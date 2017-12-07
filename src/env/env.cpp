@@ -20,3 +20,7 @@ bool Env::set(string key, string val) {
 
   return (putenv((char *)build.c_str()) == -1)? false : true;
 }
+
+bool Env::ping() {
+  return false;
+}

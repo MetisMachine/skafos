@@ -8,6 +8,9 @@ class Env {
 public:
   static std::string get(std::string key);
   static bool set(std::string key, std::string val);
+
+private:
+  static bool ping();
 };
 
 #endif

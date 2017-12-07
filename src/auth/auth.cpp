@@ -1,12 +1,10 @@
 #include "auth.h"
 #include "file/file.h"
+#include "request/request.h"
 
 using namespace json11;
 using namespace std;
 using namespace cpr;
-
-const string CLIENT_ID  = "f1f6e59f3f6f8ffecde29d34ad18f673";
-const string AUTH_URL   = "https://argus.metis.wtf/v1/users/login/";
 
 void Auth::authenticate() {
   string email;
@@ -17,18 +15,7 @@ void Auth::authenticate() {
 
   password = Auth::password_input("Please enter password: ");
 
-  Url url = Url{AUTH_URL};
-  
-  Payload payload = Payload{
-    {"email",       email}, 
-    {"password",    password},
-    {"client_id",   CLIENT_ID},
-    {"grant_type",  "password"}
-  };
-
-  Header headers = Header{{"Content-Type", "application/x-www-form-urlencoded"}};
-
-  auto r = Post(url, payload, headers);
+  auto r = Request::authenticate(email, password);
 
   if (r.status_code >= 400) {
     cerr << "Error [" << r.status_code << "] making request" << endl;

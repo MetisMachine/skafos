@@ -1,4 +1,6 @@
 
+#ifndef __common_h__
+#define __common_h__
 #pragma once
 
 #include <vector>
@@ -29,3 +31,11 @@
                                           str = str.substr(found + 1); \
                                           found = str.find_first_of(sep); } \
                                        if(str.length() > 0) vect.push_back(str);  
+
+
+const std::string CLIENT_ID             = "f1f6e59f3f6f8ffecde29d34ad18f673";
+const std::string API_URL               = "https://argus.metis.wtf/v1/users/login/";
+const std::string METIS_API_TOKEN       = "METIS_API_TOKEN";
+const std::string METIS_AUTH_TOKEN_ENV  = "METIS_OAUTH";
+                                       
+#endif
