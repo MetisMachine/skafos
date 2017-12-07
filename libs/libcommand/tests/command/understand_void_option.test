@@ -1,0 +1,10 @@
+#!/bin/sh
+
+TEST_VOID=$($srcdir/command/option_test_command void)
+
+if [ "$TEST_VOID" = "VOID" ]; then
+    return 0;
+fi
+
+echo "Command should understand Option<void> (switch). Expecting output: 'VOID', got: '$TEST_VOID'. Program exited with $? code."
+return 1;

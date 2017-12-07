@@ -1,0 +1,21 @@
+#!/bin/sh
+
+for t in -5 -4 -3 -2 -1 0 1 2 3 4 5 10 100 200 300 21231; do
+    TEST=$($srcdir/command/option_test_command int=$t)
+    if [ ! "$TEST" = "int: $t" ]; then
+        echo "Command should understand Option<int>. Expecting output: 'int: $t', got: '$TEST'. Program exited with $? code."
+        return 1;
+    fi
+done
+
+for t in a b c d e example_string f3f12; do
+    TEST=$($srcdir/command/option_test_command int=$t)
+    if [ ! "$?" = "1" ]; then
+        echo "Command should not understand Option<int> if value is not integer only. Got: '$TEST', from: '$t;. Program exited with $? code."
+        return 1;
+    fi
+done
+
+echo "Command understand Option<int> correctly."
+
+return 0;

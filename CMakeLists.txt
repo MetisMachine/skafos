@@ -57,16 +57,22 @@ add_subdirectory(libs)
 
 set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/libyaml-cpp.a")
 
-file(GLOB_RECURSE HEADERS "src/*.h")
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS 
+    "src/**/*.h" 
+    "src/*.h"
+)
+
+file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
 
 include_directories(   
     SYSTEM
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
+    ${CMAKE_SOURCE_DIR}/libs/json11
     ${CMAKE_SOURCE_DIR}/libs/cpr/include
-    ${CMAKE_SOURCE_DIR}/libs/termcolor/
+    ${CMAKE_SOURCE_DIR}/libs/termcolor
 )
 
 add_executable(skafos ${SOURCES})

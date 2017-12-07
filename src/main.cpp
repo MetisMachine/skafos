@@ -1,9 +1,9 @@
 #include <iostream>
 #include <docopt.h>
-#include <json11.hpp>
 
 #include "yaml.h"
 #include "common.h"
+#include "auth/auth.h"
 
 using namespace std;
 
@@ -30,6 +30,16 @@ If you need help, feel free to reach out:
 \n
 )";
 
+void new_project(string name) {
+  cout << "New project: " << name << endl;
+}
+
+void auth() {
+  cout << "AUTH" << endl;
+
+  Auth::authenticate();
+}
+
 int main(int argc, char **argv) {
   map<string, docopt::value> args = docopt::docopt(USAGE,
     { argv + 1, argv + argc },
@@ -37,12 +47,25 @@ int main(int argc, char **argv) {
     "metis 0.0.1"
   );
 
-  for(auto const& arg : args) {
-    cout << arg.first << " " << arg.second << endl;
+  auto ath = args.find("auth");
+  if(ath != args.end() && ath->second.asLong() > 0) {
+    auth();
+
+    return 0;
   }
 
-  YAML::Node node;
-  node["key"] = "value";
+  auto nw = args.find("new");
+  if(nw != args.end()) {
+
+    auto arg = args.find("<name>");
+    if(arg != args.end() && arg->second) {
+      new_project(arg->second.asString());
+    } else {
+      cout << "A project name is required" << endl;
+    }
+
+    return 0;
+  }
 
   return 0;
 }

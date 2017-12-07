@@ -1,3 +1,6 @@
+
+#pragma once
+
 #include <vector>
 #include <string>
 #include <stdio.h>
@@ -6,6 +9,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <unistd.h>
+#include <termios.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <fstream>
+
+#include "json11.hpp"
+#include "cpr/cpr.h"
 
 
 #define __DIR__(stringName)             char buffer[PATH_MAX + 1]; \
