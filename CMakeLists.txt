@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(metis VERSION 0.0.1)
+project(skafos VERSION 0.0.1)
 
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(BUILD_SHARED_LIBS NO)
@@ -60,13 +60,16 @@ set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/libyaml-cpp.a")
 file(GLOB_RECURSE HEADERS "src/*.h")
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-include_directories(
+include_directories(   
     SYSTEM
     ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
+    ${CMAKE_SOURCE_DIR}/libs/cpr/include
+    ${CMAKE_SOURCE_DIR}/libs/termcolor/
 )
 
-add_executable(metis ${SOURCES})
-target_link_libraries(metis docopt json11 ${YAML_CPP})
+add_executable(skafos ${SOURCES})
+target_link_libraries(skafos docopt json11 cpr ${YAML_CPP})
 
 

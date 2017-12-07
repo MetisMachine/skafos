@@ -4,22 +4,30 @@
 
 #include "yaml.h"
 #include "common.h"
-#include "env/env.h"
-#include "thread/thread.h"
 
 using namespace std;
 
 static const char USAGE[] =
-R"(Metis Machine
-  Usage:
-    metis (-h | --help)
-    metis setup
-    metis init 
-    metis --version
+R"(Skafos Metis Machine CLI (0.0.1)
 
-  Options:
-    -h --help     Show this screen.
-    -v --version  Show version.
+Usage:
+    skafos (new|auth|version)...
+    skafos new <name>
+    skafos -h | --help
+    skafos --version
+Commands:
+    new         Create a new project
+    auth        Authenticate request.    
+    version     Shows version.
+Options:
+    -V --version             Shows version.
+
+If you need help, feel free to reach out:
+    https://metismachine.com
+    https://twitter.com/metismachine
+    https://github.com/metismachine
+
+\n
 )";
 
 int main(int argc, char **argv) {

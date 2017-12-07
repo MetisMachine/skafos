@@ -1,12 +1,3 @@
-.DS_Store
-
-_build/*
-.vscode
-.idea
-
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo
@@ -24,7 +15,6 @@ _build/*
 
 # Fortran module files
 *.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -36,3 +26,20 @@ _build/*
 *.exe
 *.out
 *.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# Custom
+build/
+
+# Jekyll stuff
+_includes/
+_site/
+
+# Vim
+.ycm_extra_conf.py*
