@@ -5,6 +5,8 @@ using namespace std;
 int FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
   struct stat st;
 
+  cout << "Creating " << rootPath << "/" << path << endl;
+  
   for(string::iterator iter = path.begin() ; iter != path.end();) {
   string::iterator newIter  = find( iter, path.end(), '/' );
   string newPath            = rootPath + "/" + string( path.begin(), newIter);
@@ -40,6 +42,17 @@ void FileManager::write(string path, string content) {
   fout << content;
   
   fout.close();  
+}
+
+string FileManager::read(string path) {
+  ifstream ifs(path);
+  
+  string content(
+    (istreambuf_iterator<char>(ifs)),
+    (istreambuf_iterator<char>())
+  );
+
+  return content;
 }
 
 bool FileManager::file_exists(std::string path) {

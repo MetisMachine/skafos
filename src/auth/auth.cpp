@@ -1,6 +1,7 @@
 #include "auth.h"
 #include "file/file.h"
 #include "request/request.h"
+#include "env/env.h"
 
 using namespace json11;
 using namespace std;
@@ -15,44 +16,38 @@ void Auth::authenticate() {
 
   password = Auth::password_input("Please enter password: ");
 
-  auto r = Request::authenticate(email, password);
+  auto oauth = Request::authenticate(email, password);
 
-  if (r.status_code >= 400) {
-    cerr << "Error [" << r.status_code << "] making request" << endl;
+  if (oauth.status_code >= 400) {
+    cerr << "Error [" << oauth.status_code << "] making request" << endl;
   } else {
     string err;
-    Json json = Json::parse(r.text, err);
-    
-    Auth::write_credentials(json);
+
+    cout << "Writing credentials..." << endl;
+  
+    Env::instance()->write_credentials(Json::parse(oauth.text, err));
+    Env::instance()->load_credentials();
+
+    auto api_token = Request::generate_token();
+
+    Env::instance()->write_credentials(Json::parse(api_token.text, err));
+
+    cout << "Loading credentials..." << endl;    
+    Env::instance()->load_credentials();
   }
+}
+
+bool Auth::verify_auth() {
+  return true;
+}
+
+bool Auth::verify_api_token() {
+  return true;
 }
 
 string Auth::password_input(string prompt) {
   char *rawPassword = getpass(prompt.c_str());
   string str(rawPassword);
+
   return str;
-}
-
-void Auth::write_credentials(Json object) {
-  cout << "Writing credentials..." << endl;
-
-  struct passwd *pw   = getpwuid(getuid());
-  const char *homedir = pw->pw_dir;
-  string str(homedir);
-  string destination = ".metis";
-
-  cout << "HOME: " << str << endl;
-
-  FileManager::create_path(0777, str, destination);
-
-  Json creds = Json::object{
-    {"token", object["token"]}
-  };
-
-  string creds_string = creds.dump();
-  string filename     = str + "/" + destination + "/credentials.json";
-
-  cout << "Writing to: " << filename << endl;
-
-  FileManager::write(filename, creds_string);
 }

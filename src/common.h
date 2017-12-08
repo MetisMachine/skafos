@@ -9,12 +9,13 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include <fstream>
 
 #include "json11.hpp"
 #include "cpr/cpr.h"
@@ -33,9 +34,9 @@
                                        if(str.length() > 0) vect.push_back(str);  
 
 
-const std::string CLIENT_ID             = "f1f6e59f3f6f8ffecde29d34ad18f673";
-const std::string API_URL               = "https://argus.metis.wtf/v1/users/login/";
-const std::string METIS_API_TOKEN       = "METIS_API_TOKEN";
-const std::string METIS_AUTH_TOKEN_ENV  = "METIS_OAUTH";
-                                       
+const std::string CLIENT_ID = "f1f6e59f3f6f8ffecde29d34ad18f673";
+const std::string API_URL   = "https://api.metis.wtf/v1";
+
+
+
 #endif
