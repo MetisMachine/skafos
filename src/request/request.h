@@ -7,6 +7,9 @@
 class Request {
 public:
   static cpr::Response authenticate(std::string email, std::string password);
+
+private:
+  
 };
 
 #endif
