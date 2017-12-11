@@ -55,7 +55,7 @@ endif()
 add_subdirectory(src)
 add_subdirectory(libs)
 
-set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/libyaml-cpp.a")
+set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/yaml-cpp")
 
 file(GLOB_RECURSE HEADERS 
     "src/**/*.h" 
