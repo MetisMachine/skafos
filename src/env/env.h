@@ -1,5 +1,3 @@
-#ifndef __env_h__
-#define __env_h__
 #pragma once
 
 #include "common.h"
@@ -32,5 +30,3 @@ private:
   std::string home_dir();
   std::string metis_dir();
 };
-
-#endif

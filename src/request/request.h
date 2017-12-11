@@ -1,5 +1,3 @@
-#ifndef __request_h__
-#define __request_h__
 #pragma once
 
 #include "common.h"
@@ -14,5 +12,3 @@ private:
   static void add_oauth_token(cpr::Header* headers);
   static void add_api_token(cpr::Header* headers);
 };
-
-#endif

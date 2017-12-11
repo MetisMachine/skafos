@@ -1,4 +1,3 @@
-#ifndef __file_h__
 #pragma once
 
 #include "common.h"
@@ -10,5 +9,3 @@ public:
   static std::string read(std::string path);
   static bool file_exists(std::string path);
 };
-
-#endif

@@ -1,5 +1,3 @@
-#ifndef __auth_h__
-#define __auth_h__
 #pragma once
 
 #include "common.h"
@@ -12,5 +10,3 @@ public:
 private:
   static std::string password_input(std::string prompt);
 };
-
-#endif
