@@ -2,12 +2,6 @@
 #include "file/file.h"
 #include "request/request.h"
 
-// class Env {
-// public:
-//   static string get(std::string key);
-//   static bool set(std::string key, std::string val);
-// };
-
 using namespace std;
 using namespace json11;
 
@@ -72,7 +66,7 @@ bool Env::load_credentials() {
 
 void Env::write_credentials(Json object) {
 
-  FileManager::create_path(0777, paths.home, paths.env);
+  FileManager::create_path(0600, paths.home, paths.env);
 
   Json creds = Json::object{
     {"token", object["token"]}
