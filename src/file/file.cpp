@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "file.h"
 
 using namespace std;
@@ -5,31 +6,29 @@ using namespace std;
 int FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
   struct stat st;
 
-  cout << "Creating " << rootPath << "/" << path << endl;
+  std::cout << "Creating " << rootPath << "/" << path << std::endl;
   
-  for(string::iterator iter = path.begin() ; iter != path.end();) {
-  string::iterator newIter  = find( iter, path.end(), '/' );
-  string newPath            = rootPath + "/" + string( path.begin(), newIter);
+  for(std::string::iterator iter = path.begin(); iter != path.end();) {
+    std::string::iterator newIter = std::find(iter, path.end(), '/');
+    string newPath                = rootPath + "/" + std::string( path.begin(), newIter);
 
-    if( stat( newPath.c_str(), &st) != 0) {           
-      if( mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST ) {
-        cout << "cannot create folder [" << newPath << "] : " << strerror(errno) << endl;
+    if(stat(newPath.c_str(), &st) != 0) {
+      if(mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST) {
+          std::cout << "cannot create folder [" << newPath << "] : " << strerror(errno) << std::endl;
         return -1;
       }
     } else {
-      if( !S_ISDIR(st.st_mode) ) {
+      if(!S_ISDIR(st.st_mode)) {
         errno = ENOTDIR;
-       
-        cout << "path [" << newPath << "] not a dir " << endl;
-       
+        std::cout << "path [" << newPath << "] not a dir " << std::endl;
         return -1;
       }
     }
   
     iter = newIter;
 
-    if( newIter != path.end() ) {
-      ++ iter;
+    if(newIter != path.end()) {
+      ++iter;
     }
   }
 
