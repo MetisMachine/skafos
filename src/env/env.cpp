@@ -66,7 +66,7 @@ bool Env::load_credentials() {
 
 void Env::write_credentials(Json object) {
 
-  FileManager::create_path(0600, paths.home, paths.env);
+  FileManager::create_path(0755, paths.home, paths.env);
 
   Json creds = Json::object{
     {"token", object["token"]}

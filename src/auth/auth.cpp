@@ -17,6 +17,7 @@ void Auth::authenticate() {
   password = Auth::password_input("Please enter password: ");
 
   auto oauth = Request::authenticate(email, password);
+  cout << oauth.text << endl;
 
   if (oauth.code >= 400) {
     cerr << "Error [" << oauth.code << "] making request" << endl;

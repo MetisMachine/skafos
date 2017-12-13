@@ -8,6 +8,10 @@
 #ifndef SSE_H
 #define SSE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_HEADERS 100
 
 /* response limit: 128 kByte */
@@ -101,5 +105,9 @@ extern const char* streeq(const char* string, const char* pattern);
  * returns NULL otherwise.
  */
 extern const char* strseq(const char* string, const char* pattern);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

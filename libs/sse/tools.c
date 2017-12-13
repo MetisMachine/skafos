@@ -92,7 +92,7 @@ void log_sse_event(char** headers, const char* data)
 
 void on_sse_event(char** headers, const char* data, const char* reply_url)
 {
-  log_sse_event(headers, data);
+  //log_sse_event(headers, data);
   
   char* result = 0;
   

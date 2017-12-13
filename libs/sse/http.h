@@ -8,6 +8,10 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <string.h>
 #include <curl/curl.h>
 
@@ -32,5 +36,9 @@ extern void http(int  verb,
 extern char curl_error_buf[];
 
 extern size_t http_ignore_data(char *ptr, size_t size, size_t nmemb, void *userdata);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
