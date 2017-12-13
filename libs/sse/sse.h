@@ -47,6 +47,8 @@ DECLARE_OBJECT(Options, options);
 #define FD_STDOUT   1
 #define FD_STDERR   2
 
+void (*handle_sse_event)(const char* data);
+
 /*
  * put some data into the SSE parser
  */

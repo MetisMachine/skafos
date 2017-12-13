@@ -2,8 +2,23 @@
 #include "sse.h"
 #include "http.h"
 #include "env/env.h"
+#include "common.h"
+
+using namespace json11;
 
 DEFINE_OBJECT(Options, options);
+
+void sse_event(const char* data) {
+  std::string err;
+  Json json = Json::parse(data, err);
+  if(err.length() > 0) {
+    std::cerr << "Unable to parse log message!: " << err << std::endl;
+    return;
+  }
+
+  std::string message = json["data"].string_value();
+  std::cout << message << std::endl;
+}
 
 static const char* verify_response(CURL* curl) {
   #define EXPECTED_CONTENT_TYPE "text/event-stream"
@@ -31,6 +46,7 @@ static size_t on_data(char *ptr, size_t size, size_t nmemb, void *userdata)
 
 void Logs::print(std::string project, long num, bool tail) {
   Env::instance()->load_credentials();
+  handle_sse_event = sse_event;
   std::string auth = std::string("Authorization: Bearer ") + Env::instance()->get(METIS_AUTH_TOKEN);
   const char* headers[] = {
     "Accept: text/event-stream",

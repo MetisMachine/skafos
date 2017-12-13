@@ -103,9 +103,10 @@ void on_sse_event(char** headers, const char* data, const char* reply_url)
     free_sse_environment();
   }
   else {
-    fprint_list(stdout, headers);
-    fputs(data, stdout);
-    fputs("\n\n", stdout);
+    handle_sse_event(data);
+    //fprint_list(stdout, headers);
+    //fputs(data, stdout);
+    //fputs("\n\n", stdout);
   }
 
   if(reply_url) {
