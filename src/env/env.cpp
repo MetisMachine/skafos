@@ -43,16 +43,16 @@ bool Env::load_credentials() {
     Json json = Json::parse(creds, err);
 
     if(err.length() > 0) {
-      cerr << "Credentials error: " << err << endl;
-
+      cerr << "❗️ Credentials error: " << err << endl;
+      
       return false;
     }
 
     string token = json["token"].string_value();
     
     if(token.length() < 1) {
-      cerr << "Credentials error: No token. " << token << endl;
-
+      cerr << "❗️ Credentials error: no token found." << endl;
+      
       return false;
     }
 

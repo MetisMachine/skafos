@@ -65,6 +65,7 @@ ENDIF(CURL_FOUND)
 set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/yaml-cpp")
 
 set(LIB_CURL curl)
+set(LIB_GIT git2)
 
 file(GLOB_RECURSE HEADERS 
     "libs/restclient-cpp/include/**/*.h"
@@ -78,7 +79,7 @@ file(GLOB_RECURSE SOURCES
     "src/*.cpp"
 )
 
-include_directories(   
+include_directories(  
     SYSTEM
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src
@@ -90,6 +91,6 @@ include_directories(
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 ${YAML_CPP} ${LIB_CURL})
+target_link_libraries(skafos docopt json11 ${YAML_CPP} ${LIB_CURL} ${LIB_GIT})
 
 
