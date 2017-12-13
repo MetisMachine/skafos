@@ -2,6 +2,7 @@
 #include "file/file.h"
 #include "request/request.h"
 #include "env/env.h"
+#include "helpers/helpers.h"
 
 using namespace json11;
 using namespace std;
@@ -29,7 +30,11 @@ void Auth::authenticate() {
 
     auto api_token = Request::generate_token();
 
-    Env::instance()->write_credentials(Json::parse(api_token.body, err));
+    cout << "Generating API token..." << endl;
+
+    string token = api_token.body;
+    
+    Env::instance()->write_credentials(Json::parse(token, err));
 
     cout << "Loading credentials..." << endl;    
     Env::instance()->load_credentials();

@@ -4,12 +4,14 @@
 #include "yaml.h"
 #include "common.h"
 #include "auth/auth.h"
+#include "helpers/helpers.h"
+#include "version.h"
 
 using namespace std;
 
 static const char USAGE[] =
 R"(
-Skafos Metis Machine CLI (0.0.1)
+Skafos
 
 Usage:
     skafos (new|auth|version)...
@@ -41,10 +43,16 @@ void auth() {
 }
 
 int main(int argc, char **argv) {
+  string title = (
+    string("\nSkafos version: ") + 
+    VERSION + 
+    string("\nMetis Machine https://metismachine.com\n")
+  );
+
   map<string, docopt::value> args = docopt::docopt(USAGE,
     { argv + 1, argv + argc },
     true,
-    "Skafos 0.0.1"
+    title.c_str()
   );
 
   auto ath = args.find("auth");
