@@ -12,7 +12,8 @@ void sse_event(const char* data) {
   std::string err;
   Json json = Json::parse(data, err);
   if(err.length() > 0) {
-    std::cerr << "Unable to parse log message!: " << err << std::endl;
+    // Ignoring. Below is one possible solution if we choose to do it.
+    //std::cerr << "[SKAFOS] Unable to parse log message!: " << err << std::endl;
     return;
   }
 
