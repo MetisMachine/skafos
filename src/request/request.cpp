@@ -3,67 +3,114 @@
 
 using namespace std;
 using namespace json11;
-using namespace cpr;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
-#define DEFAULT_HEADERS Header{{"Content-Type", "application/json"}}
 
 #define LOGIN_URL "/users/login"
 #define PING_URL  "/ping"
 #define TOKEN_URL "/api_tokens/"
 
-Response Request::authenticate(string email, string password) {
-  Url url         = ENDPOINT(LOGIN_URL);
-  Header headers  = Header{{"Content-Type", "application/x-www-form-urlencoded"}};
+
+// Private
+Request *Request::instance_ = 0;
+
+Request *Request::instance() {
+  if (instance_ == 0) {
+    instance_ = new Request();
+  }
+
+  return instance_;
+}
+
+Request::Request() {
+  RestClient::init();
+
+  this->connection = new RestClient::Connection(API_URL);
+  this->connection->SetTimeout(30);
+  this->connection->SetUserAgent("Skafos");
+  this->connection->FollowRedirects(true);
+}
+
+Request::~Request() {
+  RestClient::disable();
+}
+
+RestClient::HeaderFields Request::_default_headers() {
+  RestClient::HeaderFields headers;
+  headers["Content-Type"] = "application/json";
+
+  return headers;
+}
+
+RestClient::HeaderFields Request::_api_headers() {
+  RestClient::HeaderFields headers  = this->_default_headers();
+  headers["x-api-token"]            = Env::instance()->get(METIS_API_TOKEN);
   
-  Payload payload = Payload{
+  return headers;
+}
+
+RestClient::HeaderFields Request::_oauth_headers() {
+RestClient::HeaderFields headers  = this->_default_headers();
+  headers["Authorization"]        = "Bearer " + Env::instance()->get(METIS_AUTH_TOKEN);
+  
+  return headers;
+}
+
+RestClient::Response Request::_authenticate(std::string email, std::string password) {
+  RestClient::HeaderFields headers = this->_default_headers();
+  
+  this->connection->SetHeaders(headers);
+  
+  Json body = Json::object{
     {"email",       email}, 
     {"password",    password},
     {"client_id",   CLIENT_ID},
     {"grant_type",  "password"}
   };
 
-  return Post(url, payload, headers);
+  return this->connection->post(LOGIN_URL, body.dump());
 }
 
-Response Request::ping() {
-  Url url         = ENDPOINT(PING_URL);
-  Header headers  = DEFAULT_HEADERS;
+RestClient::Response Request::_ping() {
+  RestClient::HeaderFields headers = this->_api_headers();
 
-  add_oauth_token(&headers);
+  this->connection->SetHeaders(headers);
 
-  return Get(url, headers);
+  return this->connection->get(PING_URL);
 }
 
-//MARK - Tokens
-Response Request::tokens() {
-  Url url         = ENDPOINT(TOKEN_URL);
-  Header headers  = DEFAULT_HEADERS;
+RestClient::Response Request::_tokens() {
+  RestClient::HeaderFields headers = this->_api_headers();
 
-  add_oauth_token(&headers);
+  this->connection->SetHeaders(headers);
 
-  return Get(url, headers);
+  return this->connection->get(TOKEN_URL);
 }
 
-Response Request::generate_token() {
-  Url url         = ENDPOINT(TOKEN_URL);
-  Header headers  = DEFAULT_HEADERS;
+RestClient::Response Request::_generate_token() {
+  RestClient::HeaderFields headers = this->_oauth_headers();
 
-  add_oauth_token(&headers);
+  this->connection->SetHeaders(headers);
 
-  return Post(url, Payload{}, headers);
+  return this->connection->post(TOKEN_URL, "");
+}
+
+// Public
+RestClient::Response Request::authenticate(string email, string password) {
+  return instance()->_authenticate(email, password);
+}
+
+RestClient::Response Request::ping() {
+  return instance()->_ping();
+}
+
+RestClient::Response Request::tokens() {
+  return instance()->_tokens();
 }
 
 
-//MARK - Private
-void Request::add_oauth_token(cpr::Header* headers) {
-  string token = Env::instance()->get(METIS_AUTH_TOKEN);
-
-  headers->insert({"authorization", ("Bearer " + token)});
+RestClient::Response Request::generate_token() {
+  return instance()->_generate_token();
 }
 
-void Request::add_api_token(cpr::Header* headers) {
-  string token = Env::instance()->get(METIS_API_TOKEN);
 
-  headers->insert({"x-api-token", token});
-}
