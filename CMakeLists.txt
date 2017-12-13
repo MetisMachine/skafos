@@ -58,11 +58,16 @@ add_subdirectory(libs)
 set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/yaml-cpp")
 
 file(GLOB_RECURSE HEADERS 
+    "libs/requestclient-cpp/include/**/*.h"
     "src/**/*.h" 
     "src/*.h"
 )
 
-file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
+file(GLOB_RECURSE SOURCES 
+    "libs/requestclient-cpp/source/*.cc"
+    "src/**/*.cpp" 
+    "src/*.cpp"
+)
 
 include_directories(   
     SYSTEM
@@ -71,11 +76,11 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/json11
-    ${CMAKE_SOURCE_DIR}/libs/cpr/include
     ${CMAKE_SOURCE_DIR}/libs/termcolor
+    ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 cpr ${YAML_CPP})
+target_link_libraries(skafos docopt json11 ${YAML_CPP})
 
 

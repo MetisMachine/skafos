@@ -8,7 +8,8 @@
 using namespace std;
 
 static const char USAGE[] =
-R"(Skafos Metis Machine CLI (0.0.1)
+R"(
+Skafos Metis Machine CLI (0.0.1)
 
 Usage:
     skafos (new|auth|version)...
@@ -27,7 +28,6 @@ If you need help, feel free to reach out:
     https://twitter.com/metismachine
     https://github.com/metismachine
 
-\n
 )";
 
 void new_project(string name) {
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   map<string, docopt::value> args = docopt::docopt(USAGE,
     { argv + 1, argv + argc },
     true,
-    "metis 0.0.1"
+    "Skafos 0.0.1"
   );
 
   auto ath = args.find("auth");

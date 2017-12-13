@@ -58,7 +58,7 @@ bool Env::load_credentials() {
 
     this->set(METIS_AUTH_TOKEN, token);
 
-    return Request::ping().text == "pong";
+    return Request::ping().body == "pong";
   }
 
   return false;
