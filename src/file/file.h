@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CLI_FILE__
+#define __CLI_FILE__
 
 #include "common.h"
 
@@ -9,3 +10,5 @@ public:
   static std::string read(std::string path);
   static bool file_exists(std::string path);
 };
+
+#endif

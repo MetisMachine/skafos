@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CLI_AUTH__
+#define __CLI_AUTH__
 
 #include "common.h"
 
@@ -10,3 +11,5 @@ public:
 private:
   static std::string password_input(std::string prompt);
 };
+
+#endif

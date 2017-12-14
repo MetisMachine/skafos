@@ -1,6 +1,8 @@
 #include "env.h"
 #include "file/file.h"
 #include "request/request.h"
+#include "git/git.h"
+#include "auth/auth.h"
 
 using namespace std;
 using namespace json11;
@@ -23,6 +25,19 @@ Env::Env() {
   paths.home         = home;
   paths.env          = metis;
   paths.credentials  = path;
+}
+
+void Env::setup() {
+  cout << "Setting up Skafos development environment..." << endl;
+
+  cout << "Pulling available templates" << endl;
+
+  if(FileManager::file_exists(paths.credentials) == false) {
+    Auth::authenticate();
+  }
+
+  string path = paths.home + "/" + paths.env + "/templates";
+  int success = Git::Repo::clone(METIS_TEMPLATE_REPO, path);
 }
 
 string Env::get(string key) {
