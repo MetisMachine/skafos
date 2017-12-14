@@ -1,5 +1,6 @@
 .DS_Store
 
+build/*
 _build/*
 .vscode
 .idea
@@ -36,3 +37,6 @@ _build/*
 *.exe
 *.out
 *.app
+
+# Lib trash
+libs/sse/parse-sse.c

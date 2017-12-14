@@ -86,6 +86,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/json11
+    ${CMAKE_SOURCE_DIR}/libs/cpr/include
+    ${CMAKE_SOURCE_DIR}/libs/sse
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
 )
