@@ -8,6 +8,8 @@ using namespace json11;
 using namespace std;
 
 void Auth::authenticate() {
+  cout << "Authenticate with Skafos" << endl;
+  
   string email;
   string password;
 

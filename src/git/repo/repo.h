@@ -30,6 +30,7 @@ namespace Git {
     static void checkout_progress(const char *path, size_t cur, size_t tot, void *payload);
   public:
     static int clone(std::string url,  std::string path);
+    static int pull(std::string path);
   };
   
 }

@@ -9,6 +9,7 @@ public:
   static void write(std::string path, std::string content);
   static std::string read(std::string path);
   static bool file_exists(std::string path);
+  static bool dir_exists(std::string path);
 };
 
 #endif

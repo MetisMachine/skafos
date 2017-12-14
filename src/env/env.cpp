@@ -1,8 +1,4 @@
 #include "env.h"
-#include "file/file.h"
-#include "request/request.h"
-#include "git/git.h"
-#include "auth/auth.h"
 
 using namespace std;
 using namespace json11;
@@ -20,24 +16,21 @@ Env *Env::instance() {
 Env::Env() {
   string home   = this->home_dir();
   string metis  = this->metis_dir();
-  string path   = home + "/" + metis + "/" + METIS_CREDENTIALS;
 
-  paths.home         = home;
-  paths.env          = metis;
-  paths.credentials  = path;
+  paths.home        = home;
+  paths.env         = metis;
+  paths.templates   = home + "/" + metis + "/" + METIS_TEMPLATE_DIR;
+  paths.credentials = home + "/" + metis + "/" + METIS_CREDENTIALS;
 }
 
 void Env::setup() {
   cout << "Setting up Skafos development environment..." << endl;
 
-  cout << "Pulling available templates" << endl;
+  Template::update();
+}
 
-  if(FileManager::file_exists(paths.credentials) == false) {
-    Auth::authenticate();
-  }
-
-  string path = paths.home + "/" + paths.env + "/templates";
-  int success = Git::Repo::clone(METIS_TEMPLATE_REPO, path);
+bool Env::authenticated() {
+  return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong"));
 }
 
 string Env::get(string key) {
@@ -72,7 +65,8 @@ bool Env::load_credentials() {
     }
 
     this->set(METIS_AUTH_TOKEN, token);
-
+    this->set(METIS_API_TOKEN, token);
+    
     return Request::ping().body == "pong";
   }
 

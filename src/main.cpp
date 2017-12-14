@@ -8,6 +8,7 @@
 #include "version.h"
 #include "logs/logs.h"
 #include "env/env.h"
+#include "templates/templates.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ Skafos
 Usage:
     skafos (setup|new|auth|version)...
     skafos new <name>
+    skafos templates [--update] [--search <search_term>]
     skafos logs [-n <num>] [--tail] [--project <project_token>]
     skafos -h | --help
     skafos --version
@@ -45,13 +47,9 @@ void new_project(string name) {
   cout << "New project: " << name << endl;
 }
 
-void auth() {
-  cout << "Authenticate with Skafos" << endl;
-
-  Auth::authenticate();
-}
-
 int main(int argc, char **argv) {
+  Env::instance()->load_credentials();
+
   string title = (
     string("\nSkafos version: ") + 
     VERSION + 
@@ -73,9 +71,34 @@ int main(int argc, char **argv) {
 
   auto ath = args.find("auth");
   if(ath != args.end() && ath->second.asLong() > 0) {
-    auth();
+    Auth::authenticate();
 
     return EXIT_SUCCESS;
+  }
+
+  auto tpl = args.find("templates");
+  if(tpl != args.end()) {
+    auto upt = args.find("--update");
+
+    if(upt != args.end() && upt->second.asBool()) {
+      Template::update();
+
+      return EXIT_SUCCESS;
+    }
+
+    auto srch = args.find("--search");
+
+    if(srch != args.end() && srch->second) {
+      auto search_for = args.find("<search_term>");
+
+      if(search_for != args.end() && search_for->second) {
+        string term = search_for->second.asString();
+
+        cout << "Searching for " << term << "..." << endl;
+
+        return EXIT_SUCCESS;
+      }
+    }
   }
 
   auto lg = args.find("logs");

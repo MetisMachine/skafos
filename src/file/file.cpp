@@ -1,5 +1,8 @@
 #include <algorithm>
 #include <cstring>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "file.h"
 
 using namespace std;
@@ -55,4 +58,16 @@ string FileManager::read(string path) {
 
 bool FileManager::file_exists(std::string path) {
   return (access(path.c_str(), F_OK) != -1);
+}
+
+bool FileManager::dir_exists(std::string path) {
+  struct stat info;
+  
+  if(stat(path.c_str(), &info) != 0) {
+    return false;
+  } else if(info.st_mode & S_IFDIR) {
+    return true;
+  }
+
+  return false;
 }
