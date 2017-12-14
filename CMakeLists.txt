@@ -93,6 +93,6 @@ include_directories(
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 ${YAML_CPP} ${LIB_CURL} ${LIB_GIT})
+target_link_libraries(skafos docopt json11 sse ${YAML_CPP} ${LIB_CURL} ${LIB_GIT})
 
 
