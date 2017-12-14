@@ -67,28 +67,32 @@ int main(int argc, char **argv) {
 
   auto lg = args.find("logs");
   if(lg != args.end()) {
-    std::string project = "";
-	long        numlines = 0;
-	bool        follow = false;
+    string project  = "";
+	  long numlines   = 0;
+	  bool follow     = false;
+    auto num        = args.find("<num>");
 
-    auto num = args.find("<num>");
-	if(num != args.end() && num->second) {
-		numlines = num->second.asLong();
-	}
+	  if(num != args.end() && num->second) {
+		  numlines = num->second.asLong();
+	  }
+    
     auto tail = args.find("--tail");
-	if(tail != args.end() && tail->second) {
-		follow = tail->second.asBool();
-	}
-	auto token = args.find("<project_token>");
-	if(token != args.end() && token->second) {
-		project = token->second.asString();
-	} else {
-		cout << "A project token is required" << endl;
-	}
+  
+    if(tail != args.end() && tail->second) {
+		  follow = tail->second.asBool();
+    }
+    
+	  auto token = args.find("<project_token>");
+  
+    if(token != args.end() && token->second) {
+		  project = token->second.asString();
+	  } else {
+		  cout << "A project token is required" << endl;
+	  }
 
-	Logs::print(project, numlines, follow);
+	  Logs::print(project, numlines, follow);
 
-	return 0;
+	  return 0;
   }
 
   auto nw = args.find("new");
