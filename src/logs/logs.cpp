@@ -57,14 +57,14 @@ void Logs::print(std::string project, long num, bool tail) {
 
   std::string logs_url = "";
   const char* env = getenv("ENV");
-  if(strcmp(env, "local") == 0) {
+  if(env == NULL) {
+	  logs_url = "https://api.metismachine.io/logs/" + project;
+  } else if(strcmp(env, "local") == 0) {
     std::cout << "Using local environment!" << std::endl;
     logs_url = "http://localhost:4000/logs/" + project;
   } else if(strcmp(env, "dev") == 0) {
     std::cout << "Using staging environment!" << std::endl;
     logs_url = "http://argus.metis.wtf/logs/" + project;
-  } else {
-    logs_url = "https://api.metismachine.io/logs/" + project;
   }
 
   http(HTTP_GET, (char*)logs_url.c_str(), headers, 0, 0, on_data, verify_response);
