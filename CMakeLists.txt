@@ -85,11 +85,13 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/json11
+    ${CMAKE_SOURCE_DIR}/libs/cpr/include
+    ${CMAKE_SOURCE_DIR}/libs/sse
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 ${YAML_CPP} ${LIB_CURL})
+target_link_libraries(skafos docopt json11 sse ${YAML_CPP} ${LIB_CURL})
 
 
