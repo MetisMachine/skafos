@@ -50,12 +50,11 @@ namespace Git {
     print_progress(pd);
   }
   
-  
   int Repo::clone(string url, string path) {
     git_libgit2_init();
 
     progress_data pd                    = {{0}};
-    git_repository *cloned_repo         = NULL;
+    git_repository *repo                = NULL;
     git_clone_options clone_opts        = GIT_CLONE_OPTIONS_INIT;
     git_checkout_options checkout_opts  = GIT_CHECKOUT_OPTIONS_INIT;
   
@@ -69,7 +68,7 @@ namespace Git {
 
     const char *c_url   = url.c_str();
     const char *c_path  = path.c_str();
-    int error           = git_clone(&cloned_repo, c_url, c_path, &clone_opts);
+    int error           = git_clone(&repo, c_url, c_path, &clone_opts);
 
     printf("\n");
     if (error != 0) {
@@ -80,29 +79,12 @@ namespace Git {
       } else {
         printf("ERROR %d: no detailed info\n", error);
       }
-    } else if (cloned_repo) {
-      git_repository_free(cloned_repo);
+    } else if (repo) {
+      git_repository_free(repo);
     }
 
+    git_repository_state_cleanup(repo);    
     git_libgit2_shutdown();
     return error;
   }
-
-  int Repo::pull(string path) {
-    git_libgit2_init();
-  
-    progress_data pd                    = {{0}};
-    git_repository *repo                = NULL;
-    git_checkout_options checkout_opts  = GIT_CHECKOUT_OPTIONS_INIT;
-    checkout_opts.checkout_strategy     = GIT_CHECKOUT_FORCE;
-    checkout_opts.progress_cb           = checkout_progress;
-    checkout_opts.progress_payload      = &pd;
-  
-    git_repository_open(&repo, path.c_str());
-  
-    int error = git_checkout_head(repo, &checkout_opts);
-  
-    git_libgit2_shutdown();
-    return error;
-  }  
 }

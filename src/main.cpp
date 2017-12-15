@@ -1,7 +1,6 @@
 #include <iostream>
 #include <docopt.h>
 
-#include "yaml.h"
 #include "common.h"
 #include "auth/auth.h"
 #include "helpers/helpers.h"
@@ -92,9 +91,7 @@ int main(int argc, char **argv) {
       auto search_for = args.find("<search_term>");
 
       if(search_for != args.end() && search_for->second) {
-        string term = search_for->second.asString();
-
-        cout << "Searching for " << term << "..." << endl;
+        Template::search(search_for->second.asString());
 
         return EXIT_SUCCESS;
       }

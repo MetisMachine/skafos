@@ -30,14 +30,14 @@ void Auth::authenticate() {
 
     auto api_token = Request::generate_token();
 
-    cout << "⚡️ Generating API token..." << endl;
+    cout << "⚡️  Generating API token..." << endl;
 
     string token = api_token.body;
     
-    cout << "✏️ Writing credentials..." << endl;
+    cout << "✏️  Writing credentials..." << endl;
     Env::instance()->write_credentials(Json::parse(token, err));
 
-    cout << "💾 Loading credentials..." << endl;    
+    cout << "💾  Loading credentials..." << endl;    
     Env::instance()->load_credentials();
   }
 }

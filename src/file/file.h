@@ -10,6 +10,10 @@ public:
   static std::string read(std::string path);
   static bool file_exists(std::string path);
   static bool dir_exists(std::string path);
+  static bool is_dir(std::string path);
+  static bool is_dot_dir(std::string path);
+  static void delete_dir(std::string path);
+  static std::list<std::string> dir_list(std::string path);
 };
 
 #endif

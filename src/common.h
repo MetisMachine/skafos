@@ -1,6 +1,7 @@
 #ifndef __CLI_COMMON__
 #define __CLI_COMMON__
 
+#include <list>
 #include <vector>
 #include <string>
 #include <stdio.h>
