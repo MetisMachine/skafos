@@ -1,12 +1,13 @@
 #include <iostream>
 #include <docopt.h>
 
-#include "yaml.h"
 #include "common.h"
 #include "auth/auth.h"
 #include "helpers/helpers.h"
 #include "version.h"
 #include "logs/logs.h"
+#include "env/env.h"
+#include "templates/templates.h"
 
 using namespace std;
 
@@ -15,12 +16,14 @@ R"(
 Skafos
 
 Usage:
-    skafos (new|auth|version)...
-    skafos new <name>
+    skafos (setup|init|auth|version)...
+    skafos init <name>
+    skafos templates [--update] [--search <search_term>]
     skafos logs [-n <num>] [--tail] [--project <project_token>]
     skafos -h | --help
     skafos --version
 Commands:
+    setup       Setup development environment.
     new         Create a new project
     auth        Authenticate request.    
     version     Shows version.
@@ -35,17 +38,17 @@ If you need help, feel free to reach out:
 
 )";
 
+void setup() {
+  Env::instance()->setup();
+}
+
 void new_project(string name) {
   cout << "New project: " << name << endl;
 }
 
-void auth() {
-  cout << "AUTH" << endl;
-
-  Auth::authenticate();
-}
-
 int main(int argc, char **argv) {
+  Env::instance()->load_credentials();
+
   string title = (
     string("\nSkafos version: ") + 
     VERSION + 
@@ -58,11 +61,41 @@ int main(int argc, char **argv) {
     title.c_str()
   );
 
+  auto stp = args.find("setup");
+  if(stp != args.end() && stp->second.asLong() > 0) {
+    setup();
+
+    return EXIT_SUCCESS;
+  }
+
   auto ath = args.find("auth");
   if(ath != args.end() && ath->second.asLong() > 0) {
-    auth();
+    Auth::authenticate();
 
-    return 0;
+    return EXIT_SUCCESS;
+  }
+
+  auto tpl = args.find("templates");
+  if(tpl != args.end()) {
+    auto upt = args.find("--update");
+
+    if(upt != args.end() && upt->second.asBool()) {
+      Template::update();
+
+      return EXIT_SUCCESS;
+    }
+
+    auto srch = args.find("--search");
+
+    if(srch != args.end() && srch->second) {
+      auto search_for = args.find("<search_term>");
+
+      if(search_for != args.end() && search_for->second) {
+        Template::search(search_for->second.asString());
+
+        return EXIT_SUCCESS;
+      }
+    }
   }
 
   auto lg = args.find("logs");
@@ -92,7 +125,7 @@ int main(int argc, char **argv) {
 
 	  Logs::print(project, numlines, follow);
 
-	  return 0;
+	  return EXIT_SUCCESS;
   }
 
   auto nw = args.find("new");
@@ -105,8 +138,8 @@ int main(int argc, char **argv) {
       cout << "A project name is required" << endl;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -1,6 +1,4 @@
 #include "env.h"
-#include "file/file.h"
-#include "request/request.h"
 
 using namespace std;
 using namespace json11;
@@ -18,11 +16,21 @@ Env *Env::instance() {
 Env::Env() {
   string home   = this->home_dir();
   string metis  = this->metis_dir();
-  string path   = home + "/" + metis + "/" + METIS_CREDENTIALS;
 
-  paths.home         = home;
-  paths.env          = metis;
-  paths.credentials  = path;
+  paths.home        = home;
+  paths.env         = metis;
+  paths.templates   = home + "/" + metis + "/" + METIS_TEMPLATE_DIR;
+  paths.credentials = home + "/" + metis + "/" + METIS_CREDENTIALS;
+}
+
+void Env::setup() {
+  cout << "Setting up Skafos development environment..." << endl;
+
+  Template::update();
+}
+
+bool Env::authenticated() {
+  return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong"));
 }
 
 string Env::get(string key) {
@@ -43,21 +51,22 @@ bool Env::load_credentials() {
     Json json = Json::parse(creds, err);
 
     if(err.length() > 0) {
-      cerr << "Credentials error: " << err << endl;
-
+      cerr << "❗️ Credentials error: " << err << endl;
+      
       return false;
     }
 
     string token = json["token"].string_value();
     
     if(token.length() < 1) {
-      cerr << "Credentials error: No token. " << token << endl;
-
+      cerr << "❗️ Credentials error: no token found." << endl;
+      
       return false;
     }
 
     this->set(METIS_AUTH_TOKEN, token);
-
+    this->set(METIS_API_TOKEN, token);
+    
     return Request::ping().body == "pong";
   }
 

@@ -62,9 +62,8 @@ ELSE(CURL_FOUND)
   MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
 ENDIF(CURL_FOUND)
 
-set(YAML_CPP "${CMAKE_SOURCE_DIR}/libs/yaml-cpp/yaml-cpp")
-
 set(LIB_CURL curl)
+set(LIB_GIT git2)
 
 file(GLOB_RECURSE HEADERS 
     "libs/restclient-cpp/include/**/*.h"
@@ -78,12 +77,13 @@ file(GLOB_RECURSE SOURCES
     "src/*.cpp"
 )
 
-include_directories(   
+include_directories(  
     SYSTEM
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
+    ${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include
     ${CMAKE_SOURCE_DIR}/libs/json11
     ${CMAKE_SOURCE_DIR}/libs/cpr/include
     ${CMAKE_SOURCE_DIR}/libs/sse
@@ -92,6 +92,6 @@ include_directories(
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse ${YAML_CPP} ${LIB_CURL})
+target_link_libraries(skafos docopt json11 sse yaml-cpp ${LIB_CURL} ${LIB_GIT})
 
 

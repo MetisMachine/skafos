@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CLI_REQUEST__
+#define __CLI_REQUEST__
 
 #include "common.h"
 #include "restclient-cpp/connection.h"
@@ -27,3 +28,5 @@ private:
   RestClient::Response _tokens();
   RestClient::Response _generate_token();
 };
+
+#endif
