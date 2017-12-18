@@ -16,8 +16,8 @@ R"(
 Skafos
 
 Usage:
-    skafos (setup|new|auth|version)...
-    skafos new <name>
+    skafos (setup|init|auth|version)...
+    skafos init <name>
     skafos templates [--update] [--search <search_term>]
     skafos logs [-n <num>] [--tail] [--project <project_token>]
     skafos -h | --help

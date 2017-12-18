@@ -11,19 +11,20 @@ using namespace std;
 int FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
   struct stat st;
 
-  for(std::string::iterator iter = path.begin(); iter != path.end();) {
-    std::string::iterator newIter = std::find(iter, path.end(), '/');
-    string newPath                = rootPath + "/" + std::string( path.begin(), newIter);
+  for(string::iterator iter = path.begin(); iter != path.end()) {
+    string::iterator newIter  = find(iter, path.end(), '/');
+    string newPath            = rootPath + "/" + string( path.begin(), newIter);
 
     if(stat(newPath.c_str(), &st) != 0) {
       if(mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST) {
-          std::cerr << "❗️ Error: cannot create folder [" << newPath << "] not a dir " << std::endl;
+          cerr << "❗️ Error: cannot create folder [" << newPath << "] not a dir " << endl;
         return -1;
       }
     } else {
       if(!S_ISDIR(st.st_mode)) {
         errno = ENOTDIR;
-        std::cerr << "❗️ Error: path [" << newPath << "] not a dir " << std::endl;
+        
+        cerr << "❗️ Error: path [" << newPath << "] not a dir " << endl;
         return -1;
       }
     }
