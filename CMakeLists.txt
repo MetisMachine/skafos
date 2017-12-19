@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 project(skafos VERSION 0.0.1)
 
+set(CPACK_PACKAGE_VERSION 0.0.1)
+
 set(EXECUTABLE_OUTPUT_PATH "bin")
 set(BUILD_SHARED_LIBS NO)
 
@@ -95,3 +97,5 @@ include_directories(
 
 add_executable(skafos ${SOURCES})
 target_link_libraries(skafos docopt json11 sse yaml-cpp ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
+
+install(TARGETS skafos RUNTIME DESTINATION bin)
