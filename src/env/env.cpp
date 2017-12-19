@@ -21,12 +21,16 @@ Env::Env() {
   paths.env         = metis;
   paths.templates   = home + "/" + metis + "/" + METIS_TEMPLATE_DIR;
   paths.credentials = home + "/" + metis + "/" + METIS_CREDENTIALS;
+  paths.cache       = home + "/" + metis + "/" + METIS_TEMPLATE_DIR + "/" + METIS_CACHE_DIR;
 }
 
 void Env::setup() {
-  cout << "Setting up Skafos development environment..." << endl;
+  cout << endl << "Setting up Skafos development environment..." << endl;
+
+  VERIFY_AUTH();
 
   Template::update();
+  Template::create_cache_dir();
 }
 
 bool Env::authenticated() {
@@ -87,7 +91,7 @@ void Env::write_credentials(Json object) {
 
 
 string Env::home_dir() {
-  struct passwd *pw   = getpwuid(getuid());
+  struct passwd *pw = getpwuid(getuid());
 
   return string(pw->pw_dir);
 }

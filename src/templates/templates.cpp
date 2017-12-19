@@ -7,10 +7,10 @@
 
 using namespace std;
 
+const string TEMPLATE_HEAD = "head";
+
 void Template::update() {
   VERIFY_AUTH();
-
-  FileManager::dir_exists(ENV_PATHS.templates) ? pull() : clone();
 
   if(FileManager::dir_exists(ENV_PATHS.templates)) {
     cout << "Updating project templates" << endl;
@@ -22,7 +22,8 @@ void Template::update() {
 }
 
 void Template::search(string name) {
-  list<string> tpls = FileManager::dir_list(ENV_PATHS.templates);
+  list<string> tpls = FileManager::dir_list(ENV_PATHS.templates, "yml");
+
   tpls.remove_if([&name](string str) {
     return str.find(name) == string::npos;
   });
@@ -53,6 +54,40 @@ void Template::search(string name) {
     << endl
     << endl;
   }
+}
+
+TemplateDetails Template::find(string name) {
+  TemplateDetails details;
+
+  for(TemplateDetails tpl : all()) {
+    if(tpl.name == name) {
+      return tpl;
+    }
+  }
+
+  return details;
+}
+
+list<TemplateDetails> Template::all() {
+  list<string> tpls = FileManager::dir_list(ENV_PATHS.templates, "yml");
+
+  if(tpls.size() < 1) {
+    update();
+    return all();
+  }
+
+
+  list<TemplateDetails> tpl_list;
+
+  for(string t : tpls) {
+    string path(ENV_PATHS.templates + "/" + t + ".yml");
+
+    auto details = parse_template(path);
+
+    tpl_list.push_back(details);
+  }
+
+  return tpl_list;
 }
 
 int Template::clone() {
@@ -86,3 +121,40 @@ TemplateDetails Template::parse_template(std::string path) {
 
   return details;
 }
+
+void Template::download(TemplateDetails details, string version) {
+  create_cache_dir();
+
+  string cache_path   = ENV_PATHS.cache;
+  string tpl_path     = cache_path + "/" + details.name + ".zip"; 
+
+  if(!FileManager::file_exists(tpl_path)) {
+    string download_url = details.repo;
+    
+    if((download_url.substr((download_url.length() - 1), download_url.length())) == "/") {
+      download_url = download_url.substr(0, download_url.length() - 1);
+    }
+    
+    download_url += "/archive/" + details.version + ".zip";
+
+    Request::download(download_url, tpl_path);
+    download(details, version);
+
+    return;
+  }
+
+
+}
+
+void Template::create_cache_dir() {
+  if(FileManager::dir_exists(ENV_PATHS.cache)) {
+    return;
+  }
+
+  string cache = METIS_CACHE_DIR;
+  FileManager::create_path(0755, ENV_PATHS.templates, cache);
+}
+
+
+
+// Search later? https://api.github.com/search/code\?q\=base+in:file+repo:metismachine/templates.list

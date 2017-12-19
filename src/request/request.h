@@ -11,6 +11,7 @@ public:
   static RestClient::Response ping();
   static RestClient::Response tokens();
   static RestClient::Response generate_token();
+  static void download(std::string url, std::string save_path);
 
 private:
   static Request *instance_;
@@ -27,6 +28,7 @@ private:
   RestClient::Response _ping();
   RestClient::Response _tokens();
   RestClient::Response _generate_token();
+  static void _download(std::string url, std::string save_path);
 };
 
 #endif

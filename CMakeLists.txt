@@ -16,6 +16,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
 include(CheckIncludeFiles)
@@ -55,15 +57,10 @@ endif()
 add_subdirectory(src)
 add_subdirectory(libs)
 
-FIND_PACKAGE(CURL)
-IF(CURL_FOUND)
-  INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
-ELSE(CURL_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
-ENDIF(CURL_FOUND)
-
-set(LIB_CURL curl)
-set(LIB_GIT git2)
+FIND_PACKAGE(LibArchive REQUIRED)
+FIND_PACKAGE(CURL REQUIRED)
+FIND_PACKAGE(Libgit2 REQUIRED)
+FIND_PACKAGE(YamlCpp REQUIRED)
 
 file(GLOB_RECURSE HEADERS 
     "libs/restclient-cpp/include/**/*.h"
@@ -77,11 +74,15 @@ file(GLOB_RECURSE SOURCES
     "src/*.cpp"
 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wwritable-strings -Wunneeded-internal-declaration")
+
 include_directories(  
     SYSTEM
+    ${CURL_INCLUDE_DIRS}
+    ${LibArchive_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIR}
+    ${LIBGIT2_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/libs/libcommand/include
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include
     ${CMAKE_SOURCE_DIR}/libs/json11
@@ -89,9 +90,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/sse
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${LIB_CURL} ${LIB_GIT})
-
-
+target_link_libraries(skafos docopt json11 sse yaml-cpp ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
