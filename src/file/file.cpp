@@ -3,29 +3,55 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <errno.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <sys/resource.h>
+#include <zlib.h>
+#include "libarchive/archive.h"
+#include "libarchive/archive_entry.h"
 
 #include "file.h"
 
 using namespace std;
 
-int FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
+#define CHUNK 16384
+
+string FileManager::cwd() {
+  char buffer[FILENAME_MAX];
+  getcwd(buffer, FILENAME_MAX);
+
+
+  return string(buffer);
+}
+
+string FileManager::resolve_path(string path) {
+  char resolved[PATH_MAX];
+
+  realpath(path.c_str(), resolved);
+
+  return string(resolved);
+}
+
+bool FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
   struct stat st;
 
-  for(string::iterator iter = path.begin(); iter != path.end()) {
+  for(string::iterator iter = path.begin(); iter != path.end();) {
     string::iterator newIter  = find(iter, path.end(), '/');
     string newPath            = rootPath + "/" + string( path.begin(), newIter);
 
     if(stat(newPath.c_str(), &st) != 0) {
       if(mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST) {
           cerr << "❗️ Error: cannot create folder [" << newPath << "] not a dir " << endl;
-        return -1;
+        return false;
       }
     } else {
       if(!S_ISDIR(st.st_mode)) {
         errno = ENOTDIR;
         
         cerr << "❗️ Error: path [" << newPath << "] not a dir " << endl;
-        return -1;
+        return false;
       }
     }
   
@@ -36,7 +62,28 @@ int FileManager::create_path(mode_t mode, const string& rootPath, string& path) 
     }
   }
 
-  return 0;
+  return true;
+}
+
+bool FileManager::create_path(mode_t mode, string path) {
+  int res = mkdir(path.c_str(), mode);
+
+  if(res == -1) {
+    switch(errno) {
+      case ENOENT:
+        if(create_path(0755, path.substr(0, path.find_last_of('/'))) > -1) {
+          return 0 == mkdir(path.c_str(), mode);
+        } else {
+          return false;
+        }
+      case EEXIST:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  return true;
 }
 
 void FileManager::write(string path, string content) {
@@ -139,7 +186,7 @@ void FileManager::delete_dir(std::string path) {
 }
 
 
-list<string> FileManager::dir_list(string path) {
+list<string> FileManager::dir_list(std::string path, std::string extension) {
   DIR *dir            = NULL;
   struct dirent *ent  = NULL;
 
@@ -156,10 +203,11 @@ list<string> FileManager::dir_list(string path) {
     while((ent = readdir(dir))) {
       if(!is_dot_dir(ent->d_name) ) {
         string filename(ent->d_name);
+
         string name = filename.substr(0, filename.find_last_of("."));
         string ext  = filename.substr(filename.find_last_of(".") + 1);
 
-        if(ext == "yml") {
+        if(ext == extension) {
           list.push_back(name);
         }
       }
@@ -172,3 +220,150 @@ list<string> FileManager::dir_list(string path) {
   cerr << "Unable to open directory: " << path << endl;
   exit(EXIT_FAILURE);
 }
+
+bool FileManager::unzip(string source, string destination) {
+  const char *filename = source.c_str();
+  const char *dest = destination.c_str();
+
+  struct archive *a;
+  struct archive *ext;
+  struct archive_entry *entry;
+  int flags;
+  int r;
+  string root;
+
+  /* Select which attributes we want to restore. */
+  flags = ARCHIVE_EXTRACT_TIME;
+  flags |= ARCHIVE_EXTRACT_PERM;
+  flags |= ARCHIVE_EXTRACT_ACL;
+  flags |= ARCHIVE_EXTRACT_FFLAGS;
+
+  a = archive_read_new();
+  archive_read_support_format_all(a);
+  archive_read_support_compression_all(a);
+  ext = archive_write_disk_new();
+  archive_write_disk_set_options(ext, flags);
+  archive_write_disk_set_standard_lookup(ext);
+  
+  if ((r = archive_read_open_filename(a, filename, 10240))) {
+    cout << "unable to read archive: " << filename << endl;
+
+    return false;
+  }
+
+  while(true) {
+    r = archive_read_next_header(a, &entry);
+    if (r == ARCHIVE_EOF) {
+        break;
+    } else if (r < ARCHIVE_OK) {
+      cerr 
+      << "Failed to extract archive: "
+      << source
+      << "; reason: "
+      << archive_error_string(a);
+      
+      return false; 
+    } else if (r < ARCHIVE_WARN) {
+      cerr 
+      << "Failed to extract archive: "
+      << source
+      << "; reason: "
+      << archive_error_string(a);
+
+      return false;
+    }
+
+    const char* current_file = archive_entry_pathname(entry);
+    if(root.empty()) {
+      root = current_file;
+    }
+
+    string full_output = destination + (current_file + (root.empty() ? 0 : root.size() - 1));
+    archive_entry_set_pathname(entry, full_output.c_str());
+
+    r = archive_write_header(ext, entry);
+    if (r < ARCHIVE_OK) {
+      cout 
+      << "Failed to extract archive: "
+      << source
+      << "; reason: "
+      << archive_error_string(ext);
+
+      return false;
+    } else if (archive_entry_size(entry) > 0) {
+      r = copy_data(a, ext);
+      
+      if (r < ARCHIVE_OK) {
+        cerr
+        << "Failed to extract archive: "
+        << source
+        << "; reason: "
+        << archive_error_string(ext);
+
+        return false;
+      } else if (r < ARCHIVE_WARN) {
+        cerr 
+        << "Failed to extract archive: "
+        << source
+        << "; reason: "
+        << archive_error_string(ext);
+
+        return false;
+      }
+    }
+
+    r = archive_write_finish_entry(ext);
+    if (r < ARCHIVE_OK) {
+      cerr
+      << "Failed to extract archive: "
+      << source
+      << "; reason: "
+      << archive_error_string(ext);
+
+      return false;
+    } else if (r < ARCHIVE_WARN) {
+      cerr
+      << "Failed to extract archive: "
+      << source
+      << "; reason: "
+      << archive_error_string(ext);
+
+      return false;
+    }
+  }
+
+  archive_read_close(a);
+  archive_read_free(a);
+  archive_write_close(ext);
+  archive_write_free(ext);
+
+  return 0;
+}
+
+int FileManager::copy_data(struct archive *ar, struct archive *aw) {
+  int r;
+  const void *buff;
+  size_t size;
+  la_int64_t offset;
+
+  while(true) {
+    r = archive_read_data_block(ar, &buff, &size, &offset);
+
+    if (r == ARCHIVE_EOF) {
+      return (ARCHIVE_OK);
+    }
+
+    if (r < ARCHIVE_OK) {
+      return (r);
+    }
+
+    r = archive_write_data_block(aw, buff, size, offset);
+
+    if (r < ARCHIVE_OK) {
+      cerr << archive_error_string(aw) << endl;
+
+      return (r);
+    }
+  }
+}
+

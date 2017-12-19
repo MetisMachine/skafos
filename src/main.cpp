@@ -8,6 +8,7 @@
 #include "logs/logs.h"
 #include "env/env.h"
 #include "templates/templates.h"
+#include "project/project.h"
 
 using namespace std;
 
@@ -40,10 +41,6 @@ If you need help, feel free to reach out:
 
 void setup() {
   Env::instance()->setup();
-}
-
-void new_project(string name) {
-  cout << "New project: " << name << endl;
 }
 
 int main(int argc, char **argv) {
@@ -99,7 +96,7 @@ int main(int argc, char **argv) {
   }
 
   auto lg = args.find("logs");
-  if(lg != args.end()) {
+  if(lg != args.end() && lg->second.asBool()) {
     string project  = "";
 	  long numlines   = 0;
 	  bool follow     = false;
@@ -128,12 +125,12 @@ int main(int argc, char **argv) {
 	  return EXIT_SUCCESS;
   }
 
-  auto nw = args.find("new");
+  auto nw = args.find("init");
   if(nw != args.end()) {
 
     auto arg = args.find("<name>");
     if(arg != args.end() && arg->second) {
-      new_project(arg->second.asString());
+      Project::init(arg->second.asString());
     } else {
       cout << "A project name is required" << endl;
     }

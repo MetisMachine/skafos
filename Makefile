@@ -4,7 +4,7 @@ VERSION_FILE=VERSION
 VERSION=`cat $(VERSION_FILE)`
 BUILD_DIR=_build
 
-all: clean build
+all: build
 
 build: version
 	@cd $(BUILD_DIR) \

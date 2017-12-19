@@ -6,11 +6,7 @@
 
 class Project {
 public:
-  Project();
-  
-  void init();
-private:
-  void download_template(TemplateDetails details);
+  static void init(std::string name, std::string tpl = "base");
 };
 
 #endif

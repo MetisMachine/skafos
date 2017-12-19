@@ -16,6 +16,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
 include(CheckIncludeFiles)
@@ -55,11 +57,18 @@ endif()
 add_subdirectory(src)
 add_subdirectory(libs)
 
+FIND_PACKAGE(zlib REQUIRED)
+if(ZLIB_FOUND)
+  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIRS})
+ELSE(ZLIB_FOUND)
+    MESSAGE(FATAL_ERROR "Could not find the zlib library and development files.")
+ENDIF(ZLIB_FOUND)
+
 FIND_PACKAGE(CURL)
 IF(CURL_FOUND)
   INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
 ELSE(CURL_FOUND)
-  MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
+MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
 ENDIF(CURL_FOUND)
 
 set(LIB_CURL curl)
@@ -77,11 +86,12 @@ file(GLOB_RECURSE SOURCES
     "src/*.cpp"
 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wwritable-strings -Wunneeded-internal-declaration")
+
 include_directories(  
     SYSTEM
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/libs/libcommand/include
+    ${CMAKE_SOURCE_DIR}/libs/libarchive
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include
     ${CMAKE_SOURCE_DIR}/libs/json11
@@ -89,9 +99,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/sse
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
-)
+    ${CMAKE_SOURCE_DIR}/src
+    )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${LIB_CURL} ${LIB_GIT})
-
-
+target_link_libraries(skafos docopt json11 sse yaml-cpp ${LIB_CURL} ${LIB_GIT} ${ZLIB_LIBRARIES} archive)

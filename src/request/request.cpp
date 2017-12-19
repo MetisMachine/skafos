@@ -1,3 +1,5 @@
+#include <curl/curl.h>
+
 #include "request.h"
 #include "env/env.h"
 
@@ -95,6 +97,40 @@ RestClient::Response Request::_generate_token() {
   return this->connection->post(TOKEN_URL, "");
 }
 
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    return fwrite(ptr, size, nmemb, stream);
+}
+
+void Request::_download(std::string repo_url, std::string save_path) {
+  CURL *curl = curl_easy_init();
+  FILE *fp;
+  CURLcode res;
+  char *url = (char *)repo_url.c_str();
+  char output[FILENAME_MAX];
+
+  strcpy(output, save_path.c_str());
+
+  if(curl) {
+    fp = fopen(output, "wb");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    
+    res = curl_easy_perform(curl);
+
+    if(res != CURLE_OK) {
+      cerr << "Error downloading " << repo_url << " (" << curl_easy_strerror(res) << endl;
+    }
+
+    fclose(fp);
+    curl_easy_cleanup(curl);
+  }
+}
+
 // Public
 RestClient::Response Request::authenticate(string email, string password) {
   return instance()->_authenticate(email, password);
@@ -113,4 +149,7 @@ RestClient::Response Request::generate_token() {
   return instance()->_generate_token();
 }
 
+void Request::download(string url, string save_path) {
+  instance()->_download(url, save_path);
+}
 

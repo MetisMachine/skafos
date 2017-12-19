@@ -16,12 +16,14 @@ const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
 const std::string METIS_CREDENTIALS   = "credentials.json";
 const std::string METIS_TEMPLATE_REPO = "https://github.com/MetisMachine/templates.list.git";
 const std::string METIS_TEMPLATE_DIR  = "templates";
+const std::string METIS_CACHE_DIR     = ".cache";
 
 struct metis_path {
   std::string home;
   std::string env;
   std::string templates;
   std::string credentials;
+  std::string cache;
 };
 
 class Env {
