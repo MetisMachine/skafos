@@ -57,22 +57,10 @@ endif()
 add_subdirectory(src)
 add_subdirectory(libs)
 
-FIND_PACKAGE(zlib REQUIRED)
-if(ZLIB_FOUND)
-  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIRS})
-ELSE(ZLIB_FOUND)
-    MESSAGE(FATAL_ERROR "Could not find the zlib library and development files.")
-ENDIF(ZLIB_FOUND)
-
-FIND_PACKAGE(CURL)
-IF(CURL_FOUND)
-  INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
-ELSE(CURL_FOUND)
-MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
-ENDIF(CURL_FOUND)
-
-set(LIB_CURL curl)
-set(LIB_GIT git2)
+FIND_PACKAGE(LibArchive REQUIRED)
+FIND_PACKAGE(CURL REQUIRED)
+FIND_PACKAGE(Libgit2 REQUIRED)
+FIND_PACKAGE(YamlCpp REQUIRED)
 
 file(GLOB_RECURSE HEADERS 
     "libs/restclient-cpp/include/**/*.h"
@@ -90,8 +78,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wwritable-strings -Wunneeded
 
 include_directories(  
     SYSTEM
+    ${CURL_INCLUDE_DIRS}
+    ${LibArchive_INCLUDE_DIRS}
+    ${YAMLCPP_INCLUDE_DIR}
+    ${LIBGIT2_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/libs/libarchive
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include
     ${CMAKE_SOURCE_DIR}/libs/json11
@@ -100,7 +91,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
     ${CMAKE_SOURCE_DIR}/src
-    )
+)
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${LIB_CURL} ${LIB_GIT} ${ZLIB_LIBRARIES} archive)
+target_link_libraries(skafos docopt json11 sse yaml-cpp ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})

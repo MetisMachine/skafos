@@ -9,8 +9,8 @@
 #include <limits.h>
 #include <sys/resource.h>
 #include <zlib.h>
-#include "libarchive/archive.h"
-#include "libarchive/archive_entry.h"
+#include <archive.h>
+#include <archive_entry.h>
 
 #include "file.h"
 
@@ -71,7 +71,7 @@ bool FileManager::create_path(mode_t mode, string path) {
   if(res == -1) {
     switch(errno) {
       case ENOENT:
-        if(create_path(0755, path.substr(0, path.find_last_of('/'))) > -1) {
+        if(create_path(0755, path.substr(0, path.find_last_of('/')))) {
           return 0 == mkdir(path.c_str(), mode);
         } else {
           return false;
