@@ -135,15 +135,13 @@ void Template::download(TemplateDetails details, string version) {
       download_url = download_url.substr(0, download_url.length() - 1);
     }
     
-    download_url += "/archive/" + details.version + ".zip";
+    download_url += "/archive/" + version + ".zip";
 
     Request::download(download_url, tpl_path);
     download(details, version);
 
     return;
   }
-
-
 }
 
 void Template::create_cache_dir() {
