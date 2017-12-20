@@ -11,6 +11,7 @@ public:
   static RestClient::Response ping();
   static RestClient::Response tokens();
   static RestClient::Response generate_token();
+  static RestClient::Response create_project(std::string name);
   static void download(std::string url, std::string save_path);
 
 private:
@@ -28,6 +29,7 @@ private:
   RestClient::Response _ping();
   RestClient::Response _tokens();
   RestClient::Response _generate_token();
+  RestClient::Response _create_project(std::string name);
   static void _download(std::string url, std::string save_path);
 };
 

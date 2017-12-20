@@ -14,8 +14,6 @@ using namespace std;
 
 static const char USAGE[] =
 R"(
-Skafos
-
 Usage:
     skafos (setup|init|auth|version)...
     skafos init <name>

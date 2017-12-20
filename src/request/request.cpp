@@ -8,9 +8,22 @@ using namespace json11;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
 
-#define LOGIN_URL "/users/login"
-#define PING_URL  "/ping"
-#define TOKEN_URL "/api_tokens/"
+#define LOGIN_URL   "/users/login"
+#define PING_URL    "/ping"
+#define TOKEN_URL   "/api_tokens/"
+#define PROJECT_URL "/projects"
+
+#define DEFAULT_HEADERS() \
+RestClient::HeaderFields headers = this->_default_headers(); \
+this->connection->SetHeaders(headers)
+
+#define API_HEADERS() \
+RestClient::HeaderFields headers = this->_api_headers(); \
+this->connection->SetHeaders(headers)
+
+#define OAUTH_HEADERS() \
+RestClient::HeaderFields headers = this->_oauth_headers(); \
+this->connection->SetHeaders(headers)
 
 
 // Private
@@ -52,17 +65,15 @@ RestClient::HeaderFields Request::_api_headers() {
 }
 
 RestClient::HeaderFields Request::_oauth_headers() {
-RestClient::HeaderFields headers  = this->_default_headers();
-  headers["Authorization"]        = "Bearer " + Env::instance()->get(METIS_AUTH_TOKEN);
+  RestClient::HeaderFields headers  = this->_default_headers();
+  headers["Authorization"]          = "Bearer " + Env::instance()->get(METIS_AUTH_TOKEN);
   
   return headers;
 }
 
 RestClient::Response Request::_authenticate(std::string email, std::string password) {
-  RestClient::HeaderFields headers = this->_default_headers();
-  
-  this->connection->SetHeaders(headers);
-  
+  DEFAULT_HEADERS();
+
   Json body = Json::object{
     {"email",       email}, 
     {"password",    password},
@@ -74,27 +85,31 @@ RestClient::Response Request::_authenticate(std::string email, std::string passw
 }
 
 RestClient::Response Request::_ping() {
-  RestClient::HeaderFields headers = this->_api_headers();
-
-  this->connection->SetHeaders(headers);
-
+  API_HEADERS();
+  
   return this->connection->get(PING_URL);
 }
 
 RestClient::Response Request::_tokens() {
-  RestClient::HeaderFields headers = this->_api_headers();
-
-  this->connection->SetHeaders(headers);
+  API_HEADERS();
 
   return this->connection->get(TOKEN_URL);
 }
 
 RestClient::Response Request::_generate_token() {
-  RestClient::HeaderFields headers = this->_oauth_headers();
-
-  this->connection->SetHeaders(headers);
+  OAUTH_HEADERS();
 
   return this->connection->post(TOKEN_URL, "");
+}
+
+RestClient::Response Request::_create_project(std::string name) {
+  API_HEADERS();
+
+  Json body = Json::object{
+    {"name",  name}
+  };
+
+  return this->connection->post(PROJECT_URL, body.dump());
 }
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
@@ -103,11 +118,11 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 
 void Request::_download(std::string repo_url, std::string save_path) {
-  CURL *curl = curl_easy_init();
   FILE *fp;
   CURLcode res;
-  char *url = (char *)repo_url.c_str();
   char output[FILENAME_MAX];
+  char *url   = (char *)repo_url.c_str();
+  CURL *curl  = curl_easy_init();
 
   strcpy(output, save_path.c_str());
 
@@ -147,6 +162,10 @@ RestClient::Response Request::tokens() {
 
 RestClient::Response Request::generate_token() {
   return instance()->_generate_token();
+}
+
+RestClient::Response Request::create_project(std::string name) {
+  return instance()->_create_project(name);
 }
 
 void Request::download(string url, string save_path) {

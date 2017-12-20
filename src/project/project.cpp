@@ -2,15 +2,18 @@
 #include "templates/templates.h"
 #include "file/file.h"
 #include "env/env.h"
+#include "request/request.h"
+#include "jinja/jinja.h"
+#include "jinja/stringhelper.h"
 
 using namespace std;
+using namespace json11;
 
 void Project::init(string name, string tpl) {
   string directory = (name == "")? 
     FileManager::cwd() : (name == ".") ? 
       FileManager::resolve_path(name) : 
       FileManager::cwd() + "/" + name;
-
 
   string project_name = directory.substr(directory.find_last_of("/"));
     
@@ -25,26 +28,24 @@ void Project::init(string name, string tpl) {
     exit(EXIT_FAILURE);
   }
 
-  string version = (tpl_details.version.length() > 0)? tpl_details.version : "master";
+  string version = "master"; //(tpl_details.version.length() > 0)? tpl_details.version : "master";
 
   Template::download(tpl_details, version);
   
   string cache_path = ENV_PATHS.cache + "/" + tpl + ".zip";
  
   FileManager::unzip(cache_path, directory);
+
+  string template_path      = directory + "/metis.config.yml";
+  Jinja::Template config_template  = FileManager::read(template_path);
+  
+  string err;
+  string proj   = replace(project_name, "/", "");
+  Json json     = Json::parse(Request::create_project(proj).body, err);
+  string token  = json["token"].string_value();
+
+  config_template.setValue("token", token);
+  config_template.setValue("name", proj);
+
+  FileManager::write(template_path, config_template.render());
 }
-
-
-/*
-  cout << "CWD: " << FileManager::cwd() << endl;
-  cout << "Res: " << FileManager::resolve_path(".") << endl;
-  // TemplateDetails tpl = Template::find("base");
-
-  // Template::download(tpl, "0.0.1");
-  
-  // string zip_path = ENV_PATHS.cache + "/base.zip";
-  // string dest     = ENV_PATHS.cache;
-  
-  // FileManager::unzip(zip_path, dest);
-
-*/
