@@ -46,9 +46,10 @@ static size_t on_data(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 void Logs::print(std::string project, long num, bool tail) {
-  Env::instance()->load_credentials();
+  VERIFY_AUTH();
+
   handle_sse_event = sse_event;
-  std::string auth = std::string("Authorization: Bearer ") + Env::instance()->get(METIS_AUTH_TOKEN);
+  std::string auth = std::string("x-api-token: ") + Env::instance()->get(METIS_API_TOKEN);
   const char* headers[] = {
     "Accept: text/event-stream",
     auth.c_str(),
@@ -57,10 +58,12 @@ void Logs::print(std::string project, long num, bool tail) {
 
   std::string logs_url = "";
   const char* env = getenv("ENV");
+
   if(env == NULL) {
 	  logs_url = "https://api.metismachine.io/logs/" + project;
   } else if(strcmp(env, "local") == 0) {
     std::cout << "Using local environment!" << std::endl;
+
     logs_url = "http://localhost:4000/logs/" + project;
   } else if(strcmp(env, "dev") == 0) {
     std::cout << "Using staging environment!" << std::endl;
