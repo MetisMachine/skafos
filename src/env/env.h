@@ -31,7 +31,7 @@ public:
   bool authenticated();
   metis_path paths;  
   static Env *instance();
-
+  
   std::string get(std::string key);
   void set(std::string key, std::string val);
   void setup();

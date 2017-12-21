@@ -25,8 +25,8 @@ Env::Env() {
 }
 
 void Env::setup() {
-  cout << endl << "Setting up Skafos development environment..." << endl;
-
+  console::info("Setting up Skafos development environment...");
+  
   VERIFY_AUTH();
 
   Template::update();
@@ -55,7 +55,7 @@ bool Env::load_credentials() {
     Json json = Json::parse(creds, err);
 
     if(err.length() > 0) {
-      cerr << "❗️ Credentials error: " << err << endl;
+      console::error("Unable to load or read credentials :" + err);
       
       return false;
     }
@@ -63,7 +63,7 @@ bool Env::load_credentials() {
     string token = json["token"].string_value();
     
     if(token.length() < 1) {
-      cerr << "❗️ Credentials error: no token found." << endl;
+      console::error("Credentials error: no token found.");
       
       return false;
     }
@@ -77,8 +77,7 @@ bool Env::load_credentials() {
   return false;
 }
 
-void Env::write_credentials(Json object) {
-
+void Env::write_credentials(Json object) {  
   FileManager::create_path(0755, paths.home, paths.env);
 
   Json creds = Json::object{

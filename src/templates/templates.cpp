@@ -12,13 +12,15 @@ const string TEMPLATE_HEAD = "head";
 void Template::update() {
   VERIFY_AUTH();
 
+  START_LOADING("Updating project templates..");
+
   if(FileManager::dir_exists(ENV_PATHS.templates)) {
-    cout << "Updating project templates" << endl;
     pull();    
   } else {
-    cout << "Fetching project templates" << endl;
     clone();
   }
+
+  END_LOADING();
 }
 
 void Template::search(string name) {
@@ -29,7 +31,7 @@ void Template::search(string name) {
   });
 
   if(tpls.size() < 1) {
-    cout << "No templates found with name " << name << endl;
+    console::error("No template found with name: " + name);
     return;
   }
 
@@ -123,6 +125,8 @@ TemplateDetails Template::parse_template(std::string path) {
 }
 
 void Template::download(TemplateDetails details, string version) {
+  START_LOADING("Downloading template...");
+  
   create_cache_dir();
 
   string cache_path   = ENV_PATHS.cache;
@@ -139,9 +143,9 @@ void Template::download(TemplateDetails details, string version) {
 
     Request::download(download_url, tpl_path);
     download(details, version);
-
-    return;
   }
+
+  END_LOADING();
 }
 
 void Template::create_cache_dir() {

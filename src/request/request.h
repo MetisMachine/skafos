@@ -8,6 +8,7 @@
 class Request {
 public:
   static RestClient::Response authenticate(std::string email, std::string password);
+  static RestClient::HeaderFields api_headers();
   static RestClient::Response ping();
   static RestClient::Response tokens();
   static RestClient::Response generate_token();

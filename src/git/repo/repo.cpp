@@ -6,30 +6,10 @@ using namespace std;
 
 namespace Git {
   void Repo::print_progress(const progress_data *pd) {
-    int network_percent = pd->fetch_progress.total_objects > 0 ?
-      (100*pd->fetch_progress.received_objects) / pd->fetch_progress.total_objects : 0;
-    int index_percent = pd->fetch_progress.total_objects > 0 ?
-      (100*pd->fetch_progress.indexed_objects) / pd->fetch_progress.total_objects : 0;
-  
-    int checkout_percent = pd->total_steps > 0
-      ? (100 * pd->completed_steps) / pd->total_steps : 0;
-
-    int kbytes = pd->fetch_progress.received_bytes / 1024;
-  
-    if (pd->fetch_progress.total_objects && pd->fetch_progress.received_objects == pd->fetch_progress.total_objects) {
-      printf(
-        "Resolving deltas %d/%d\r", 
-        pd->fetch_progress.indexed_deltas,
-        pd->fetch_progress.total_deltas
-      );
-    } 
   }
   
   int Repo::sideband_progress(const char *str, int len, void *payload) {
     (void)payload; // unused, callback wants it anyways.
-  
-    printf("remote: %.*s", len, str);
-    fflush(stdout);
     return 0;
   }
   
@@ -70,14 +50,14 @@ namespace Git {
     const char *c_path  = path.c_str();
     int error           = git_clone(&repo, c_url, c_path, &clone_opts);
 
-    printf("\n");
     if (error != 0) {
       const git_error *err = giterr_last();
       
       if (err) {
-        printf("ERROR %d: %s\n", err->klass, err->message);
+        console::error("Error " + to_string(err->klass) + ": " + err->message);
+        // printf("ERROR %d: %s\n", err->klass, err->message);
       } else {
-        printf("ERROR %d: no detailed info\n", error);
+        console::error("Error " + to_string(error) + ": no detailed information.");
       }
     } else if (repo) {
       git_repository_free(repo);

@@ -2,26 +2,31 @@
 #include "file/file.h"
 #include "request/request.h"
 #include "env/env.h"
-#include "helpers/helpers.h"
 
 using namespace json11;
 using namespace std;
 
 void Auth::authenticate() {
-  cout << "Authenticate with Skafos" << endl;
+  console::info("Skafos Authentication...");
   
   string email;
   string password;
 
-  cout << "➜ " << "Please enter email: ";
+  cout << console::ARROW << " Please enter email: ";
   cin >> email;
 
-  password = Auth::password_input("➜ Please enter password: ");
+  password = Auth::password_input(console::ARROW + " Please enter password: ");
+
+  cout << endl;
+
+  START_LOADING("Authenticating...");
 
   auto oauth = Request::authenticate(email, password);
 
+  END_LOADING();
+
   if (oauth.code >= 400) {
-    cerr << "❗️ Error [" << oauth.code << "] making request" << endl;
+    console::error("Error making request. (" + to_string(oauth.code) + ")");
   } else {
     string err;
 
@@ -30,14 +35,15 @@ void Auth::authenticate() {
 
     auto api_token = Request::generate_token();
 
-    cout << "⚡️  Generating API token..." << endl;
+    console::info("Generating API token...");
 
     string token = api_token.body;
     
-    cout << "✏️  Writing credentials..." << endl;
+    console::info("Writing credentials...");
+
     Env::instance()->write_credentials(Json::parse(token, err));
 
-    cout << "💾  Loading credentials..." << endl;    
+    console::info("Loading credentials...");
     Env::instance()->load_credentials();
   }
 }
