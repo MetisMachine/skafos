@@ -23,7 +23,7 @@ void Project::init(string name, string tpl) {
 
   TemplateDetails tpl_details = Template::find(tpl);
   if(tpl_details.repo.length() < 1) {
-    cerr << "Unable to find template: " << tpl << endl;
+    console::error("Unable to find template: " + tpl);
 
     exit(EXIT_FAILURE);
   }

@@ -138,7 +138,12 @@ void Request::_download(std::string repo_url, std::string save_path) {
     res = curl_easy_perform(curl);
 
     if(res != CURLE_OK) {
-      cerr << "Error downloading " << repo_url << " (" << curl_easy_strerror(res) << endl;
+      console::error(
+        "Unable to download " 
+        + repo_url 
+        + " ("
+        + curl_easy_strerror(res)
+        + ").");
     }
 
     fclose(fp);

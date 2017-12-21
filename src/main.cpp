@@ -3,7 +3,6 @@
 
 #include "common.h"
 #include "auth/auth.h"
-#include "helpers/helpers.h"
 #include "version.h"
 #include "logs/logs.h"
 #include "env/env.h"
@@ -18,7 +17,7 @@ Usage:
     skafos (setup|init|auth|version)...
     skafos init <name>
     skafos templates [--update] [--search <search_term>]
-    skafos logs [-n <num>] [--tail] [--project <project_token>]
+    skafos logs <project_token> [-n <num>] [--tail]
     skafos -h | --help
     skafos --version
 Commands:
@@ -55,6 +54,10 @@ int main(int argc, char **argv) {
     true,
     title.c_str()
   );
+
+  // for(auto const& arg : args) {
+  //   std::cout << "ARG FIRST: " << arg.first <<  " ARG SECOND: " << arg.second << std::endl;
+  // }
 
   auto stp = args.find("setup");
   if(stp != args.end() && stp->second.asLong() > 0) {
@@ -98,15 +101,19 @@ int main(int argc, char **argv) {
     string project  = "";
 	  long numlines   = 0;
 	  bool follow     = false;
-    auto num        = args.find("<num>");
-
-	  if(num != args.end() && num->second) {
-		  numlines = num->second.asLong();
-	  }
+    
+    auto n = args.find("-n");
+    if(n != args.end() && n->second.asBool()) {
+      auto num = args.find("<num>");
+      
+      if(num != args.end() && num->second) {
+		    numlines = num->second.asLong();
+	    }
+    }
     
     auto tail = args.find("--tail");
   
-    if(tail != args.end() && tail->second) {
+    if(tail != args.end() && tail->second.asBool()) {
 		  follow = tail->second.asBool();
     }
     
@@ -114,10 +121,8 @@ int main(int argc, char **argv) {
   
     if(token != args.end() && token->second) {
 		  project = token->second.asString();
-	  } else {
-		  cout << "A project token is required" << endl;
 	  }
-
+    
 	  Logs::print(project, numlines, follow);
 
 	  return EXIT_SUCCESS;

@@ -18,7 +18,7 @@ void sse_event(const char* data) {
   }
 
   std::string message = json["data"].string_value();
-  std::cout << message << std::endl;
+  console::info(message);
 }
 
 static const char* verify_response(CURL* curl) {
@@ -67,7 +67,15 @@ void Logs::print(std::string project, long num, bool tail) {
     logs_url = "http://localhost:4000/logs/" + project;
   } else if(strcmp(env, "dev") == 0) {
     std::cout << "Using staging environment!" << std::endl;
+
     logs_url = "http://argus.metis.wtf/logs/" + project;
+  }
+
+  std::string num_string = (num == 0)? "10" : std::to_string(num);
+  logs_url += ("?offset=" + num_string);
+  
+  if(tail) {
+    logs_url += "&tail=true";
   }
 
   http(HTTP_GET, (char*)logs_url.c_str(), headers, 0, 0, on_data, verify_response);

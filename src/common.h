@@ -19,7 +19,7 @@
 
 #include "termcolor.hpp"
 #include "json11.hpp"
-#include "out/out.h"
+#include "console/console.h"
 
 const std::string CLIENT_ID = "f1f6e59f3f6f8ffecde29d34ad18f673";
 const std::string API_URL   = "https://api.metis.wtf/v1";
@@ -29,5 +29,14 @@ const std::string API_URL   = "https://api.metis.wtf/v1";
 // const std::string PRODUCTION_ENDPOINT = "https://api.metismachine.io";
 // const std::string API_VERSION         = "v1";
 
+
+#define START_LOADING(message) \
+auto __ld_ = new console::loader(message); \
+__ld_->start(); \
+sleep(1)
+
+#define END_LOADING() \
+__ld_->stop(); \
+delete __ld_
 
 #endif

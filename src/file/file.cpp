@@ -43,14 +43,16 @@ bool FileManager::create_path(mode_t mode, const string& rootPath, string& path)
 
     if(stat(newPath.c_str(), &st) != 0) {
       if(mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST) {
-          cerr << "❗️ Error: cannot create folder [" << newPath << "] not a dir " << endl;
+        console::error("Unable to create folder: " + newPath + ". Exist and not a folder.");
+
         return false;
       }
     } else {
       if(!S_ISDIR(st.st_mode)) {
         errno = ENOTDIR;
-        
-        cerr << "❗️ Error: path [" << newPath << "] not a dir " << endl;
+
+        console::error("Unable to create folder: " + newPath + ". Exist and not a folder.");
+
         return false;
       }
     }
@@ -149,13 +151,13 @@ void FileManager::delete_dir(std::string path) {
   stat(path.c_str(), &stat_path);
 
   if(!is_dir(path)) {
-    cerr << "Unable to delete directory: " << path << endl;
-    
+    console::error("Unable to delete directory: " + path);
+
     exit(EXIT_FAILURE);
   }
 
   if((dir = opendir(path.c_str())) == 0) {
-    cerr << "Unable to open directory: " << path << endl;
+    console::error("Unable to open directory: " + path);
     
     exit(EXIT_FAILURE);
   }
@@ -191,7 +193,7 @@ list<string> FileManager::dir_list(std::string path, std::string extension) {
   struct dirent *ent  = NULL;
 
   if(chdir(path.c_str()) < 0) {
-    cerr << "Invalid directory: " << path << endl;
+    console::error("Invalid directory: " + path);
 
     exit(EXIT_FAILURE);
   }
@@ -217,13 +219,14 @@ list<string> FileManager::dir_list(std::string path, std::string extension) {
     return list;
   }
 
-  cerr << "Unable to open directory: " << path << endl;
+  console::error("Unable to open directory: " + path);
+
   exit(EXIT_FAILURE);
 }
 
 bool FileManager::unzip(string source, string destination) {
-  const char *filename = source.c_str();
-  const char *dest = destination.c_str();
+  const char *filename  = source.c_str();
+  const char *dest      = destination.c_str();
 
   struct archive *a;
   struct archive *ext;
@@ -241,12 +244,13 @@ bool FileManager::unzip(string source, string destination) {
   a = archive_read_new();
   archive_read_support_format_all(a);
   archive_read_support_compression_all(a);
+
   ext = archive_write_disk_new();
   archive_write_disk_set_options(ext, flags);
   archive_write_disk_set_standard_lookup(ext);
   
   if ((r = archive_read_open_filename(a, filename, 10240))) {
-    cout << "unable to read archive: " << filename << endl;
+    console::error("Unable to read archive: " + string(filename));
 
     return false;
   }
@@ -256,19 +260,21 @@ bool FileManager::unzip(string source, string destination) {
     if (r == ARCHIVE_EOF) {
         break;
     } else if (r < ARCHIVE_OK) {
-      cerr 
-      << "Failed to extract archive: "
-      << source
-      << "; reason: "
-      << archive_error_string(a);
+      console::error(
+        "Failed to extract from archive ("
+        + source
+        + "); "
+        + archive_error_string(a)
+      );
       
       return false; 
     } else if (r < ARCHIVE_WARN) {
-      cerr 
-      << "Failed to extract archive: "
-      << source
-      << "; reason: "
-      << archive_error_string(a);
+      console::error(
+        "Failed to extract from archive ("
+        + source
+        + "); "
+        + archive_error_string(a)
+      );
 
       return false;
     }
@@ -283,30 +289,33 @@ bool FileManager::unzip(string source, string destination) {
 
     r = archive_write_header(ext, entry);
     if (r < ARCHIVE_OK) {
-      cout 
-      << "Failed to extract archive: "
-      << source
-      << "; reason: "
-      << archive_error_string(ext);
+      console::error(
+        "Failed to extract from archive ("
+        + source
+        + "); "
+        + archive_error_string(a)
+      );
 
       return false;
     } else if (archive_entry_size(entry) > 0) {
       r = copy_data(a, ext);
       
       if (r < ARCHIVE_OK) {
-        cerr
-        << "Failed to extract archive: "
-        << source
-        << "; reason: "
-        << archive_error_string(ext);
+        console::error(
+          "Failed to extract from archive ("
+          + source
+          + "); "
+          + archive_error_string(a)
+        );
 
         return false;
       } else if (r < ARCHIVE_WARN) {
-        cerr 
-        << "Failed to extract archive: "
-        << source
-        << "; reason: "
-        << archive_error_string(ext);
+        console::error(
+          "Failed to extract from archive ("
+          + source
+          + "); "
+          + archive_error_string(a)
+        );
 
         return false;
       }
@@ -314,19 +323,21 @@ bool FileManager::unzip(string source, string destination) {
 
     r = archive_write_finish_entry(ext);
     if (r < ARCHIVE_OK) {
-      cerr
-      << "Failed to extract archive: "
-      << source
-      << "; reason: "
-      << archive_error_string(ext);
+      console::error(
+        "Failed to extract from archive ("
+        + source
+        + "); "
+        + archive_error_string(a)
+      );
 
       return false;
     } else if (r < ARCHIVE_WARN) {
-      cerr
-      << "Failed to extract archive: "
-      << source
-      << "; reason: "
-      << archive_error_string(ext);
+      console::error(
+        "Failed to extract from archive ("
+        + source
+        + "); "
+        + archive_error_string(a)
+      );
 
       return false;
     }
