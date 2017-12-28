@@ -17,6 +17,6 @@
 ---
 
 If you need help, feel free to reach out:
-    https://metismachine.com
-    https://twitter.com/metismachine
-    https://github.com/metismachine
+- https://metismachine.com
+- https://twitter.com/metismachine
+- https://github.com/metismachine
