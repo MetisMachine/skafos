@@ -2,6 +2,8 @@
 
 build/*
 _build/*
+!_build/.gitkeep
+!.gitkeep
 .vscode
 .idea
 
