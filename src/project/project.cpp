@@ -19,9 +19,12 @@ void Project::init(string name, string tpl) {
 
   string project_name = directory.substr(directory.find_last_of("/"));
     
-  if(!FileManager::dir_exists(directory)) {
-    FileManager::create_path(0755, directory);
+  if(exists(directory)) {
+    console::error("Not an empty directory, we don't want to overwrite any current projects");
+    exit(EXIT_FAILURE);
   }
+
+  FileManager::create_path(0755, directory);
 
   TemplateDetails tpl_details = Template::find(tpl);
   if(tpl_details.repo.length() < 1) {
@@ -50,4 +53,16 @@ void Project::init(string name, string tpl) {
   config_template.setValue("name", proj);
 
   FileManager::write(template_path, config_template.render());
+}
+
+bool Project::exists(std::string directory) {
+  if(FileManager::dir_exists(directory)) {
+      list<string>files = FileManager::dir_list(directory);
+
+      if(files.size() > 0) {
+        return true;
+      }
+  }
+
+  return false;
 }

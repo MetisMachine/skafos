@@ -132,12 +132,13 @@ int main(int argc, char **argv) {
   if(nw != args.end()) {
 
     auto arg = args.find("<name>");
+
+    string name = ".";    
     if(arg != args.end() && arg->second) {
-      Project::init(arg->second.asString());
-    } else {
-      cout << "A project name is required" << endl;
+      name = arg->second.asString();
     }
 
+    Project::init(name);
     return EXIT_SUCCESS;
   }
 
