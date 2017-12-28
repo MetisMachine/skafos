@@ -19,7 +19,7 @@ using namespace std;
 #define CHUNK 16384
 
 string FileManager::cwd() {
-  char buffer[FILENAME_MAX];
+  char buffer[FILENAME_MAX] = {0};
   getcwd(buffer, FILENAME_MAX);
 
 
@@ -209,7 +209,7 @@ list<string> FileManager::dir_list(std::string path, std::string extension) {
         string name = filename.substr(0, filename.find_last_of("."));
         string ext  = filename.substr(filename.find_last_of(".") + 1);
 
-        if(ext == extension) {
+        if(extension == "" || ext == extension) {
           list.push_back(name);
         }
       }
