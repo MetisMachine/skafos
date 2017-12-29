@@ -19,5 +19,13 @@ version:
 clean:
 	@rm -rf _build/* 
 
-run:
-	@./_build/bin/skafos new my_project
+_start_release:
+	@echo "Creating release for version $(VERSION)..."
+
+_tag_release:
+	@git tag -a $(VERSION) -m "Creating release for version $(VERSION)"
+	@git push --tags
+
+release: _start_release clean build _tag_release
+
+
