@@ -1,5 +1,5 @@
 .DS_Store
-
+src/cli_env.h
 build/*
 _build/*
 !_build/.gitkeep
