@@ -37,9 +37,13 @@ void Project::init(string name, string tpl) {
 
   Template::download(tpl_details, version);
   
+  console::info("Setting up template in project...");
+
   string cache_path = ENV_PATHS.cache + "/" + tpl + ".zip";
  
   FileManager::unzip(cache_path, directory);
+
+  console::info("Creating configuration file");
 
   string template_path      = directory + "/metis.config.yml";
   Jinja::Template config_template  = FileManager::read(template_path);

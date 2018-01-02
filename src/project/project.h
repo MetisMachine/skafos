@@ -6,7 +6,7 @@
 
 class Project {
 public:
-  static void init(std::string name, std::string tpl = "base");
+  static void init(std::string name, std::string tpl);
 
 private:
   static bool exists(std::string directory);

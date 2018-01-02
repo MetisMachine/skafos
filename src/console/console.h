@@ -16,12 +16,14 @@ namespace console {
   #define CYAN    termcolor::cyan
   #define BOLD    termcolor::bold
   #define RESET   termcolor::reset
+  #define WHITE   termcolor::white
   
   const std::string ARROW     = "➜";
   const std::string CHECKMARK = "✓";
   const std::string ECKS      = "✗";
   const std::string DBL_ARROW = "»";
   const std::string EX_POINT  = "!";
+  const std::string PINCH     = "ː";
 
   #define SPIN_DOTS   {"⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"}
   #define SPIN_ARC    {"◜","◠","◝","◞","◡","◟"}
@@ -48,6 +50,7 @@ namespace console {
   void warn(std::string message);
   void error(std::string message);
   void debug(std::string message);
+  void cli_args(int argc, char **argv);
 }
 
 #endif

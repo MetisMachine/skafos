@@ -45,6 +45,9 @@ void Auth::authenticate() {
 
     console::info("Loading credentials...");
     Env::instance()->load_credentials();
+
+    console::info("Setting up environment");
+    Env::instance()->setup();
   }
 }
 

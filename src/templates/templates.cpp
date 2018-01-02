@@ -134,14 +134,14 @@ void Template::download(TemplateDetails details, string version) {
 
   if(!FileManager::file_exists(tpl_path)) {
     string download_url = details.repo;
-    
     if((download_url.substr((download_url.length() - 1), download_url.length())) == "/") {
       download_url = download_url.substr(0, download_url.length() - 1);
     }
-    
+  
     download_url += "/archive/" + version + ".zip";
 
     Request::download(download_url, tpl_path);
+
     download(details, version);
   }
 
