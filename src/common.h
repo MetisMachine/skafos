@@ -17,9 +17,11 @@
 #include <sys/types.h>
 #include <pwd.h>
 
+#include "version.h"
+#include "cli_env.h"
+
 #include "termcolor.hpp"
 #include "json11.hpp"
-#include "cli_env.h"
 #include "console/console.h"
 #include "env/env.h"
 

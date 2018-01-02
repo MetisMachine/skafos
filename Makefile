@@ -40,6 +40,6 @@ clean:
 	@rm -rf _build/* 
 
 
-release: _start_release clean build_dist _tag_release
+release: _start_release clean build_dist
 
 

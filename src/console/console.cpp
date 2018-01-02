@@ -1,4 +1,10 @@
 #include "console.h"
+#include <iostream>
+#include <docopt.h>
+
+#include "common.h"
+#include "usage.h"
+
 #include <thread>
 #include <stdarg.h>
 
@@ -95,5 +101,66 @@ namespace console {
     }
 
     FLASH_MSG(BLUE, DBL_ARROW, message);
+  }
+
+  void cli_args(int argc, char **argv) {
+    string title = (
+      string("\nSkafos version: ") + 
+      VERSION + 
+      string("\nMetis Machine https://metismachine.com\n")
+    );
+
+    map<string, docopt::value> args = docopt::docopt(
+      USAGE, 
+      { argv + 1, argv + argc },
+      true,
+      title.c_str()
+    );
+
+    cout 
+    << endl
+    << termcolor::on_white
+    << BLUE
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << "DEBUGGING"
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << RESET
+    << endl
+    << endl;
+
+    for(auto const& arg : args) {
+      cout 
+      << YELLOW 
+      << DBL_ARROW
+      << RESET
+      << WHITE
+      << " Argument: "
+      << RESET
+      << BOLD
+      << WHITE
+      << arg.first
+      << RESET
+      << WHITE
+      << " value: "
+      << RESET
+      << BOLD
+      << WHITE
+      << arg.second
+      << endl;
+    }
+
+    cout 
+    << endl
+    << termcolor::on_white
+    << BLUE
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH << PINCH
+    << RESET
+    << endl
+    << endl;
   }
 }

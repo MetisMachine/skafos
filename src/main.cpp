@@ -1,44 +1,14 @@
 #include <iostream>
 #include <docopt.h>
-
+#include "usage.h"
 #include "common.h"
 #include "auth/auth.h"
-#include "version.h"
 #include "logs/logs.h"
 #include "env/env.h"
 #include "templates/templates.h"
 #include "project/project.h"
 
 using namespace std;
-
-static const char USAGE[] =
-R"(
-Usage:
-    skafos (setup|init|auth|version)...
-    skafos init <name>
-    skafos templates [--update] [--search <search_term>]
-    skafos logs <project_token> [-n <num>] [--tail]
-    skafos -h | --help
-    skafos --version
-Commands:
-    setup       Setup development environment.
-    new         Create a new project
-    auth        Authenticate request.    
-    version     Shows version.
-    logs        Get logs for a project.
-Options:
-    -V --version             Shows version.
-
-If you need help, feel free to reach out:
-    https://metismachine.com
-    https://twitter.com/metismachine
-    https://github.com/metismachine
-
-)";
-
-void setup() {
-  Env::instance()->setup();
-}
 
 int main(int argc, char **argv) {
   Env::instance()->load_credentials();
@@ -55,13 +25,9 @@ int main(int argc, char **argv) {
     title.c_str()
   );
 
-  // for(auto const& arg : args) {
-  //   std::cout << "ARG FIRST: " << arg.first <<  " ARG SECOND: " << arg.second << std::endl;
-  // }
-
   auto stp = args.find("setup");
   if(stp != args.end() && stp->second.asLong() > 0) {
-    setup();
+    Env::instance()->setup();
 
     return EXIT_SUCCESS;
   }
@@ -130,15 +96,23 @@ int main(int argc, char **argv) {
 
   auto nw = args.find("init");
   if(nw != args.end()) {
+    string tpl = "base";
 
-    auto arg = args.find("<name>");
+    auto name_arg = args.find("<name>");
 
     string name = ".";    
-    if(arg != args.end() && arg->second) {
-      name = arg->second.asString();
+    if(name_arg != args.end() && name_arg->second) {
+      name = name_arg->second.asString();
     }
 
-    Project::init(name);
+    auto tpl_arg = args.find("--template");
+    if(tpl_arg != args.end() && tpl_arg->second.isString()) {
+      tpl = tpl_arg->second.asString();
+    }
+
+
+    Project::init(name, tpl);
+    
     return EXIT_SUCCESS;
   }
 
