@@ -15,7 +15,7 @@ _tag_release:
 
 _create_version_h:
 	@rm -rf src/version.h && \
-	echo -e "#ifndef __CLI_VERSION__\n#define __CLI_VERSION__\n\n#define VERSION \"$(VERSION)\"\n\n#endif\n\n" >> src/version.h
+	printf "#ifndef __CLI_VERSION__\n#define __CLI_VERSION__\n\n#define VERSION \"$(VERSION)\"\n\n#endif\n\n" >> src/version.h
 
 _env_for_staging:
 	@cp build_envs/staging_env.h src/cli_env.h
