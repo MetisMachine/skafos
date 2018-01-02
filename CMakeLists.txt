@@ -75,8 +75,6 @@ file(GLOB_RECURSE SOURCES
     "src/*.cpp"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wwritable-strings -Wunneeded-internal-declaration")
-
 include_directories(  
     SYSTEM
     ${CURL_INCLUDE_DIRS}
