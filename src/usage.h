@@ -4,8 +4,8 @@
 static const char USAGE[] =
 R"(
 Usage:
-    skafos (setup|init|auth|version)...
-    skafos init [<name>] [--template=<template_name>]
+    skafos (setup|init|auth)...
+    skafos init [<name>] [--template <template_name>]
     skafos templates [--update] [--search <search_term>]
     skafos logs <project_token> [-n <num>] [--tail]
     skafos -h | --help
@@ -17,7 +17,7 @@ Commands:
     version     Shows version.
     logs        Get logs for a project.
 Options:
-    -V --version             Shows version.
+    -v --version             Shows version.
 
 If you need help, feel free to reach out:
     https://metismachine.com
