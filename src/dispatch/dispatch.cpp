@@ -56,6 +56,23 @@ void setup() {
   Env::instance()->setup();
 }
 
+void init(int argc, char **argv, int cmdIndex){
+  std::map<std::string, int> initFlags = findFlags(argc, argv, cmdIndex);
+  string name = ".";
+  string tpl = "base";
+  if(argc > 2){
+    if(string(argv[2]).compare("--template") != 0){
+      name = string(argv[2]);
+    }
+  }
+  if(initFlags.find("--template")->second != -1){
+    int tplIndex = initFlags.find("--template")->second;
+    if(tplIndex+1 < argc){
+      tpl = argv[tplIndex+1];
+    }
+  }
+  Project::init(name, tpl);
+}
 
 void auth(){
   Auth::authenticate();
