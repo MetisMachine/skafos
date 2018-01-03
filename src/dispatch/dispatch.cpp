@@ -52,3 +52,12 @@ std::map<std::string, int> findFlags(int argc, char **argv, int cmdIndex){
   return foundFlags;
 }
 
+void setup() {
+  Env::instance()->setup();
+}
+
+
+void auth(){
+  Auth::authenticate();
+}
+
