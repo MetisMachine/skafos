@@ -24,3 +24,12 @@ struct command templatesCmd = {"templates", {"--update", "--search"}, true};
 struct command logsCmd = {"logs", {"-n", "--tail"}, true};
 struct command commandList[5] = {setupCmd, initCmd, authCmd, templatesCmd, logsCmd};
 
+int Dispatch::nameMatch(string arg){
+  for (int j = 0; j < sizeof(commandList)/sizeof(commandList[0]) ; j++){
+    if (arg.compare(commandList[j].name) == 0){
+      return j; 
+    }
+  }
+  return -1; 
+}
+
