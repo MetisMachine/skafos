@@ -93,3 +93,25 @@ void templates(int argc, char **argv, int cmdIndex){
   }  
 }
 
+void logs(int argc, char **argv, int cmdIndex){
+  std::map<std::string, int> logFlags = findFlags(argc, argv, cmdIndex);
+  string project  = "";
+	long numlines   = 0;
+	bool follow     = false;
+  if (string(argv[2]).compare("--tail") != 0 || string(argv[2]).compare("-n") != 0){
+    project = string(argv[2]);
+  } else {
+		cout << "A project token is required" << endl;
+	}
+  if(logFlags.find("-n")->second != -1){
+    int numIndex = logFlags.find("-n")->second;
+    if(numIndex+1 < argc){
+      numlines = long(argv[numIndex+1]);
+    }
+  }
+  if(logFlags.find("--tail")->second != -1){
+    follow = true;
+  }
+  Logs::print(project, numlines, follow);
+}
+
