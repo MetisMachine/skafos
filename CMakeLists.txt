@@ -93,7 +93,7 @@ include_directories(
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
+target_link_libraries(skafos docopt json11 sse ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY} pthread)
 
 install(TARGETS skafos RUNTIME DESTINATION bin)
 

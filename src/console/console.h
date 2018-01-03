@@ -1,6 +1,8 @@
 #ifndef __CLI_OUT__
 #define __CLI_OUT__
 
+#include <atomic>
+
 #include "common.h"
 #include "termcolor.hpp"
 

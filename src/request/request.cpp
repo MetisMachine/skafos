@@ -1,4 +1,5 @@
 #include <curl/curl.h>
+#include <cstring>
 
 #include "request.h"
 #include "env/env.h"
