@@ -49,7 +49,11 @@ build_dist: clean _create_version_h _env_for_prod
 clean:
 	@rm -rf _build/* 
 
-
+build_debug: clean _create_version_h _env_for_staging
+	@cd $(BUILD_DIR) \
+	&& echo "Building skafos..." \
+	&& cmake -DCMAKE_BUILD_TYPE=Debug .. -Wno-dev \
+	&& make
 
 release: _start_release clean build_dist
 
