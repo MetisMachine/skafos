@@ -41,3 +41,14 @@ int Dispatch::flagMatch(int argc, char **argv, string flag){
     }
   return -1;
 }
+
+std::map<std::string, int> findFlags(int argc, char **argv, int cmdIndex){
+  std::map<std::string, int> foundFlags;
+  for(int k = 0; k < commandList[cmdIndex].flags.size(); k++){
+    string key = commandList[cmdIndex].flags[k];
+    int value = Dispatch::flagMatch(argc, argv, commandList[cmdIndex].flags[k]);
+    foundFlags[key] = value;
+  }
+  return foundFlags;
+}
+
