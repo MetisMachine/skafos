@@ -133,24 +133,6 @@ struct FunctionCaller{
         auto iter = m.find(string_name);
   
         auto mapVal = iter->second;
-typedef void (*voidFunctionType)(void);
-
-struct FunctionCaller{
-
-    std::map<std::string,std::pair<voidFunctionType,std::type_index>> m;
-
-    template<typename T>
-    void insert(std::string string_name, T func){
-        auto tt = std::type_index(typeid(func));
-        m.insert(std::make_pair(string_name,
-                        std::make_pair((voidFunctionType)func,tt)));
-    }
-
-    template<typename T,typename... Args>
-    T callFunction(std::string string_name, Args... args){
-        auto iter = m.find(string_name);
-  
-        auto mapVal = iter->second;
         
         auto typeCasted = (T(*)(Args ...))(mapVal.first); 
         assert(mapVal.second == std::type_index(typeid(typeCasted)));
@@ -158,3 +140,18 @@ struct FunctionCaller{
     }
 };
 
+int Dispatch::dispatch(int argc, char **argv, int cmdIndex){
+    FunctionCaller disp;
+    disp.insert("setup", setup);
+    disp.insert("init", init);
+    disp.insert("auth", auth);
+    disp.insert("templates", templates);
+    disp.insert("logs", logs);
+    
+    if(commandList[cmdIndex].flags.size() == 0 && commandList[cmdIndex].hasArgs == false){
+      disp.callFunction<void>(commandList[cmdIndex].name);
+    } else{
+      disp.callFunction<void>(commandList[cmdIndex].name, argc, argv, cmdIndex);
+    }
+    return EXIT_SUCCESS;
+}
