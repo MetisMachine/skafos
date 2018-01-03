@@ -33,3 +33,11 @@ int Dispatch::nameMatch(string arg){
   return -1; 
 }
 
+int Dispatch::flagMatch(int argc, char **argv, string flag){
+    for (int l = 0; l < argc; l++){
+      if(flag.compare(argv[l]) == 0){
+        return l;
+      }
+    }
+  return -1;
+}
