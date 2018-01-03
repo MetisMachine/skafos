@@ -88,7 +88,7 @@ void templates(int argc, char **argv, int cmdIndex){
     if(searchIndex+1 < argc){
        Template::search(argv[searchIndex+1]);
     } else{
-       cout << "A <search_term> is required." << endl;
+       console::error("A <search_term> is required.");
     }
   }  
 }
@@ -101,7 +101,7 @@ void logs(int argc, char **argv, int cmdIndex){
   if (string(argv[2]).compare("--tail") != 0 || string(argv[2]).compare("-n") != 0){
     project = string(argv[2]);
   } else {
-		cout << "A project token is required" << endl;
+		console::error("A project token is required");
 	}
   if(logFlags.find("-n")->second != -1){
     int numIndex = logFlags.find("-n")->second;
