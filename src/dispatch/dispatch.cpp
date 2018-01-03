@@ -78,3 +78,18 @@ void auth(){
   Auth::authenticate();
 }
 
+void templates(int argc, char **argv, int cmdIndex){
+  std::map<std::string, int> templateFlags = findFlags(argc, argv, cmdIndex);
+  if(templateFlags.find("--update")->second != -1){
+    Template::update();
+  }
+  if(templateFlags.find("--search")->second != -1){
+    int searchIndex = templateFlags.find("--search")->second;
+    if(searchIndex+1 < argc){
+       Template::search(argv[searchIndex+1]);
+    } else{
+       cout << "A <search_term> is required." << endl;
+    }
+  }  
+}
+
