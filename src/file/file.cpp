@@ -34,16 +34,17 @@ string FileManager::resolve_path(string path) {
   return string(resolved);
 }
 
-bool FileManager::create_path(mode_t mode, const string& rootPath, string& path) {
+bool FileManager::create_path(mode_t mode, const string &root_path, string &path) {
   struct stat st;
 
   for(string::iterator iter = path.begin(); iter != path.end();) {
-    string::iterator newIter  = find(iter, path.end(), '/');
-    string newPath            = rootPath + "/" + string( path.begin(), newIter);
 
-    if(stat(newPath.c_str(), &st) != 0) {
-      if(mkdir( newPath.c_str(), mode) != 0 && errno != EEXIST) {
-        console::error("Unable to create folder: " + newPath + ". Exist and not a folder.");
+    string::iterator new_iter  = find(iter, path.end(), '/');
+    string new_path            = root_path + "/" + string( path.begin(), new_iter);
+
+    if(stat(new_path.c_str(), &st) != 0) {
+      if(mkdir( new_path.c_str(), mode) != 0 && errno != EEXIST) {
+        console::error("Unable to create folder: " + new_path + ". Exist and not a folder.");
 
         return false;
       }
@@ -51,15 +52,15 @@ bool FileManager::create_path(mode_t mode, const string& rootPath, string& path)
       if(!S_ISDIR(st.st_mode)) {
         errno = ENOTDIR;
 
-        console::error("Unable to create folder: " + newPath + ". Exist and not a folder.");
+        console::error("Unable to create folder: " + new_path + ". Exist and not a folder.");
 
         return false;
       }
     }
   
-    iter = newIter;
+    iter = new_iter;
 
-    if(newIter != path.end()) {
+    if(new_iter != path.end()) {
       ++iter;
     }
   }
@@ -107,11 +108,11 @@ string FileManager::read(string path) {
   return content;
 }
 
-bool FileManager::file_exists(std::string path) {
+bool FileManager::file_exists(string path) {
   return (access(path.c_str(), F_OK) != -1);
 }
 
-bool FileManager::dir_exists(std::string path) {
+bool FileManager::dir_exists(string path) {
   struct stat info;
   
   if(stat(path.c_str(), &info) != 0) {
@@ -123,7 +124,7 @@ bool FileManager::dir_exists(std::string path) {
   return false;
 }
 
-bool FileManager::is_dir(std::string path) {
+bool FileManager::is_dir(string path) {
   struct stat buffer;
   if(stat(path.c_str(), &buffer) != 0) {
     return true;
@@ -132,7 +133,7 @@ bool FileManager::is_dir(std::string path) {
   return S_ISDIR(buffer.st_mode);
 }
 
-bool FileManager::is_dot_dir(std::string path) {
+bool FileManager::is_dot_dir(string path) {
   if(path == "." || path == "..") {
     return true;
   }
@@ -140,7 +141,7 @@ bool FileManager::is_dot_dir(std::string path) {
   return false;
 }
 
-void FileManager::delete_dir(std::string path) {
+void FileManager::delete_dir(string path) {
 
   size_t path_len;
   char  *full_path;
@@ -188,7 +189,7 @@ void FileManager::delete_dir(std::string path) {
 }
 
 
-list<string> FileManager::dir_list(std::string path, std::string extension) {
+list<string> FileManager::dir_list(string path, string extension) {
   DIR *dir            = NULL;
   struct dirent *ent  = NULL;
 
@@ -355,7 +356,7 @@ int FileManager::copy_data(struct archive *ar, struct archive *aw) {
   int r;
   const void *buff;
   size_t size;
-  la_int64_t offset;
+  int64_t offset;
 
   while(true) {
     r = archive_read_data_block(ar, &buff, &size, &offset);
