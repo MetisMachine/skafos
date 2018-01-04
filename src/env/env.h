@@ -4,7 +4,6 @@
 #include "common.h"
 #include "file/file.h"
 #include "request/request.h"
-#include "git/git.h"
 #include "auth/auth.h"
 #include "templates/templates.h"
 
@@ -14,8 +13,8 @@
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
 const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
 const std::string METIS_CREDENTIALS   = "credentials.json";
-const std::string METIS_TEMPLATE_REPO = "https://github.com/MetisMachine/templates.list.git";
 const std::string METIS_TEMPLATE_DIR  = "templates";
+const std::string METIS_TEMPLATE_LIST = "https://github.com/MetisMachine/templates.list/archive/master.zip";
 const std::string METIS_CACHE_DIR     = ".cache";
 
 struct metis_path {

@@ -60,8 +60,10 @@ add_subdirectory(libs)
 
 FIND_PACKAGE(LibArchive REQUIRED)
 FIND_PACKAGE(CURL REQUIRED)
-FIND_PACKAGE(Libgit2 REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
+
+set(THREADS_PREFER_PTHREAD_FLAG, ON)
 
 file(GLOB_RECURSE HEADERS 
     "libs/restclient-cpp/include/**/*.h"
@@ -80,7 +82,6 @@ include_directories(
     ${CURL_INCLUDE_DIRS}
     ${LibArchive_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIR}
-    ${LIBGIT2_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp
     ${CMAKE_SOURCE_DIR}/libs/yaml-cpp/include
@@ -93,7 +94,7 @@ include_directories(
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${CURL_LIBRARIES} ${LIBGIT2_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
+target_link_libraries(skafos docopt json11 sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
 
 install(TARGETS skafos RUNTIME DESTINATION bin)
 

@@ -12,6 +12,7 @@ using namespace std;
 
 #define FLASH_MSG(clr, symbl, msg) \
 cout      \
+<< endl   \
 << RESET  \
 << BOLD   \
 << clr    \
@@ -20,19 +21,7 @@ cout      \
 << RESET  \
 << msg    \
 << RESET  \
-<< endl   \
-
-#define FLASH_ERR(clr, symbl, msg) \
-cerr      \
-<< RESET  \
-<< BOLD   \
-<< clr    \
-<< symbl  \
-<< " "    \
-<< RESET  \
-<< msg    \
-<< RESET  \
-<< endl   \
+<< endl   
 
 namespace console {
 
@@ -46,11 +35,14 @@ namespace console {
   }
 
   void loader::start() {
-
+    if(this->_loading == true) {
+      return;
+    }
+    
     std::thread t([&]() {
       this->_loading = true;
 
-      list<string> frames       = SPIN_DOTS;
+      list<string> frames       = SPIN_LINES;
       list<string>::iterator it = frames.begin();
 
       while(this->_loading) {        
@@ -73,10 +65,11 @@ namespace console {
   }
 
   void loader::stop() {
+    cout << flush;
     cout << endl;
     this->_loading = false;
-
   }
+
   void success(string message) {
     FLASH_MSG(GREEN, CHECKMARK, message);
   }
@@ -86,24 +79,22 @@ namespace console {
   }
 
   void warn(string message) {
-    FLASH_ERR(YELLOW, (EX_POINT + ARROW), message);
+    FLASH_MSG(YELLOW, (EX_POINT + ARROW), message);
   }
 
   void error(string message) {
-    FLASH_ERR(RED, ECKS, message);
+    FLASH_MSG(RED, ECKS, message);
   }
 
   void debug(string message) {
-    const char* env = getenv("ENV");
-
-    if(env == NULL) {
-      return;
-    }
+    if(ENVIRONMENT == "production") { return; }
 
     FLASH_MSG(BLUE, DBL_ARROW, message);
   }
 
   void cli_args(int argc, char **argv) {
+    if(ENVIRONMENT == "production") { return; }
+
     string title = (
       string("\nSkafos version: ") + 
       VERSION + 

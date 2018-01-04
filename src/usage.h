@@ -9,15 +9,14 @@ Usage:
     skafos templates [--update] [--search <search_term>]
     skafos logs <project_token> [-n <num>] [--tail]
     skafos -h | --help
-    skafos --version
+    skafos -v | --version
 Commands:
     setup       Setup development environment.
     init        Create a new project
     auth        Authenticate request.    
-    version     Shows version.
     logs        Get logs for a project.
 Options:
-    -v --version             Shows version.
+    -v --version    Shows version.
 
 If you need help, feel free to reach out:
     https://metismachine.com
