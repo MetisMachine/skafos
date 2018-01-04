@@ -20,9 +20,7 @@ cout      \
 << RESET  \
 << msg    \
 << RESET  \
-<< endl   \
-<< flush  \
-
+<< endl   
 
 namespace console {
 
@@ -66,7 +64,7 @@ namespace console {
   }
 
   void loader::stop() {
-    cout << flush << endl;
+    cout << endl;
     this->_loading = false;
 
   }
@@ -100,7 +98,7 @@ namespace console {
     #ifndef STAGING
     return;
     #endif
-    
+
     string title = (
       string("\nSkafos version: ") + 
       VERSION + 
