@@ -21,18 +21,8 @@ cout      \
 << msg    \
 << RESET  \
 << endl   \
+<< flush  \
 
-#define FLASH_ERR(clr, symbl, msg) \
-cerr      \
-<< RESET  \
-<< BOLD   \
-<< clr    \
-<< symbl  \
-<< " "    \
-<< RESET  \
-<< msg    \
-<< RESET  \
-<< endl   \
 
 namespace console {
 
@@ -46,11 +36,14 @@ namespace console {
   }
 
   void loader::start() {
-
+    if(this->_loading == true) {
+      return;
+    }
+    
     std::thread t([&]() {
       this->_loading = true;
 
-      list<string> frames       = SPIN_DOTS;
+      list<string> frames       = SPIN_LINES;
       list<string>::iterator it = frames.begin();
 
       while(this->_loading) {        
@@ -73,7 +66,7 @@ namespace console {
   }
 
   void loader::stop() {
-    cout << endl;
+    cout << flush << endl;
     this->_loading = false;
 
   }
@@ -86,11 +79,11 @@ namespace console {
   }
 
   void warn(string message) {
-    FLASH_ERR(YELLOW, (EX_POINT + ARROW), message);
+    FLASH_MSG(YELLOW, (EX_POINT + ARROW), message);
   }
 
   void error(string message) {
-    FLASH_ERR(RED, ECKS, message);
+    FLASH_MSG(RED, ECKS, message);
   }
 
   void debug(string message) {
@@ -104,6 +97,10 @@ namespace console {
   }
 
   void cli_args(int argc, char **argv) {
+    #ifndef STAGING
+    return;
+    #endif
+    
     string title = (
       string("\nSkafos version: ") + 
       VERSION + 

@@ -12,6 +12,8 @@
 #include <sstream>
 #include <cstdlib>
 #include <pthread.h>
+#include <atomic>
+#include <cstring>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/types.h>

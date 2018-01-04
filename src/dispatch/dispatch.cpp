@@ -17,23 +17,49 @@
 
 using namespace std;
 
-struct command setupCmd = {"setup", {}, false};
-struct command initCmd = {"init", {"--template"}, true};
-struct command authCmd = {"auth", {}, false};
-struct command templatesCmd = {"templates", {"--update", "--search"}, true};
-struct command logsCmd = {"logs", {"-n", "--tail"}, true};
-struct command commandList[5] = {setupCmd, initCmd, authCmd, templatesCmd, logsCmd};
+typedef void (*VoidFunctionType)(void);
 
-int Dispatch::nameMatch(string arg){
-  for (int j = 0; j < sizeof(commandList)/sizeof(commandList[0]) ; j++){
-    if (arg.compare(commandList[j].name) == 0){
+struct FunctionCaller {
+
+    map<string,pair<VoidFunctionType,type_index>> m;
+
+    template<typename T>
+    void insert(string string_name, T func){
+        auto tt = type_index(typeid(func));
+        
+        m.insert(make_pair(string_name, make_pair((VoidFunctionType)func,tt)));
+    }
+
+    template<typename T,typename... Args>
+    T callFunction(std::string string_name, Args... args){
+        auto iter       = m.find(string_name);
+        auto mapVal     = iter->second;
+        auto typeCasted = (T(*)(Args ...))(mapVal.first); 
+
+        assert(mapVal.second == type_index(typeid(typeCasted)));
+
+        return typeCasted(forward<Args>(args)...);
+    }
+};
+
+struct command setup_cmd        = {"setup", {}, false};
+struct command init_cmd         = {"init", {"--template"}, true};
+struct command auth_cmd         = {"auth", {}, false};
+struct command templates_cmd    = {"templates", {"--update", "--search"}, true};
+struct command logs_cmd         = {"logs", {"-n", "--tail"}, true};
+struct command command_list[5]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, logs_cmd};
+
+int Dispatch::name_match(string arg) {
+  for (int j = 0; j < sizeof(command_list)/sizeof(command_list[0]) ; j++) {
+    if (arg.compare(command_list[j].name) == 0) {
       return j; 
     }
   }
+
   return -1; 
 }
 
-int Dispatch::flagMatch(int argc, char **argv, string flag){
+int Dispatch::flag_match(int argc, char **argv, string flag) {
     for (int l = 0; l < argc; l++){
       if(flag.compare(argv[l]) == 0){
         return l;
@@ -42,13 +68,14 @@ int Dispatch::flagMatch(int argc, char **argv, string flag){
   return -1;
 }
 
-std::map<std::string, int> findFlags(int argc, char **argv, int cmdIndex){
-  std::map<std::string, int> foundFlags;
-  for(int k = 0; k < commandList[cmdIndex].flags.size(); k++){
-    string key = commandList[cmdIndex].flags[k];
-    int value = Dispatch::flagMatch(argc, argv, commandList[cmdIndex].flags[k]);
-    foundFlags[key] = value;
+map<string, int> find_flags(int argc, char **argv, int cmdIndex) {
+  map<string, int> foundFlags;
+
+  for(int k = 0; k < command_list[cmdIndex].flags.size(); k++) {
+    string key      = command_list[cmdIndex].flags[k];
+    foundFlags[key] = Dispatch::flag_match(argc, argv, command_list[cmdIndex].flags[k]);;
   }
+
   return foundFlags;
 }
 
@@ -56,45 +83,52 @@ void setup() {
   Env::instance()->setup();
 }
 
-void init(int argc, char **argv, int cmdIndex){
-  std::map<std::string, int> initFlags = findFlags(argc, argv, cmdIndex);
-  string name = ".";
-  string tpl = "base";
-  if(argc > 2){
-    if(string(argv[2]).compare("--template") != 0){
+void init(int argc, char **argv, int cmd_index) {
+  map<string, int> init_flags = find_flags(argc, argv, cmd_index);
+  string name                 = ".";
+  string tpl                  = "base";
+  
+  if(argc > 2) {
+    if(string(argv[2]).compare("--template") != 0) {
       name = string(argv[2]);
     }
   }
-  if(initFlags.find("--template")->second != -1){
-    int tplIndex = initFlags.find("--template")->second;
-    if(tplIndex+1 < argc){
-      tpl = argv[tplIndex+1];
+
+  if(init_flags.find("--template")->second != -1) {
+    int tpl_index = init_flags.find("--template")->second;
+    
+    if(tpl_index + 1 < argc) {
+      tpl = argv[tpl_index + 1];
     }
   }
+
   Project::init(name, tpl);
 }
 
-void auth(){
+void auth() {
   Auth::authenticate();
 }
 
-void templates(int argc, char **argv, int cmdIndex){
-  std::map<std::string, int> templateFlags = findFlags(argc, argv, cmdIndex);
-  if(templateFlags.find("--update")->second != -1){
+void templates(int argc, char **argv, int cmd_index) {
+  map<string, int> template_flags = find_flags(argc, argv, cmd_index);
+
+  if(template_flags.find("--update")->second != -1) {
     Template::update();
   }
-  if(templateFlags.find("--search")->second != -1){
-    int searchIndex = templateFlags.find("--search")->second;
-    if(searchIndex+1 < argc){
-       Template::search(argv[searchIndex+1]);
-    } else{
+
+  if(template_flags.find("--search")->second != -1){
+    int search_index = template_flags.find("--search")->second;
+
+    if(search_index + 1 < argc) {
+       Template::search(argv[search_index + 1]);
+    } else {
        console::error("A <search_term> is required.");
     }
   }  
 }
 
 void logs(int argc, char **argv, int cmdIndex){
-  std::map<std::string, int> logFlags = findFlags(argc, argv, cmdIndex);
+  std::map<std::string, int> logFlags = find_flags(argc, argv, cmdIndex);
   string project  = "";
 	long numlines   = 0;
 	bool follow     = false;
@@ -115,43 +149,20 @@ void logs(int argc, char **argv, int cmdIndex){
   Logs::print(project, numlines, follow);
 }
 
-typedef void (*voidFunctionType)(void);
-
-struct FunctionCaller{
-
-    std::map<std::string,std::pair<voidFunctionType,std::type_index>> m;
-
-    template<typename T>
-    void insert(std::string string_name, T func){
-        auto tt = std::type_index(typeid(func));
-        m.insert(std::make_pair(string_name,
-                        std::make_pair((voidFunctionType)func,tt)));
-    }
-
-    template<typename T,typename... Args>
-    T callFunction(std::string string_name, Args... args){
-        auto iter = m.find(string_name);
-  
-        auto mapVal = iter->second;
-        
-        auto typeCasted = (T(*)(Args ...))(mapVal.first); 
-        assert(mapVal.second == std::type_index(typeid(typeCasted)));
-        return typeCasted(std::forward<Args>(args)...);
-    }
-};
-
-int Dispatch::dispatch(int argc, char **argv, int cmdIndex){
+int Dispatch::dispatch(int argc, char **argv, int cmd_index){
     FunctionCaller disp;
-    disp.insert("setup", setup);
-    disp.insert("init", init);
-    disp.insert("auth", auth);
-    disp.insert("templates", templates);
-    disp.insert("logs", logs);
+
+    disp.insert("setup",      setup);
+    disp.insert("init",       init);
+    disp.insert("auth",       auth);
+    disp.insert("templates",  templates);
+    disp.insert("logs",       logs);
     
-    if(commandList[cmdIndex].flags.size() == 0 && commandList[cmdIndex].hasArgs == false){
-      disp.callFunction<void>(commandList[cmdIndex].name);
-    } else{
-      disp.callFunction<void>(commandList[cmdIndex].name, argc, argv, cmdIndex);
+    if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {
+      disp.callFunction<void>(command_list[cmd_index].name);
+    } else {
+      disp.callFunction<void>(command_list[cmd_index].name, argc, argv, cmd_index);
     }
+    
     return EXIT_SUCCESS;
 }

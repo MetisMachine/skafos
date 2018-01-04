@@ -12,8 +12,7 @@ void sse_event(const char* data) {
   std::string err;
   Json json = Json::parse(data, err);
   if(err.length() > 0) {
-    // Ignoring. Below is one possible solution if we choose to do it.
-    //std::cerr << "[SKAFOS] Unable to parse log message!: " << err << std::endl;
+    console::error("Error displaying log message");
     return;
   }
 
@@ -56,22 +55,9 @@ void Logs::print(std::string project, long num, bool tail) {
     NULL
   };
 
-  std::string logs_url = "";
-  const char* env = getenv("ENV");
+  std::string logs_url    = LOGGING_URL + project;
+  std::string num_string  = (num == 0)? "10" : std::to_string(num);
 
-  if(env == NULL) {
-	  logs_url = "https://api.metismachine.io/logs/" + project;
-  } else if(strcmp(env, "local") == 0) {
-    std::cout << "Using local environment!" << std::endl;
-
-    logs_url = "http://localhost:4000/logs/" + project;
-  } else if(strcmp(env, "dev") == 0) {
-    std::cout << "Using staging environment!" << std::endl;
-
-    logs_url = "http://argus.metis.wtf/logs/" + project;
-  }
-
-  std::string num_string = (num == 0)? "10" : std::to_string(num);
   logs_url += ("?offset=" + num_string);
   
   if(tail) {

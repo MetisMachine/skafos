@@ -6,15 +6,15 @@
 struct command{
   std::string name;
   std::vector<std::string> flags;
-  bool hasArgs;
+  bool has_args;
 };
 
 class Dispatch {
   public: 
-    static int dispatch(int argc, char **argv, int cmdIndex);
-    static int nameMatch(std::string arg);
-    static int flagMatch(int argc, char **argv, std::string flag);
-    static int findFlags(int argc, char **argv, int cmdIndex);
+    static int dispatch(int argc, char **argv, int cmd_ondex);
+    static int name_match(std::string arg);
+    static int flag_match(int argc, char **argv, std::string flag);
+    static int find_flags(int argc, char **argv, int cmdIndex);
 };
 
 #endif
