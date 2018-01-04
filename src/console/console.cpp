@@ -87,19 +87,13 @@ namespace console {
   }
 
   void debug(string message) {
-    const char* env = getenv("ENV");
-
-    if(env == NULL) {
-      return;
-    }
+    if(ENVIRONMENT == "production") { return; }
 
     FLASH_MSG(BLUE, DBL_ARROW, message);
   }
 
   void cli_args(int argc, char **argv) {
-    #ifndef STAGING
-    return;
-    #endif
+    if(ENVIRONMENT == "production") { return; }
 
     string title = (
       string("\nSkafos version: ") + 

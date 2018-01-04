@@ -20,17 +20,16 @@ void handle_signal(int s) {
 }
 
 int main(int argc, char **argv) {
-  #ifdef STAGING
-  cout
-  << endl
-  << termcolor::bold
-  << termcolor::cyan
-  << ">>> Running in staging..."
-  << termcolor::reset
-  << endl
-  << endl;
-  
-  #endif
+  if(ENVIRONMENT == "staging") {
+    cout
+    << endl
+    << termcolor::bold
+    << termcolor::cyan
+    << ">>> Running in staging..."
+    << termcolor::reset
+    << endl
+    << endl;
+    }
 
   signal(SIGINT, handle_signal);  
 

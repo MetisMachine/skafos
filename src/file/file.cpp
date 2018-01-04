@@ -189,6 +189,10 @@ void FileManager::delete_dir(string path) {
 }
 
 void FileManager::delete_file(std::string path) {
+  if(is_dir(path)) {
+    return;
+  }
+  
   unlink(path.c_str());
 }
 
