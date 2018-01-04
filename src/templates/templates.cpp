@@ -1,7 +1,6 @@
 #include "templates.h"
 #include "yaml-cpp/yaml.h"
 #include "env/env.h"
-#include "git/git.h"
 #include "file/file.h"
 #include <iomanip>
 
@@ -11,16 +10,29 @@ const string TEMPLATE_HEAD = "head";
 
 void Template::update() {
   VERIFY_AUTH();
+  // START_LOADING("Updating project templates..");
 
-  START_LOADING("Updating project templates..");
+  console::info("Updating templates...");
 
   if(FileManager::dir_exists(ENV_PATHS.templates)) {
-    pull();    
-  } else {
-    clone();
+    FileManager::delete_dir(ENV_PATHS.templates);
   }
 
-  END_LOADING();
+  FileManager::create_path(0755, ENV_PATHS.templates);
+
+  string tpl_path = ENV_PATHS.env + "/template_list.zip"; 
+
+  console::info(
+    "Download from: " +
+    METIS_TEMPLATE_REPO +
+    " to: " +
+    tpl_path
+  );
+
+  Request::download(METIS_TEMPLATE_REPO, tpl_path);
+
+
+  // END_LOADING();
 }
 
 void Template::search(string name) {
@@ -90,16 +102,6 @@ list<TemplateDetails> Template::all() {
   }
 
   return tpl_list;
-}
-
-int Template::clone() {
-  return Git::Repo::clone(METIS_TEMPLATE_REPO, ENV_PATHS.templates);
-}
-
-int Template::pull() {
-  FileManager::delete_dir(ENV_PATHS.templates);
-
-  return clone();
 }
 
 TemplateDetails Template::parse_template(std::string path) {
