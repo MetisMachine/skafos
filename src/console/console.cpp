@@ -12,6 +12,7 @@ using namespace std;
 
 #define FLASH_MSG(clr, symbl, msg) \
 cout      \
+<< endl   \
 << RESET  \
 << BOLD   \
 << clr    \

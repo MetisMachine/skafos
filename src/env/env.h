@@ -14,7 +14,7 @@
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
 const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
 const std::string METIS_CREDENTIALS   = "credentials.json";
-const std::string METIS_TEMPLATE_REPO = "https://github.com/MetisMachine/templates.list.git";
+const std::string METIS_TEMPLATE_REPO = "git@github.com:MetisMachine/templates.list.git";
 const std::string METIS_TEMPLATE_DIR  = "templates";
 const std::string METIS_CACHE_DIR     = ".cache";
 

@@ -59,7 +59,7 @@ namespace Git {
           to_string(err->klass) + 
           ": " + 
           err->message + 
-          "(" + url + "/" + path + ")"
+          " (" + url + "/" + path + ")"
         );
       } else {
         console::error("Error " + to_string(error) + ": no detailed information.");
