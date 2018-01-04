@@ -65,10 +65,11 @@ namespace console {
   }
 
   void loader::stop() {
+    cout << flush;
     cout << endl;
     this->_loading = false;
-
   }
+
   void success(string message) {
     FLASH_MSG(GREEN, CHECKMARK, message);
   }

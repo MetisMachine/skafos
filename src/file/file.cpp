@@ -188,6 +188,9 @@ void FileManager::delete_dir(string path) {
   rmdir(path.c_str());
 }
 
+void FileManager::delete_file(std::string path) {
+  unlink(path.c_str());
+}
 
 list<string> FileManager::dir_list(string path, string extension) {
   DIR *dir            = NULL;
