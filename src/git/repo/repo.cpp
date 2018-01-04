@@ -54,8 +54,13 @@ namespace Git {
       const git_error *err = giterr_last();
       
       if (err) {
-        console::error("Error " + to_string(err->klass) + ": " + err->message);
-        // printf("ERROR %d: %s\n", err->klass, err->message);
+        console::error(
+          "Error " + 
+          to_string(err->klass) + 
+          ": " + 
+          err->message + 
+          "(" + url + "/" + path + ")"
+        );
       } else {
         console::error("Error " + to_string(error) + ": no detailed information.");
       }

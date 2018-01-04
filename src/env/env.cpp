@@ -25,8 +25,6 @@ Env::Env() {
 }
 
 void Env::setup() {
-  console::info("Setting up Skafos development environment...");
-  
   VERIFY_AUTH();
 
   Template::update();
