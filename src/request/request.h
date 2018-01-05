@@ -13,6 +13,10 @@ public:
   static RestClient::Response tokens();
   static RestClient::Response generate_token();
   static RestClient::Response create_project(std::string name);
+  static RestClient::Response env_vars(std::string project_id);
+  static RestClient::Response add_env_var(std::string project_id, std::string key, std::string value);
+  static RestClient::Response delete_env_var(std::string project_id, std::string key);
+
   static void download(std::string url, std::string save_path);
 
 private:
@@ -31,6 +35,10 @@ private:
   RestClient::Response _tokens();
   RestClient::Response _generate_token();
   RestClient::Response _create_project(std::string name);
+  RestClient::Response _env_vars(std::string project_id);
+  RestClient::Response _add_env_var(std::string project_id, std::string key, std::string value);
+  RestClient::Response _delete_env_var(std::string project_id, std::string key);
+
   static void _download(std::string url, std::string save_path);
 };
 
