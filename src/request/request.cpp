@@ -8,10 +8,11 @@ using namespace json11;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
 
-#define LOGIN_URL   "/users/login"
-#define PING_URL    "/ping"
-#define TOKEN_URL   "/api_tokens/"
-#define PROJECT_URL "/projects"
+const string LOGIN_URL    = "/users/login";
+const string PING_URL     = "/ping";
+const string TOKEN_URL    = "/api_tokens/";
+const string PROJECT_URL  = "/projects";
+const string ENV_VARS_URL = "/env_vars";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -71,7 +72,7 @@ RestClient::HeaderFields Request::_oauth_headers() {
   return headers;
 }
 
-RestClient::Response Request::_authenticate(std::string email, std::string password) {
+RestClient::Response Request::_authenticate(string email, string password) {
   DEFAULT_HEADERS();
 
   Json body = Json::object{
@@ -102,7 +103,7 @@ RestClient::Response Request::_generate_token() {
   return this->connection->post(TOKEN_URL, "");
 }
 
-RestClient::Response Request::_create_project(std::string name) {
+RestClient::Response Request::_create_project(string name) {
   API_HEADERS();
 
   Json body = Json::object{
@@ -112,12 +113,43 @@ RestClient::Response Request::_create_project(std::string name) {
   return this->connection->post(PROJECT_URL, body.dump());
 }
 
+RestClient::Response Request::_env_vars(string project_id) {
+  API_HEADERS();
+
+  string uri = ENV_VARS_URL + "/" + project_id;
+
+  return this->connection->get(uri);
+}
+
+RestClient::Response Request::_add_env_var(string project_id, string key, string value) {
+  API_HEADERS();
+
+  Json body = Json::object{
+    {"name",  key},
+    {"value", value}
+  };
+
+  string uri(ENV_VARS_URL + "/" + project_id);
+
+  return this->connection->post(uri, body.dump());
+}
+
+RestClient::Response Request::_delete_env_var(string project_id, string key) {
+  API_HEADERS();
+
+  string uri = ENV_VARS_URL + "/" + project_id + "/" + key;
+
+  return this->connection->del(uri);
+}
+
+
+// DOWNLOAD 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     return fwrite(ptr, size, nmemb, stream);
 }
 
-void Request::_download(std::string repo_url, std::string save_path) {
+void Request::_download(string repo_url, string save_path) {
   FILE *fp;
   CURLcode res;
   char output[FILENAME_MAX];
@@ -169,10 +201,24 @@ RestClient::Response Request::generate_token() {
   return instance()->_generate_token();
 }
 
-RestClient::Response Request::create_project(std::string name) {
+RestClient::Response Request::create_project(string name) {
   return instance()->_create_project(name);
 }
 
+RestClient::Response Request::env_vars(string project_id) {
+  return instance()->_env_vars(project_id);
+}
+
+RestClient::Response Request::add_env_var(string project_id, string key, string value) {
+  return instance()->_add_env_var(project_id, key, value);
+}
+
+RestClient::Response Request::delete_env_var(string project_id, string key) {
+  return instance()->_delete_env_var(project_id, key);
+}
+
+
+// DOWNLOAD
 void Request::download(string url, string save_path) {
   instance()->_download(url, save_path);
 }
