@@ -12,12 +12,12 @@ void sse_event(const char* data) {
   std::string err;
   Json json = Json::parse(data, err);
   if(err.length() > 0) {
-    console::error("Error displaying log message");
     return;
   }
 
   std::string message = json["data"].string_value();
   console::info(message);
+  std::cout << std::endl;
 }
 
 static const char* verify_response(CURL* curl) {

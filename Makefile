@@ -27,7 +27,7 @@ _env_for_staging:
 _env_for_prod:
 	@cp build_envs/production_env.h src/cli_env.h
 
-build: clean _create_version_h _env_for_staging
+build: clean _create_dev_version_h _env_for_staging
 	@cd $(BUILD_DIR) \
 	&& echo "Building skafos..." \
 	&& cmake .. -Wno-dev \

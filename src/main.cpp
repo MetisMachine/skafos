@@ -29,7 +29,8 @@ int main(int argc, char **argv) {
     << termcolor::reset
     << endl
     << endl;
-    }
+  }
+
 
   signal(SIGINT, handle_signal);  
 
