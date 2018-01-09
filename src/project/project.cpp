@@ -45,8 +45,8 @@ void Project::init(string name, string tpl) {
 
   console::info("Creating configuration file");
 
-  string template_path      = directory + "/metis.config.yml";
-  Jinja::Template config_template  = FileManager::read(template_path);
+  string template_path            = directory + "/metis.config.yml";
+  Jinja::Template config_template = FileManager::read(template_path);
   
   string err;
   string proj   = replace(project_name, "/", "");

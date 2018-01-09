@@ -12,6 +12,7 @@
 #include "version.h"
 #include "logs/logs.h"
 #include "env/env.h"
+#include "env_var/env_var.h"
 #include "templates/templates.h"
 #include "project/project.h"
 #include "project_env/project_env.h"
@@ -130,32 +131,82 @@ void templates(int argc, char **argv, int cmd_index) {
 }
 
 void envvar(int argc, char **argv, int cmd_index) {
-  console::info("HERE IN ENV_VAR");
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+
+  // LIST: // skafos env
+  // GET:  // skafos env <key>
+  // SET:  // skafos env <key> --set <value>
+  // DEL:  // skafos env <key> --delete
+
+  /**
+   * 0      1     2     3   4
+   * skafos env <key> --set <value>
+   */
+
+  if(argc == 3) {
+    string key = string(argv[2]);
+    
+    EnvVar::get(key);
+    
+    console::log("GET: " + key);
+
+    exit(EXIT_SUCCESS);
+  }
+
+  if(argc > 3) {
+    string key = string(argv[2]);
+
+    if(string(argv[3]) == "--delete") {
+      EnvVar::del(key);
+
+      exit(EXIT_SUCCESS);
+    }
+
+    if(string(argv[3]) == "--set") {
+      string val = string(argv[4]);
+
+      EnvVar::set(key, val);
+
+      exit(EXIT_SUCCESS);
+    }
+  }
+
+  EnvVar::list();
+  exit(EXIT_SUCCESS);
 }
 
 void logs(int argc, char **argv, int cmd_index){
   std::map<std::string, int> logFlags = find_flags(argc, argv, cmd_index);
-  string project  = "";
+  string project  = ProjectEnv::current().token;
 	long numlines   = 0;
 	bool follow     = false;
+
   if (string(argv[2]).compare("--tail") != 0 || string(argv[2]).compare("-n") != 0){
     project = string(argv[2]);
-  } else {
+  }
+
+  if(project.size() < 1) {
 		console::error("A project token is required");
+    
+    exit(EXIT_FAILURE);
 	}
-  if(logFlags.find("-n")->second != -1){
+  
+  if(logFlags.find("-n")->second != -1) {
     int numIndex = logFlags.find("-n")->second;
-    if(numIndex+1 < argc){
+
+    if(numIndex+1 < argc) {
       numlines = long(argv[numIndex+1]);
     }
   }
-  if(logFlags.find("--tail")->second != -1){
+
+  if(logFlags.find("--tail")->second != -1) {
     follow = true;
   }
+
   Logs::print(project, numlines, follow);
 }
 
-int Dispatch::dispatch(int argc, char **argv, int cmd_index){
+int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
     FunctionCaller disp;
 
     disp.insert("setup",      setup);

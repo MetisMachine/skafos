@@ -36,17 +36,17 @@ int main(int argc, char **argv) {
 
   Env::instance()->load_credentials();
 
-  string title = (
+  string version = (
     string("\nSkafos version: ") + 
     VERSION + 
     string("\nMetis Machine https://metismachine.com\n")
   );
 
-  map<string, docopt::value> args = docopt::docopt(
+  docopt::docopt(
     USAGE,
     { argv + 1, argv + argc },
     true,
-    title.c_str()
+    version.c_str()
   );
 
   Dispatch::dispatch(

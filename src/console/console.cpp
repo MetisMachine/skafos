@@ -74,6 +74,10 @@ namespace console {
     FLASH_MSG(GREEN, CHECKMARK, message);
   }
 
+  void log(string message) {
+    FLASH_MSG(WHITE, PINCH, message);
+  }
+
   void info(string message) {
     FLASH_MSG(BLUE, ARROW, message);
   }

@@ -5,6 +5,7 @@
 
 class EnvVar {
 public:
+  static void run(int argc, char **argv, int cmd_index);
   static void list();
   static void get(std::string key);
   static void set(std::string key, std::string value);

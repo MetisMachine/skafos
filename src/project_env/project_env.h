@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define PROJECT_TOKEN  ProjectEnv::current().token
+
 struct ProjectDetails {
   std::string token;
   std::string name;

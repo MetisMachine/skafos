@@ -7,8 +7,8 @@ Usage:
     skafos (setup|init|auth)...
     skafos init [<name>] [--template <template_name>]
     skafos templates [--update] [--search <search_term>]
-    skafos env [<key>] [--set <value>]
-    skafos logs <project_token> [-n <num>] [--tail]
+    skafos env [<key>] [--set <value>] [--delete]
+    skafos logs [<project_token>] [-n <num>] [--tail]
     skafos -h | --help
     skafos -v | --version
 Commands:

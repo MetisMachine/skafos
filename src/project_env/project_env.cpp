@@ -32,8 +32,7 @@ ProjectDetails ProjectEnv::_current() {
 ProjectDetails ProjectEnv::parse_project(string path) {
   ProjectDetails details;
   
-  string config_path  = path + "/metis.config.yml";
-  YAML::Node prj      = YAML::LoadFile(config_path);
+  YAML::Node prj = YAML::LoadFile(path);   
 
   const string token      = prj["project_token"].as<string>();
   const string name       = prj["name"].as<string>();
