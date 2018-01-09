@@ -31,6 +31,7 @@ ProjectDetails ProjectEnv::_current() {
 
 ProjectDetails ProjectEnv::parse_project(string path) {
   ProjectDetails details;
+  
   string config_path  = path + "/metis.config.yml";
   YAML::Node prj      = YAML::LoadFile(config_path);
 
