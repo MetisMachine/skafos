@@ -19,11 +19,9 @@ void Auth::authenticate() {
 
   cout << endl;
 
-  START_LOADING("Authenticating...");
+  console::info("Authenticating...");
 
   auto oauth = Request::authenticate(email, password);
-
-  END_LOADING();
 
   if (oauth.code >= 400) {
     console::error("Error making request. (" + to_string(oauth.code) + ")");
@@ -45,9 +43,6 @@ void Auth::authenticate() {
 
     console::info("Loading credentials...");
     Env::instance()->load_credentials();
-
-    console::info("Setting up environment");
-    Env::instance()->setup();
   }
 }
 

@@ -49,13 +49,9 @@ int main(int argc, char **argv) {
     version.c_str()
   );
 
-  Dispatch::dispatch(
+  return Dispatch::dispatch(
     argc, 
     argv, 
     Dispatch::name_match(string(argv[1]))
   );
-
-  cout << endl << flush;
-
-  return EXIT_SUCCESS;
 }

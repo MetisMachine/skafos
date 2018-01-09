@@ -50,7 +50,7 @@ struct command auth_cmd         = {"auth", {}, false};
 struct command templates_cmd    = {"templates", {"--update", "--search"}, true};
 struct command env_cmd          = {"env", {"--set"}, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true};
-struct command command_list[6]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, env_cmd, logs_cmd};
+struct command command_list[6]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, logs_cmd, env_cmd};
 
 int Dispatch::name_match(string arg) {
   for (int j = 0; j < sizeof(command_list)/sizeof(command_list[0]) ; j++) {
@@ -203,8 +203,8 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
     disp.insert("init",       init);
     disp.insert("auth",       auth);
     disp.insert("templates",  templates);
-    disp.insert("env",        envvar);
     disp.insert("logs",       logs);
+    disp.insert("env",        envvar);
     
     if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {
       disp.callFunction<void>(command_list[cmd_index].name);

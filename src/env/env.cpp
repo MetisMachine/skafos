@@ -27,6 +27,8 @@ Env::Env() {
 void Env::setup() {
   VERIFY_AUTH();
 
+  console::info("Setting up environment");
+
   Template::update();
   Template::create_cache_dir();
 }
@@ -86,6 +88,12 @@ void Env::write_credentials(Json object) {
   FileManager::write(paths.credentials, creds_string);
 }
 
+void Env::verify_auth() {
+  if(Env::instance()->authenticated() == false) {
+    Auth::authenticate(); 
+    Env::setup();
+  }
+}
 
 string Env::home_dir() {
   struct passwd *pw = getpwuid(getuid());

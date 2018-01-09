@@ -7,7 +7,8 @@
 #include "auth/auth.h"
 #include "templates/templates.h"
 
-#define VERIFY_AUTH if(Env::instance()->authenticated() == false) Auth::authenticate
+#define VERIFY_AUTH Env::instance()->verify_auth
+
 #define ENV_PATHS Env::instance()->paths
 
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
@@ -36,6 +37,7 @@ public:
   void setup();
   bool load_credentials();
   void write_credentials(json11::Json object);
+  void verify_auth();
 
 private:
   static Env *instance_;

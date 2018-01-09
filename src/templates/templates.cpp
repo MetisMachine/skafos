@@ -10,15 +10,13 @@ const string TEMPLATE_HEAD = "head";
 
 void Template::update() {
   VERIFY_AUTH();
-  START_LOADING("Updating project templates..");
 
+  console::info("Updating templates...");
   string tpl_path = ENV_PATHS.home + "/" + ENV_PATHS.env + "/template_list.zip"; 
   
   Request::download(METIS_TEMPLATE_LIST, tpl_path);
   FileManager::unzip(tpl_path, ENV_PATHS.templates);
   FileManager::delete_file(tpl_path);
-
-  END_LOADING();
 }
 
 void Template::search(string name) {
@@ -113,7 +111,7 @@ TemplateDetails Template::parse_template(std::string path) {
 }
 
 void Template::download(TemplateDetails details, string version) {
-  START_LOADING("Downloading template...");
+  console::info("Downloading template...");
   
   create_cache_dir();
 
@@ -132,8 +130,6 @@ void Template::download(TemplateDetails details, string version) {
 
     download(details, version);
   }
-
-  END_LOADING();
 }
 
 void Template::create_cache_dir() {
