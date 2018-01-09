@@ -35,6 +35,13 @@ void EnvVar::list() {
 }
 
 void EnvVar::get(std::string key) {
+  RestClient::Response response = Request::env_var(PROJECT_TOKEN,  key);
+
+  string err;
+  Json json = Json::parse(response.body, err);
+  auto data = json["data"];
+
+  console::info(data["name"].string_value() + "=" + data["value"].string_value());
 }
 
 void EnvVar::set(std::string key, std::string value) {

@@ -133,22 +133,10 @@ void templates(int argc, char **argv, int cmd_index) {
 void envvar(int argc, char **argv, int cmd_index) {
   map<string, int> flags = find_flags(argc, argv, cmd_index);
 
-  // LIST: // skafos env
-  // GET:  // skafos env <key>
-  // SET:  // skafos env <key> --set <value>
-  // DEL:  // skafos env <key> --delete
-
-  /**
-   * 0      1     2     3   4
-   * skafos env <key> --set <value>
-   */
-
   if(argc == 3) {
     string key = string(argv[2]);
     
     EnvVar::get(key);
-    
-    console::log("GET: " + key);
 
     exit(EXIT_SUCCESS);
   }
@@ -177,7 +165,7 @@ void envvar(int argc, char **argv, int cmd_index) {
 
 void logs(int argc, char **argv, int cmd_index){
   std::map<std::string, int> logFlags = find_flags(argc, argv, cmd_index);
-  
+
   string config_path  = FileManager::cwd() + "/metis.config.yml";
   string project      = (FileManager::file_exists(config_path))? ProjectEnv::current().token : "";
 	long numlines       = 0;
