@@ -177,9 +177,11 @@ void envvar(int argc, char **argv, int cmd_index) {
 
 void logs(int argc, char **argv, int cmd_index){
   std::map<std::string, int> logFlags = find_flags(argc, argv, cmd_index);
-  string project  = ProjectEnv::current().token;
-	long numlines   = 0;
-	bool follow     = false;
+  
+  string config_path  = FileManager::cwd() + "/metis.config.yml";
+  string project      = (FileManager::file_exists(config_path))? ProjectEnv::current().token : "";
+	long numlines       = 0;
+	bool follow         = false;
 
   if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
     project = string(argv[2]);
