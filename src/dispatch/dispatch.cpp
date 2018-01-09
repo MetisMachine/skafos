@@ -181,7 +181,7 @@ void logs(int argc, char **argv, int cmd_index){
 	long numlines   = 0;
 	bool follow     = false;
 
-  if (string(argv[2]).compare("--tail") != 0 || string(argv[2]).compare("-n") != 0){
+  if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
     project = string(argv[2]);
   }
 

@@ -118,6 +118,8 @@ RestClient::Response Request::_env_vars(string project_id) {
 
   string uri = ENV_VARS_URL + "/" + project_id;
 
+  console::debug("VAR LIST: " + API_URL + uri);
+
   return this->connection->get(uri);
 }
 
