@@ -121,6 +121,14 @@ RestClient::Response Request::_env_vars(string project_id) {
   return this->connection->get(uri);
 }
 
+RestClient::Response Request::_env_var(std::string project_id, std::string key) {
+  API_HEADERS();
+
+  string uri = ENV_VARS_URL + "/" + project_id + "/" + key;
+
+  return this->connection->get(uri);
+}
+
 RestClient::Response Request::_add_env_var(string project_id, string key, string value) {
   API_HEADERS();
 
@@ -207,6 +215,10 @@ RestClient::Response Request::create_project(string name) {
 
 RestClient::Response Request::env_vars(string project_id) {
   return instance()->_env_vars(project_id);
+}
+
+RestClient::Response Request::env_var(string project_id, string key) {
+  return instance()->_env_var(project_id, key);
 }
 
 RestClient::Response Request::add_env_var(string project_id, string key, string value) {

@@ -45,7 +45,9 @@ namespace console {
     std::string _message;
   };
 
+  void headline(std::string message);
   void success(std::string message);
+  void log(std::string message);
   void info(std::string message);
   void warn(std::string message);
   void error(std::string message);

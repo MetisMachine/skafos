@@ -12,8 +12,10 @@
 #include "version.h"
 #include "logs/logs.h"
 #include "env/env.h"
+#include "env_var/env_var.h"
 #include "templates/templates.h"
 #include "project/project.h"
+#include "project_env/project_env.h"
 
 using namespace std;
 
@@ -46,8 +48,9 @@ struct command setup_cmd        = {"setup", {}, false};
 struct command init_cmd         = {"init", {"--template"}, true};
 struct command auth_cmd         = {"auth", {}, false};
 struct command templates_cmd    = {"templates", {"--update", "--search"}, true};
+struct command env_cmd          = {"env", {"--set"}, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true};
-struct command command_list[5]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, logs_cmd};
+struct command command_list[6]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, env_cmd, logs_cmd};
 
 int Dispatch::name_match(string arg) {
   for (int j = 0; j < sizeof(command_list)/sizeof(command_list[0]) ; j++) {
@@ -68,12 +71,12 @@ int Dispatch::flag_match(int argc, char **argv, string flag) {
   return -1;
 }
 
-map<string, int> find_flags(int argc, char **argv, int cmdIndex) {
+map<string, int> find_flags(int argc, char **argv, int cmd_index) {
   map<string, int> foundFlags;
 
-  for(int k = 0; k < command_list[cmdIndex].flags.size(); k++) {
-    string key      = command_list[cmdIndex].flags[k];
-    foundFlags[key] = Dispatch::flag_match(argc, argv, command_list[cmdIndex].flags[k]);;
+  for(int k = 0; k < command_list[cmd_index].flags.size(); k++) {
+    string key      = command_list[cmd_index].flags[k];
+    foundFlags[key] = Dispatch::flag_match(argc, argv, command_list[cmd_index].flags[k]);;
   }
 
   return foundFlags;
@@ -127,35 +130,80 @@ void templates(int argc, char **argv, int cmd_index) {
   }  
 }
 
-void logs(int argc, char **argv, int cmdIndex){
-  std::map<std::string, int> logFlags = find_flags(argc, argv, cmdIndex);
-  string project  = "";
-	long numlines   = 0;
-	bool follow     = false;
-  if (string(argv[2]).compare("--tail") != 0 || string(argv[2]).compare("-n") != 0){
-    project = string(argv[2]);
-  } else {
-		console::error("A project token is required");
-	}
-  if(logFlags.find("-n")->second != -1){
-    int numIndex = logFlags.find("-n")->second;
-    if(numIndex+1 < argc){
-      numlines = long(argv[numIndex+1]);
+void envvar(int argc, char **argv, int cmd_index) {
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+
+  if(argc == 3) {
+    string key = string(argv[2]);
+    
+    EnvVar::get(key);
+
+    exit(EXIT_SUCCESS);
+  }
+
+  if(argc > 3) {
+    string key = string(argv[2]);
+
+    if(string(argv[3]) == "--delete") {
+      EnvVar::del(key);
+
+      exit(EXIT_SUCCESS);
+    }
+
+    if(string(argv[3]) == "--set") {
+      string val = string(argv[4]);
+
+      EnvVar::set(key, val);
+
+      exit(EXIT_SUCCESS);
     }
   }
-  if(logFlags.find("--tail")->second != -1){
+
+  EnvVar::list();
+  exit(EXIT_SUCCESS);
+}
+
+void logs(int argc, char **argv, int cmd_index){
+  std::map<std::string, int> logFlags = find_flags(argc, argv, cmd_index);
+
+  string config_path  = FileManager::cwd() + "/metis.config.yml";
+  string project      = (FileManager::file_exists(config_path))? ProjectEnv::current().token : "";
+	long numlines       = 0;
+	bool follow         = false;
+
+  if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
+    project = string(argv[2]);
+  }
+
+  if(project.size() < 1) {
+		console::error("A project token is required");
+    
+    exit(EXIT_FAILURE);
+	}
+  
+  if(logFlags.find("-n")->second != -1) {
+    int numIndex = logFlags.find("-n")->second;
+
+    if(numIndex+1 < argc) {
+      numlines = atoi(argv[numIndex+1]);
+    }
+  }
+
+  if(logFlags.find("--tail")->second != -1) {
     follow = true;
   }
+
   Logs::print(project, numlines, follow);
 }
 
-int Dispatch::dispatch(int argc, char **argv, int cmd_index){
+int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
     FunctionCaller disp;
 
     disp.insert("setup",      setup);
     disp.insert("init",       init);
     disp.insert("auth",       auth);
     disp.insert("templates",  templates);
+    disp.insert("env",        envvar);
     disp.insert("logs",       logs);
     
     if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {

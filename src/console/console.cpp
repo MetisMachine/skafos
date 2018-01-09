@@ -12,7 +12,6 @@ using namespace std;
 
 #define FLASH_MSG(clr, symbl, msg) \
 cout      \
-<< endl   \
 << RESET  \
 << BOLD   \
 << clr    \
@@ -70,8 +69,21 @@ namespace console {
     this->_loading = false;
   }
 
+  void headline(std::string message) {
+    cout
+    << RESET
+    << BOLD 
+    << message  
+    << RESET
+    << endl;
+  }
+
   void success(string message) {
     FLASH_MSG(GREEN, CHECKMARK, message);
+  }
+
+  void log(string message) {
+    FLASH_MSG(WHITE, PINCH, message);
   }
 
   void info(string message) {
