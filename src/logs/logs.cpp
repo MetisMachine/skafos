@@ -44,7 +44,7 @@ static size_t on_data(char *ptr, size_t size, size_t nmemb, void *userdata)
   return size * nmemb;
 }
 
-void Logs::print(std::string project, long num, bool tail) {
+void Logs::print(std::string project, int num, bool tail) {
   VERIFY_AUTH();
 
   handle_sse_event = sse_event;
@@ -56,7 +56,7 @@ void Logs::print(std::string project, long num, bool tail) {
   };
 
   std::string logs_url    = LOGGING_URL + project;
-  std::string num_string  = (num == 0)? "10" : std::to_string(num);
+  std::string num_string  = (num == 0) ? "10" : std::to_string(num);
 
   logs_url += ("?offset=" + num_string);
   

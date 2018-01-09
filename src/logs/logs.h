@@ -5,7 +5,7 @@
 
 class Logs {
   public:
-    static void print(std::string project, long num, bool tail);
+    static void print(std::string project, int num, bool tail);
 };
 
 #endif // !__SKAFOS__CLI_LOGS_H__

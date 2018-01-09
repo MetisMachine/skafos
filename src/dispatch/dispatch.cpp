@@ -195,7 +195,7 @@ void logs(int argc, char **argv, int cmd_index){
     int numIndex = logFlags.find("-n")->second;
 
     if(numIndex+1 < argc) {
-      numlines = long(argv[numIndex+1]);
+      numlines = atoi(argv[numIndex+1]);
     }
   }
 
