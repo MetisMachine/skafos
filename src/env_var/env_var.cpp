@@ -50,6 +50,7 @@ void EnvVar::get(std::string key) {
 }
 
 void EnvVar::set(std::string key, std::string value) {
+  Request::delete_env_var(PROJECT_TOKEN, key);
   Request::add_env_var(PROJECT_TOKEN, key, value);
 
   console::info("Set " + key + " to value: " + value);

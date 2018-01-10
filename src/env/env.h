@@ -8,7 +8,6 @@
 #include "templates/templates.h"
 
 #define VERIFY_AUTH Env::instance()->verify_auth
-
 #define ENV_PATHS Env::instance()->paths
 
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
