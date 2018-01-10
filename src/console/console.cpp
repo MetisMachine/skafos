@@ -101,7 +101,15 @@ namespace console {
   void debug(string message) {
     if(ENVIRONMENT == "production") { return; }
 
-    FLASH_MSG(BLUE, DBL_ARROW, message);
+    cout
+    << RESET
+    << BOLD
+    << YELLOW
+    << "~"
+    << " "
+    << message
+    << RESET
+    << endl;
   }
 
   void cli_args(int argc, char **argv) {
