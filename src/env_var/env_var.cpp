@@ -1,3 +1,4 @@
+#include <strings.h>
 #include "env_var.h"
 #include "request/request.h"
 #include "project_env/project_env.h"
@@ -41,7 +42,11 @@ void EnvVar::get(std::string key) {
   Json json = Json::parse(response.body, err);
   auto data = json["data"];
 
-  console::info(data["name"].string_value() + "=" + data["value"].string_value());
+  if(data["name"].string_value() == "") {
+    console::info("Could not find environment variable: " + key);
+  } else {
+    console::info(data["name"].string_value() + "=" + data["value"].string_value());
+  }
 }
 
 void EnvVar::set(std::string key, std::string value) {
@@ -51,7 +56,7 @@ void EnvVar::set(std::string key, std::string value) {
 }
 
 void EnvVar::del(std::string key) {
-  string yesno = "Y";
+  string yesno = "y";
 
   cout << "Are you sure you want to delete: " << key << "? [Yn] ";
 
@@ -64,7 +69,7 @@ void EnvVar::del(std::string key) {
     stream >> yesno;
   }
 
-  if(yesno == "Y") {
+  if(strcasecmp(yesno.c_str(), "y") == 0) {
     Request::delete_env_var(PROJECT_TOKEN, key);
 
     console::success("Env var (" + key + ") has been deleted");
