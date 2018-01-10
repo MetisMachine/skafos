@@ -45,8 +45,6 @@ static size_t on_data(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 void Logs::print(std::string project, int num, bool tail) {
-  VERIFY_AUTH();
-
   handle_sse_event = sse_event;
   std::string auth = std::string("x-api-token: ") + Env::instance()->get(METIS_API_TOKEN);
   const char* headers[] = {

@@ -25,12 +25,15 @@ Env::Env() {
 }
 
 void Env::setup() {
-  VERIFY_AUTH();
+  static bool running = false;
 
-  console::info("Setting up environment");
+  if(!running) {
+    running = true;
+    console::info("Setting up environment");
 
-  Template::update();
-  Template::create_cache_dir();
+    Template::update();
+    Template::create_cache_dir();
+  }
 }
 
 bool Env::authenticated() {

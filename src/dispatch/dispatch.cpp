@@ -44,12 +44,12 @@ struct FunctionCaller {
     }
 };
 
-struct command setup_cmd        = {"setup", {}, false};
-struct command init_cmd         = {"init", {"--template"}, true};
-struct command auth_cmd         = {"auth", {}, false};
-struct command templates_cmd    = {"templates", {"--update", "--search"}, true};
-struct command env_cmd          = {"env", {"--set"}, true};
-struct command logs_cmd         = {"logs", {"-n", "--tail"}, true};
+struct command setup_cmd        = {"setup", {}, false, true};
+struct command init_cmd         = {"init", {"--template"}, true, true};
+struct command auth_cmd         = {"auth", {}, false, false};
+struct command templates_cmd    = {"templates", {"--update", "--search"}, true, true};
+struct command env_cmd          = {"env", {"--set"}, true, true};
+struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command command_list[6]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, logs_cmd, env_cmd};
 
 int Dispatch::name_match(string arg) {
@@ -205,7 +205,11 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
     disp.insert("templates",  templates);
     disp.insert("logs",       logs);
     disp.insert("env",        envvar);
-    
+
+	if(command_list[cmd_index].needs_auth) {
+		VERIFY_AUTH();
+	}
+
     if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {
       disp.callFunction<void>(command_list[cmd_index].name);
     } else {

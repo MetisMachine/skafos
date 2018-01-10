@@ -7,6 +7,7 @@ struct command{
   std::string name;
   std::vector<std::string> flags;
   bool has_args;
+  bool needs_auth;
 };
 
 class Dispatch {

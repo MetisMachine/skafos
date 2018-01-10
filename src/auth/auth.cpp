@@ -24,7 +24,9 @@ void Auth::authenticate() {
   auto oauth = Request::authenticate(email, password);
 
   if (oauth.code >= 400) {
-    console::error("Error making request. (" + to_string(oauth.code) + ")");
+    console::error("Invalid email or password.");
+    console::debug("Error making request. (" + to_string(oauth.code) + ")");
+    exit(EXIT_FAILURE);
   } else {
     string err;
 
@@ -37,11 +39,11 @@ void Auth::authenticate() {
 
     string token = api_token.body;
     
-    console::info("Writing credentials...");
+    console::info("Saving credentials...");
 
     Env::instance()->write_credentials(Json::parse(token, err));
 
-    console::info("Loading credentials...");
+    console::debug("Loading credentials...");
     Env::instance()->load_credentials();
   }
 }

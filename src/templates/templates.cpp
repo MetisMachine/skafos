@@ -9,8 +9,6 @@ using namespace std;
 const string TEMPLATE_HEAD = "head";
 
 void Template::update() {
-  VERIFY_AUTH();
-
   console::info("Updating templates...");
   string tpl_path = ENV_PATHS.home + "/" + ENV_PATHS.env + "/template_list.zip"; 
   

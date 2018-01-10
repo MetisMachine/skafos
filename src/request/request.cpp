@@ -164,7 +164,8 @@ void Request::_download(string repo_url, string save_path) {
   char *url   = (char *)repo_url.c_str();
   CURL *curl  = curl_easy_init();
 
-  strcpy(output, save_path.c_str());
+  console::debug("Request _download(save_path): " + save_path);
+  strcpy(output, FileManager::resolve_path(save_path).c_str());
 
   if(curl) {
     fp = fopen(output, "wb");
