@@ -168,7 +168,7 @@ void logs(int argc, char **argv, int cmd_index){
 
   string config_path  = FileManager::cwd() + "/metis.config.yml";
   string project      = (FileManager::file_exists(config_path))? ProjectEnv::current().token : "";
-	long numlines       = 0;
+	int numlines        = 0;
 	bool follow         = false;
 
   if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
@@ -197,24 +197,24 @@ void logs(int argc, char **argv, int cmd_index){
 }
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
-    FunctionCaller disp;
+  FunctionCaller disp;
 
-    disp.insert("setup",      setup);
-    disp.insert("init",       init);
-    disp.insert("auth",       auth);
-    disp.insert("templates",  templates);
-    disp.insert("logs",       logs);
-    disp.insert("env",        envvar);
+  disp.insert("setup",      setup);
+  disp.insert("init",       init);
+  disp.insert("auth",       auth);
+  disp.insert("templates",  templates);
+  disp.insert("logs",       logs);
+  disp.insert("env",        envvar);
 
-	if(command_list[cmd_index].needs_auth) {
-		VERIFY_AUTH();
-	}
+  if(command_list[cmd_index].needs_auth) {
+    VERIFY_AUTH();
+  }
 
-    if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {
-      disp.callFunction<void>(command_list[cmd_index].name);
-    } else {
-      disp.callFunction<void>(command_list[cmd_index].name, argc, argv, cmd_index);
-    }
-    
-    return EXIT_SUCCESS;
+  if(command_list[cmd_index].flags.size() == 0 && command_list[cmd_index].has_args == false) {
+    disp.callFunction<void>(command_list[cmd_index].name);
+  } else {
+    disp.callFunction<void>(command_list[cmd_index].name, argc, argv, cmd_index);
+  }
+  
+  return EXIT_SUCCESS;
 }
