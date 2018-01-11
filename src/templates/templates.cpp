@@ -116,18 +116,16 @@ void Template::download(TemplateDetails details, string version) {
   string cache_path   = ENV_PATHS.cache;
   string tpl_path     = cache_path + "/" + details.name + ".zip"; 
 
-  if(!FileManager::file_exists(tpl_path)) {
-    string download_url = details.repo;
-    if((download_url.substr((download_url.length() - 1), download_url.length())) == "/") {
-      download_url = download_url.substr(0, download_url.length() - 1);
-    }
-  
-    download_url += "/archive/" + version + ".zip";
-
-    Request::download(download_url, tpl_path);
-
-    download(details, version);
+  string download_url = details.repo;
+  if((download_url.substr((download_url.length() - 1), download_url.length())) == "/") {
+    download_url = download_url.substr(0, download_url.length() - 1);
   }
+
+  download_url += "/archive/" + version + ".zip";
+
+  console::debug("Template URL: " + download_url);
+
+  Request::download(download_url, tpl_path);
 }
 
 void Template::create_cache_dir() {
