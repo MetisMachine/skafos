@@ -32,7 +32,8 @@ static void curl_perform(CURL* curl) {
         sleep(3);
         break;
       default:
-        fprintf(stderr, "curl: %s\n", curl_error_buf);
+        fprintf(stderr, "No logs are currently available (%d)\n", res);
+        // fprintf(stderr, "curl: %s\n", curl_error_buf);
         exit(1);
     }
   }
@@ -129,6 +130,7 @@ static CURL* curl_handle(int index) {
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
   curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_error_buf);
+  curl_easy_setopt(curl, CURLOPT_IGNORE_CONTENT_LENGTH, 1L);
   
   /* === allow insecure connections? =============================== */
 

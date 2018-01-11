@@ -6,6 +6,15 @@
 
 using namespace json11;
 
+// #define START_LOADING(message) \
+// auto __ld_ = new console::loader(message); \
+// __ld_->start(); \
+// sleep(1)
+
+// #define END_LOADING() \
+// __ld_->stop(); \
+// delete __ld_
+
 DEFINE_OBJECT(Options, options);
 
 void sse_event(const char* data) {
@@ -17,7 +26,6 @@ void sse_event(const char* data) {
 
   std::string message = json["data"].string_value();
   console::info(message);
-  std::cout << std::endl;
 }
 
 static const char* verify_response(CURL* curl) {
@@ -27,6 +35,7 @@ static const char* verify_response(CURL* curl) {
 
   char* content_type;
   curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &content_type);
+  
   if(!content_type) {
     content_type = (char*)std::string("").c_str();
   }
@@ -34,7 +43,8 @@ static const char* verify_response(CURL* curl) {
   if(!strncmp(content_type, expected_content_type, strlen(expected_content_type)))
     return 0;
 
-  return "Invalid content_type, should be '" EXPECTED_CONTENT_TYPE "'.";
+  console::debug("Invalid content_type, should be '" + std::string(EXPECTED_CONTENT_TYPE) + "'.");
+  return " ";
 }
 
 static size_t on_data(char *ptr, size_t size, size_t nmemb, void *userdata)
