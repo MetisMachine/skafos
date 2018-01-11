@@ -171,28 +171,36 @@ void logs(int argc, char **argv, int cmd_index){
 	int numlines        = 0;
 	bool follow         = false;
 
-  if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
-    project = string(argv[2]);
-  }
+  if(argc > 2) {
+    if((string(argv[2]) != "--tail") && (string(argv[2]) != "-n")) {
+      project = string(argv[2]);
+    }
 
-  if(project.size() < 1) {
-		console::error("A project token is required");
+    if(project.size() < 1) {
+      console::error("A project token is required");
+      
+      exit(EXIT_FAILURE);
+    }
     
-    exit(EXIT_FAILURE);
-	}
-  
-  if(logFlags.find("-n")->second != -1) {
-    int numIndex = logFlags.find("-n")->second;
+    if(logFlags.find("-n")->second != -1) {
+      int numIndex = logFlags.find("-n")->second;
 
-    if(numIndex+1 < argc) {
-      numlines = atoi(argv[numIndex+1]);
+      if(numIndex+1 < argc) {
+        numlines = atoi(argv[numIndex+1]);
+      }
+    }
+
+    if(logFlags.find("--tail")->second != -1) {
+      follow = true;
     }
   }
 
-  if(logFlags.find("--tail")->second != -1) {
-    follow = true;
-  }
+  if(project.size() < 1) {
+    console::error("Unable to start logging, no project token available.");
 
+    exit(EXIT_FAILURE);
+  }
+  
   console::info("Connecting to task logs...");
   Logs::print(project, numlines, follow);
 }

@@ -31,8 +31,15 @@ ProjectDetails ProjectEnv::_current() {
 
 ProjectDetails ProjectEnv::parse_project(string path) {
   ProjectDetails details;
+
+  YAML::Node prj;
   
-  YAML::Node prj = YAML::LoadFile(path);   
+  try {
+    prj = YAML::LoadFile(path);
+  } catch(...) {
+    console::error("Unable to find metis.config.yml, are you in a project directory?");
+    exit(EXIT_FAILURE);
+  }
 
   const string token      = prj["project_token"].as<string>();
   const string name       = prj["name"].as<string>();
