@@ -193,6 +193,7 @@ void logs(int argc, char **argv, int cmd_index){
     follow = true;
   }
 
+  console::info("Connecting to task logs...");
   Logs::print(project, numlines, follow);
 }
 
