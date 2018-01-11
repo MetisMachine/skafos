@@ -4,8 +4,8 @@
 #include "common.h"
 
 class Logs {
-  public:
-    static void print(std::string project, int num, bool tail);
+public:
+  static void print(std::string project, int num, bool tail);
 };
 
-#endif // !__SKAFOS__CLI_LOGS_H__
+#endif 
