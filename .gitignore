@@ -6,6 +6,7 @@ _build/*
 !.gitkeep
 .vscode
 .idea
+metis.config.yml
 
 # Prerequisites
 *.d

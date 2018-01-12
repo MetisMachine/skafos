@@ -16,6 +16,7 @@
 #include "templates/templates.h"
 #include "project/project.h"
 #include "project_env/project_env.h"
+#include "data/data.h"
 
 using namespace std;
 
@@ -50,7 +51,17 @@ struct command auth_cmd         = {"auth", {}, false, false};
 struct command templates_cmd    = {"templates", {"--update", "--search"}, true, true};
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
-struct command command_list[6]  = {setup_cmd, init_cmd, auth_cmd, templates_cmd, logs_cmd, env_cmd};
+struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
+
+struct command command_list[7]  = {
+  setup_cmd, 
+  init_cmd, 
+  auth_cmd, 
+  templates_cmd, 
+  logs_cmd, 
+  env_cmd,
+  fetch_cmd
+};
 
 int Dispatch::name_match(string arg) {
   for (int j = 0; j < sizeof(command_list)/sizeof(command_list[0]) ; j++) {
@@ -205,6 +216,21 @@ void logs(int argc, char **argv, int cmd_index){
   Logs::print(project, numlines, follow);
 }
 
+void fetch_table(int argc, char **argv, int cmd_index) {
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+
+  if(flags.find("--table")->second != -1) {
+    int index = flags.find("--table")->second;
+
+    if(index + 1 < argc) {
+      Data::fetch(argv[index + 1]);
+    }
+  }
+
+  exit(EXIT_FAILURE);
+}
+
+
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
 
@@ -214,6 +240,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("templates",  templates);
   disp.insert("logs",       logs);
   disp.insert("env",        envvar);
+  disp.insert("fetch",      fetch_table);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

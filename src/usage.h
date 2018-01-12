@@ -9,15 +9,17 @@ Usage:
     skafos templates [--update] [--search <search_term>]
     skafos env [<key>] [--set <value>] [--delete]
     skafos logs [<project_token>] [-n <num>] [--tail]
+    skafos fetch --table <table_name>
     skafos -h | --help
     skafos -v | --version
 Commands:
     setup       Setup development environment.
-    init        Create a new project
-    auth        Authenticate request.    
-    templates   Manage templates
-    env         Get or set environment variables
+    init        Create a new project.
+    auth        Authenticate request.
+    templates   Manage templates.
+    env         Get or set environment variables.
     logs        Get logs for a project.
+    fetch       Fetch results from a given table.
 Options:
     -v --version    Shows version.
 
