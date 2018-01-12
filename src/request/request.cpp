@@ -13,6 +13,7 @@ const string PING_URL     = "/ping";
 const string TOKEN_URL    = "/api_tokens/";
 const string PROJECT_URL  = "/projects";
 const string ENV_VARS_URL = "/env_vars";
+const string FETCH_URL    = "/data";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -150,6 +151,13 @@ RestClient::Response Request::_delete_env_var(string project_id, string key) {
   return this->connection->del(uri);
 }
 
+RestClient::Response Request::_fetch(string project_id, string table) {
+  API_HEADERS();
+
+  string uri = FETCH_URL + "/" + project_id + "/" + table;
+
+  return this->connection->get(uri);
+}
 
 // DOWNLOAD 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
@@ -230,6 +238,9 @@ RestClient::Response Request::delete_env_var(string project_id, string key) {
   return instance()->_delete_env_var(project_id, key);
 }
 
+RestClient::Response Request::fetch(string project_id, string table) {
+  return instance()->_fetch(project_id, table);
+}
 
 // DOWNLOAD
 void Request::download(string url, string save_path) {
