@@ -24,8 +24,12 @@ void sse_event(const char* data) {
     return;
   }
 
-  std::string message = json["data"].string_value();
-  console::info(message);
+  std::string eventtype = json["event"].string_value();
+  if (eventtype.compare("message") == 0) {
+    std::string message = json["data"].string_value();
+    console::info(message);
+    std::cout << std::endl;
+  }
 }
 
 static const char* verify_response(CURL* curl) {
