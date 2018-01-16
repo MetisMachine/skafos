@@ -58,7 +58,7 @@ endif()
 add_subdirectory(src)
 add_subdirectory(libs)
 
-FIND_PACKAGE(LibArchive REQUIRED)
+FIND_PACKAGE(LibArchive)
 FIND_PACKAGE(CURL REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
