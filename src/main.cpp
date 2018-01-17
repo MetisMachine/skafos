@@ -1,6 +1,6 @@
 #include <iostream>
 #include <signal.h>
-#include <docopt.h>
+#include "docopt/docopt.h"
 #include "usage.h"
 #include "common.h"
 #include "auth/auth.h"

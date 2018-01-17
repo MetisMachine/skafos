@@ -1,6 +1,6 @@
 #include "console.h"
 #include <iostream>
-#include <docopt.h>
+#include "docopt/docopt.h"
 
 #include "common.h"
 #include "usage.h"

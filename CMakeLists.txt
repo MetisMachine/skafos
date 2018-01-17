@@ -66,12 +66,14 @@ FIND_PACKAGE(Threads REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG, ON)
 
 file(GLOB_RECURSE HEADERS 
+    "libs/docopt/*.h"
     "libs/restclient-cpp/include/**/*.h"
     "src/**/*.h" 
     "src/*.h"
 )
 
 file(GLOB_RECURSE SOURCES 
+    "libs/docopt/*.cpp"
     "libs/restclient-cpp/source/*.cc"
     "src/**/*.cpp" 
     "src/*.cpp"
@@ -90,11 +92,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/sse
     ${CMAKE_SOURCE_DIR}/libs/termcolor
     ${CMAKE_SOURCE_DIR}/libs/restclient-cpp/include
+    ${CMAKE_SOURCE_DIR}/libs/docopt/include
     ${CMAKE_SOURCE_DIR}/src
 )
 
 add_executable(skafos ${SOURCES})
-target_link_libraries(skafos docopt json11 sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
+target_link_libraries(skafos json11 sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
 
 install(TARGETS skafos RUNTIME DESTINATION bin)
 
