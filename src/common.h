@@ -23,7 +23,7 @@
 #include "cli_env.h"
 
 #include "termcolor.hpp"
-#include "json11.hpp"
+#include "json11/json11.hpp"
 #include "console/console.h"
 #include "env/env.h"
 
