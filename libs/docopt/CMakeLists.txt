@@ -46,7 +46,7 @@ if(MSVC OR XCODE)
     # static libraries completely separately.
     # Xcode does not support libraries with only object files as sources.
     # See https://cmake.org/cmake/help/v3.0/command/add_library.html?highlight=add_library
-    add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
+    add_library(docopt STATIC ${docopt_SOURCES} ${docopt_HEADERS})
     add_library(docopt_s STATIC ${docopt_SOURCES} ${docopt_HEADERS})
 else()
     # If not using MSVC or Xcode, we will create an intermediate object target
@@ -54,7 +54,7 @@ else()
     add_library(docopt_o OBJECT ${docopt_SOURCES} ${docopt_HEADERS})
     set_target_properties(docopt_o PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-    add_library(docopt SHARED $<TARGET_OBJECTS:docopt_o>)
+    add_library(docopt STATIC $<TARGET_OBJECTS:docopt_o>)
     add_library(docopt_s STATIC $<TARGET_OBJECTS:docopt_o>)
 endif()
 
