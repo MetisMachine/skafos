@@ -103,4 +103,11 @@ include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_VERSION ${RELEASE_VERSION})
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_PACKAGE_DESCRIPTION "Commandline tool for the Metis Machine (www.metismachine.com) Skafos platform.")
+set(CPACK_PACKAGE_CONTACT "support@metismachine.com")
+endif()
+
 include(CPack)
