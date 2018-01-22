@@ -105,5 +105,5 @@ string Env::home_dir() {
 }
 
 string Env::metis_dir() {
-  return ".metis";
+  return (ENVIRONMENT == "production")? ".metis" : ".metis_dev";
 }
