@@ -94,10 +94,17 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src
 )
 
-add_executable(skafos ${SOURCES})
-target_link_libraries(skafos sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
 
-install(TARGETS skafos RUNTIME DESTINATION bin)
+if($ENV{STAGING})
+set(EXE_NAME skadev)
+else()
+set(EXE_NAME skafos)
+endif()
+
+add_executable(${EXE_NAME} ${SOURCES})
+target_link_libraries(${EXE_NAME} sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
+
+install(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin)
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_VERSION ${RELEASE_VERSION})

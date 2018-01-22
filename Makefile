@@ -30,7 +30,7 @@ _env_for_prod:
 build: clean _create_dev_version_h _env_for_staging
 	@cd $(BUILD_DIR) \
 	&& echo "Building skafos..." \
-	&& cmake .. -Wno-dev \
+	&& STAGING=1 cmake .. -Wno-dev \
 	&& make
 
 build_dev: clean _create_dev_version_h _env_for_staging
@@ -49,8 +49,4 @@ build_dist: clean _create_version_h _env_for_prod
 clean:
 	@rm -rf _build/* 
 
-
-
 release: _start_release clean build_dist _tag_release
-
-homebrew: clean build_dist
