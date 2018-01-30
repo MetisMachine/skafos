@@ -18,6 +18,7 @@ public:
   static RestClient::Response add_env_var(std::string project_id, std::string key, std::string value);
   static RestClient::Response delete_env_var(std::string project_id, std::string key);
   static RestClient::Response fetch(std::string project_id, std::string table);
+  static RestClient::Response create_task(std::string name, std::string project_id);
 
   static void download(std::string url, std::string save_path);
 
@@ -42,6 +43,7 @@ private:
   RestClient::Response _add_env_var(std::string project_id, std::string key, std::string value);
   RestClient::Response _delete_env_var(std::string project_id, std::string key);
   RestClient::Response _fetch(std::string project_id, std::string table);
+  RestClient::Response _create_task(std::string name, std::string project_id);
 
   static void _download(std::string url, std::string save_path);
 };
