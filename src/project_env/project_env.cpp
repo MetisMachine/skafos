@@ -31,6 +31,12 @@ ProjectDetails ProjectEnv::_current() {
 
 ProjectDetails ProjectEnv::parse_project(string path) {
   ProjectDetails details;
+  ProjectTask prj_task_info;
+  std::vector<ProjectTask> prj_tasks;
+  std::string name = "";
+  std::string entrypoint = "";
+  std::string task_id = "";
+  std::string token = "";
 
   YAML::Node prj;
   
