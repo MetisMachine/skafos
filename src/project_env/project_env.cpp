@@ -64,10 +64,18 @@ ProjectDetails ProjectEnv::parse_project(string path) {
     token = prj["project_token"].as<string>();
     
   } else {
+    console::debug("Using single task (old) config file"); 
 
-  details.token       = token;
-  details.name        = name;
-  details.entrypoint  = entrypoint;
+    token      = prj["project_token"].as<string>();
+    name       = prj["name"].as<string>();
+    entrypoint = prj["entrypoint"].as<string>();
+
+    prj_task_info.name = name;
+    prj_task_info.entrypoint = entrypoint;
+    prj_task_info.task_id = task_id;
+    prj_tasks.push_back(prj_task_info);
+  
+  }
 
   return details;
 }
