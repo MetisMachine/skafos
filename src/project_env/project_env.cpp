@@ -77,5 +77,8 @@ ProjectDetails ProjectEnv::parse_project(string path) {
   
   }
 
+  details.token         = token;
+  details.project_tasks = prj_tasks; 
+
   return details;
 }
