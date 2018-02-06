@@ -6,27 +6,21 @@
 
 using namespace json11;
 
-// #define START_LOADING(message) \
-// auto __ld_ = new console::loader(message); \
-// __ld_->start(); \
-// sleep(1)
-
-// #define END_LOADING() \
-// __ld_->stop(); \
-// delete __ld_
-
 DEFINE_OBJECT(Options, options);
 
 void sse_event(const char* data) {
   std::string err;
   Json json = Json::parse(data, err);
-  if(err.length() > 0) {
+
+  if(err.length() > 0 || !json["event"].is_string()) {
     return;
   }
 
   std::string eventtype = json["event"].string_value();
-  if (eventtype.compare("message") == 0) {
+
+  if (eventtype.compare("message") == 0 && json["data"].is_string()) {
     std::string message = json["data"].string_value();
+
     console::info(message);
     std::cout << std::endl;
   }
