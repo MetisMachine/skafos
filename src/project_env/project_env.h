@@ -5,10 +5,15 @@
 
 #define PROJECT_TOKEN  ProjectEnv::current().token
 
-struct ProjectDetails {
-  std::string token;
+struct ProjectTask {
+  std::string task_id;
   std::string name;
   std::string entrypoint;
+};
+
+struct ProjectDetails {
+  std::vector<ProjectTask> project_tasks;
+  std::string token;
 };
 
 class ProjectEnv {

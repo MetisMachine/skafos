@@ -8,12 +8,13 @@ using namespace json11;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
 
-const string LOGIN_URL    = "/users/login";
-const string PING_URL     = "/ping";
-const string TOKEN_URL    = "/api_tokens/";
-const string PROJECT_URL  = "/projects";
-const string ENV_VARS_URL = "/env_vars";
-const string FETCH_URL    = "/data";
+const string LOGIN_URL          = "/users/login";
+const string PING_URL           = "/ping";
+const string TOKEN_URL          = "/api_tokens/";
+const string PROJECT_URL        = "/projects";
+const string ENV_VARS_URL       = "/env_vars";
+const string FETCH_URL          = "/data";
+const string PROJECT_TASKS_URL  = "/project_tasks";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -159,6 +160,19 @@ RestClient::Response Request::_fetch(string project_id, string table) {
   return this->connection->get(uri);
 }
 
+RestClient::Response Request::_create_task(string name, string project_id) {
+  API_HEADERS();
+
+  Json body = Json::object {
+    {"name", name}
+  };
+
+  string uri = PROJECT_URL + "/" + project_id + "/" + PROJECT_TASKS_URL + "/";
+
+  return this->connection->post(uri, body.dump());
+}
+
+
 // DOWNLOAD 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -240,6 +254,10 @@ RestClient::Response Request::delete_env_var(string project_id, string key) {
 
 RestClient::Response Request::fetch(string project_id, string table) {
   return instance()->_fetch(project_id, table);
+}
+
+RestClient::Response Request::create_task(string name, string project_id) {
+  return instance()->_create_task(name, project_id);
 }
 
 // DOWNLOAD

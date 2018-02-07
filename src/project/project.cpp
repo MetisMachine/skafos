@@ -50,9 +50,13 @@ void Project::init(string name, string tpl) {
   string proj   = replace(project_name, "/", "");
   Json json     = Json::parse(Request::create_project(proj).body, err);
   string token  = json["token"].string_value();
+  string project_task_id = json["project_tasks"][0]["id"].string_value();
+  string project_task_name = json["project_tasks"][0]["name"].string_value();
 
   config_template.setValue("token", token);
   config_template.setValue("name", proj);
+  config_template.setValue("project_task_id", project_task_id);
+  config_template.setValue("project_task_name", project_task_name);
 
   FileManager::write(template_path, config_template.render());
 }
