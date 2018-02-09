@@ -35,7 +35,12 @@ static void data_add(const char* string)
 {
   size_t new_len = (data_buf ? strlen(data_buf) : 0) + strlen(string) + 1;
 
-  data_buf = realloc(data_buf, new_len + 1);
+  if(data_buf == NULL) {
+    data_buf = malloc(new_len + 1);
+    memset(data_buf, 0, new_len + 1);
+  } else {
+    data_buf = realloc(data_buf, new_len + 1);
+  }
   strcat(data_buf, "\n");
   strcat(data_buf, string);
   
