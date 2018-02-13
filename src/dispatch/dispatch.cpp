@@ -52,15 +52,17 @@ struct command templates_cmd    = {"templates", {"--update", "--search"}, true, 
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
+struct command kill_task_cmd    = {"kill", {"--task"}, true, true};
 
-struct command command_list[7]  = {
+struct command command_list[8]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
   templates_cmd, 
   logs_cmd, 
   env_cmd,
-  fetch_cmd
+  fetch_cmd,
+  kill_task_cmd
 };
 
 int Dispatch::name_match(string arg) {
@@ -230,6 +232,37 @@ void fetch_table(int argc, char **argv, int cmd_index) {
   exit(EXIT_FAILURE);
 }
 
+void kill_task(int argc, char **argv, int cmd_index){
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+  string kill_id                = ".";
+  string task_type              = "";
+
+  if(flags.find("--all")->second != -1) {
+    task_type = "all";
+    int all_index = flags.find("--all")->second;
+
+    if(all_index + 1 < argc) {
+      kill_id = argv[all_index + 1];
+    }
+  } else if(flags.find("--project_task")->second != -1) {
+    task_type = "project_task";
+    int proj_task_index = flags.find("--project_task")->second;
+
+    if(proj_task_index + 1 < argc) {
+      kill_id = argv[proj_task_index + 1];
+    }
+  } else {
+    task_type = "task";
+    int task_index = flags.find("--task")->second;
+
+    if(task_index + 1 < argc) {
+      kill_id = argv[task_index + 1];
+    }
+  }
+
+  Project::kill(kill_id, task_type);
+}
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
@@ -241,6 +274,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("logs",       logs);
   disp.insert("env",        envvar);
   disp.insert("fetch",      fetch_table);
+  disp.insert("kill",       kill_task);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
