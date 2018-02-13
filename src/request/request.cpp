@@ -15,6 +15,9 @@ const string PROJECT_URL        = "/projects";
 const string ENV_VARS_URL       = "/env_vars";
 const string FETCH_URL          = "/data";
 const string PROJECT_TASKS_URL  = "/project_tasks";
+const string KILL_ALL_URL       = "/kill_all";
+const string KILL_TASK_URL      = "/kill";
+const string TASKS_URL          = "/tasks";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -172,6 +175,25 @@ RestClient::Response Request::_create_task(string name, string project_id) {
   return this->connection->post(uri, body.dump());
 }
 
+RestClient::Response Request::_kill_task(string kill_id, string task_type){
+  API_HEADERS();
+  string uri = "";
+
+  if (task_type.compare("all") == 0){
+    uri = PROJECT_URL + "/" + kill_id + KILL_ALL_URL;
+
+    return this->connection->del(uri);
+  } else if (task_type.compare("project_task") == 0){
+    uri = PROJECT_TASKS_URL + "/" + kill_id + KILL_TASK_URL;
+
+    return this->connection->del(uri);
+  } else {
+    uri = TASKS_URL + "/" + kill_id + KILL_ALL_URL;
+
+    return this->connection->del(uri);
+  }
+}
+
 
 // DOWNLOAD 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
@@ -258,6 +280,10 @@ RestClient::Response Request::fetch(string project_id, string table) {
 
 RestClient::Response Request::create_task(string name, string project_id) {
   return instance()->_create_task(name, project_id);
+}
+
+RestClient::Response Request::kill_task(string kill_id, string task_type) {
+  return instance()->_kill_task(kill_id, task_type);
 }
 
 // DOWNLOAD
