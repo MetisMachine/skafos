@@ -10,6 +10,7 @@ Usage:
     skafos env [<key>] [--set <value>] [--delete]
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
+    skafos kill (--all [<project_token>] | --project_task <project_task_id> | --task <task_id>)
     skafos -h | --help
     skafos -v | --version
 Commands:
@@ -20,6 +21,7 @@ Commands:
     env         Get or set environment variables.
     logs        Get logs for a project.
     fetch       Fetch results from a given table.
+    kill        Kill an entire project or specific task.
 Options:
     -v --version    Shows version.
 
