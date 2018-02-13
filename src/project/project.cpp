@@ -59,6 +59,22 @@ void Project::init(string name, string tpl) {
   config_template.setValue("project_task_name", project_task_name);
 
   FileManager::write(template_path, config_template.render());
+  string directory = (kill_id == "")? 
+    FileManager::cwd() : (kill_id == ".") ? 
+      FileManager::resolve_path(kill_id) : 
+      FileManager::cwd() + "/" + kill_id;
+
+  if(task_type == "."){
+    YAML::Node config;
+    string tpl_path = directory + "/metis.config.yml";
+    try {
+      config = YAML::LoadFile(tpl_path);
+    } catch(...) {
+      console::error("Unable to find metis.config.yml, are you in a project directory?");
+      exit(EXIT_FAILURE);
+    }
+    kill_id = config["token"].as<string>();
+  }
 }
 
 bool Project::exists(std::string directory) {
