@@ -5,6 +5,7 @@
 #include "request/request.h"
 #include "jinja/jinja.h"
 #include "jinja/stringhelper.h"
+#include "yaml-cpp/yaml.h"
 
 using namespace std;
 using namespace json11;
@@ -59,6 +60,9 @@ void Project::init(string name, string tpl) {
   config_template.setValue("project_task_name", project_task_name);
 
   FileManager::write(template_path, config_template.render());
+}
+
+void Project::kill(string kill_id, string task_type){
   string directory = (kill_id == "")? 
     FileManager::cwd() : (kill_id == ".") ? 
       FileManager::resolve_path(kill_id) : 
@@ -74,6 +78,18 @@ void Project::init(string name, string tpl) {
       exit(EXIT_FAILURE);
     }
     kill_id = config["token"].as<string>();
+  }
+  string err;
+  Json json = Json::parse(Request::kill_task(kill_id, task_type).body, err);
+  bool kill_message_sent = json["kill_message_sent"].bool_value();
+  if (kill_id.compare("all") == 0){
+      kill_id = "project";
+    }
+
+  if (kill_message_sent){
+    console::success("Successfully added the " + kill_id + " to the kill task queue.");
+  } else{
+    console::error("Unable to add the " + kill_id + " to the kill task queue.");
   }
 }
 
