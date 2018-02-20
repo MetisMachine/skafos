@@ -175,16 +175,33 @@ RestClient::Response Request::_create_task(string name, string project_id) {
   return this->connection->post(uri, body.dump());
 }
 
-RestClient::Response Request::_kill_task(string kill_id, string task_type){
+RestClient::Response Request::_kill_project(string project_token){
   API_HEADERS();
   string uri = "";
 
-  if (task_type.compare("all") == 0){
-    uri = PROJECT_URL + "/" + kill_id + KILL_ALL_URL;
+  uri = PROJECT_URL + "/" + project_token + KILL_ALL_URL;
 
     return this->connection->del(uri);
-  } else if (task_type.compare("project_task") == 0){
-    uri = PROJECT_TASKS_URL + "/" + kill_id + KILL_TASK_URL;
+}
+
+RestClient::Response Request::_kill_project(string project_token, string project_tasks, string tasks){
+  API_HEADERS();
+  string uri = ""; 
+  Json body;
+  vector<string> tasks_list;
+  vector<string> project_tasks_list;
+
+  uri = PROJECT_URL + "/" + project_token + KILL_TASK_URL;
+
+  if(project_tasks.compare("") == 0 && tasks.compare("") != 0){
+    tasks_list = string_split(tasks, ',');
+    body = Json::object{
+      {"task_ids", tasks_list}
+    };
+  }
+
+  return this->connection->post(uri, body.dump()); 
+}
 
     return this->connection->del(uri);
 RestClient::Response Request::_kill_task(string task){
