@@ -187,13 +187,30 @@ RestClient::Response Request::_kill_task(string kill_id, string task_type){
     uri = PROJECT_TASKS_URL + "/" + kill_id + KILL_TASK_URL;
 
     return this->connection->del(uri);
-  } else {
-    uri = TASKS_URL + "/" + kill_id + KILL_ALL_URL;
+RestClient::Response Request::_kill_task(string task){
+  API_HEADERS();
+  string uri = "";
+
+  uri = TASKS_URL + "/" + task + KILL_ALL_URL;
 
     return this->connection->del(uri);
-  }
 }
 
+RestClient::Response Request::_kill_task(string task, string project_tasks){
+  API_HEADERS();
+  string uri = "";
+  vector<string> project_tasks_list;
+
+  uri = TASKS_URL + "/" + task + KILL_TASK_URL;
+
+  project_tasks_list = string_split(project_tasks, ',');
+
+  Json body = Json::object {
+    {"project_task_ids", project_tasks_list}
+  };
+
+  return this->connection->post(uri, body.dump());
+}
 
 // DOWNLOAD 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
