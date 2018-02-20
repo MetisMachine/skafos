@@ -7,8 +7,10 @@
 class Project {
 public:
   static void init(std::string name, std::string tpl);
-  static void kill(std::string kill_id, std::string task_type);
-
+  static void kill(std::string project_token);
+  static void kill(std::string project_tasks, std::string tasks);
+  static void kill(std::string project_token, std::string project_tasks, std::string tasks);
+ 
 private:
   static bool exists(std::string directory);
 };
