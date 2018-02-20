@@ -31,7 +31,6 @@ this->connection->SetHeaders(headers)
 RestClient::HeaderFields headers = this->_oauth_headers(); \
 this->connection->SetHeaders(headers)
 
-
 // Private
 Request *Request::instance_ = 0;
 
@@ -181,7 +180,7 @@ RestClient::Response Request::_kill_project(string project_token){
 
   uri = PROJECT_URL + "/" + project_token + KILL_ALL_URL;
 
-    return this->connection->del(uri);
+  return this->connection->del(uri);
 }
 
 RestClient::Response Request::_kill_project(string project_token, string project_tasks, string tasks){
@@ -209,7 +208,7 @@ RestClient::Response Request::_kill_project_task(string project_task){
 
   uri = PROJECT_TASKS_URL + "/" + project_task + KILL_ALL_URL;
 
-    return this->connection->del(uri);
+  return this->connection->del(uri);
 }
 
 RestClient::Response Request::_kill_project_task(string project_task, string tasks){
@@ -234,7 +233,7 @@ RestClient::Response Request::_kill_task(string task){
 
   uri = TASKS_URL + "/" + task + KILL_ALL_URL;
 
-    return this->connection->del(uri);
+  return this->connection->del(uri);
 }
 
 RestClient::Response Request::_kill_task(string task, string project_tasks){
@@ -340,8 +339,28 @@ RestClient::Response Request::create_task(string name, string project_id) {
   return instance()->_create_task(name, project_id);
 }
 
-RestClient::Response Request::kill_task(string kill_id, string task_type) {
-  return instance()->_kill_task(kill_id, task_type);
+RestClient::Response Request::kill_project(string project_token) {
+  return instance()->_kill_project(project_token);
+}
+
+RestClient::Response Request::kill_project(string project_token, string project_tasks, string tasks) {
+  return instance()->_kill_project(project_token, project_tasks, tasks);
+}
+
+RestClient::Response Request::kill_project_task(string project_task){
+  return instance()->_kill_project_task(project_task);
+}
+
+RestClient::Response Request::kill_project_task(string project_task, string tasks){
+  return instance()->_kill_project_task(project_task, tasks);
+}
+
+RestClient::Response Request::kill_task(string task){
+  return instance()->_kill_task(task);
+}
+
+RestClient::Response Request::kill_task(string task, string project_tasks){
+  return instance()->_kill_task(task, project_tasks);
 }
 
 // DOWNLOAD
