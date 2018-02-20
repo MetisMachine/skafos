@@ -52,7 +52,7 @@ struct command templates_cmd    = {"templates", {"--update", "--search"}, true, 
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
-struct command kill_task_cmd    = {"kill", {"--task"}, true, true};
+struct command kill_task_cmd    = {"kill", {"--tasks", "--project_tasks"}, true, true};
 
 struct command command_list[8]  = {
   setup_cmd, 
@@ -234,33 +234,44 @@ void fetch_table(int argc, char **argv, int cmd_index) {
 
 void kill_task(int argc, char **argv, int cmd_index){
   map<string, int> flags = find_flags(argc, argv, cmd_index);
-  string kill_id                = ".";
-  string task_type              = "";
+  string project_token          = ".";
+  string project_tasks          = "";
+  string tasks                  = "";
 
-  if(flags.find("--all")->second != -1) {
-    task_type = "all";
-    int all_index = flags.find("--all")->second;
+  if(argc == 3) {
+    project_token = string(argv[2]);
+    
+    Project::kill(project_token);
 
-    if(all_index + 1 < argc) {
-      kill_id = argv[all_index + 1];
-    }
-  } else if(flags.find("--project_task")->second != -1) {
-    task_type = "project_task";
-    int proj_task_index = flags.find("--project_task")->second;
+    exit(EXIT_SUCCESS);
+  }
+  if(argc > 3) {
+    if(string(argv[2]).compare("--project_tasks") != 0 && string(argv[2]).compare("--tasks") != 0){
+      project_token = string(argv[2]);
+    } 
+  }
+
+  if(flags.find("--project_tasks")->second != -1){
+    int proj_task_index = flags.find("--task")->second;
 
     if(proj_task_index + 1 < argc) {
-      kill_id = argv[proj_task_index + 1];
-    }
-  } else {
-    task_type = "task";
-    int task_index = flags.find("--task")->second;
-
-    if(task_index + 1 < argc) {
-      kill_id = argv[task_index + 1];
+      project_tasks = argv[proj_task_index + 1];
     }
   }
 
-  Project::kill(kill_id, task_type);
+  if(flags.find("--tasks")->second != -1){
+    int task_index = flags.find("--task")->second;
+
+    if(task_index + 1 < argc) {
+      tasks = argv[task_index + 1];
+    }
+  }
+
+  if(project_token.compare(".") != 0){
+    Project::kill(project_token, project_tasks, tasks);
+  } else {
+    Project::kill(project_tasks, tasks);
+  }
 }
 
 
