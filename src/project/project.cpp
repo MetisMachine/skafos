@@ -92,6 +92,20 @@ void Project::kill(string project_token){
     console::error("Unable to add the project with token " + project_token + " to the kill task queue.");
   }
 }
+void Project::kill(string project_tasks, string tasks){
+  Json json;
+  string err;
+  string project_token = ".";;
+
+  if(project_tasks.find(",") == std::string::npos && project_tasks.compare("") != 0){
+    if(tasks.compare("") == 0){
+      console::log("Kill Project Task Only");
+      //json = Json::parse(Request::kill_project_task(project_tasks).body, err);
+    } else {
+      console::log("Kill Project Task with specified tasks");
+      //json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
+    } 
+  }
   bool kill_message_sent = json["kill_message_sent"].bool_value();
   if (kill_id.compare("all") == 0){
       kill_id = "project";
