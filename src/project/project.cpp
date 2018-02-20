@@ -106,9 +106,30 @@ void Project::kill(string project_tasks, string tasks){
       //json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
     } 
   }
+
+  if(tasks.find(",") == std::string::npos && tasks.compare("") != 0){
+    if(project_tasks.compare("") == 0){
+      console::log("Kill Task Only");
+      //json = Json::parse(Request::kill_task(tasks).body, err);
+    } else{
+      console::log("Kill Task with specified project tasks");
+      //json = Json::parse(Request::kill_task(tasks, project_tasks).body, err);
+    }
+  }
+
+  if(project_tasks.find(",") == std::string::npos && tasks.find(",") == std::string::npos && tasks.compare("") != 0){
+    console::error("Please provide a project token in your skafos kill command.");
+  } else {
+    Json json = Json::object {
+      {"kill_message_sent", true}
+    };
   bool kill_message_sent = json["kill_message_sent"].bool_value();
-  if (kill_id.compare("all") == 0){
-      kill_id = "project";
+    if (kill_message_sent){
+      console::success("Successfully added the project with token " + project_token + " to the kill task queue.");
+    } else{
+      console::error("Unable to add the project with token" + project_token + " to the kill task queue.");
+    }
+  }
     }
 
   if (kill_message_sent){
