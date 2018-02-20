@@ -349,3 +349,13 @@ void Request::download(string url, string save_path) {
   instance()->_download(url, save_path);
 }
 
+std::vector<std::string> Request::string_split(const std::string& s, char delimiter){
+   std::vector<std::string> split_list;
+   std::string word;
+   std::istringstream list_stream(s);
+   while (std::getline(list_stream, word, delimiter))
+   {
+      split_list.push_back(word);
+   }
+   return split_list;
+}
