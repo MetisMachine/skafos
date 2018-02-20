@@ -92,6 +92,7 @@ void Project::kill(string project_token){
     console::error("Unable to add the project with token " + project_token + " to the kill task queue.");
   }
 }
+
 void Project::kill(string project_tasks, string tasks){
   Json json;
   string err;
@@ -123,19 +124,27 @@ void Project::kill(string project_tasks, string tasks){
     Json json = Json::object {
       {"kill_message_sent", true}
     };
-  bool kill_message_sent = json["kill_message_sent"].bool_value();
+    bool kill_message_sent = json["kill_message_sent"].bool_value();
     if (kill_message_sent){
       console::success("Successfully added the project with token " + project_token + " to the kill task queue.");
     } else{
       console::error("Unable to add the project with token" + project_token + " to the kill task queue.");
     }
   }
-    }
+}
+
+void Project::kill(string project_token, string project_tasks, string tasks){
+  string err;
+  // Json json = Json::parse(Request::kill_project(project_token, project_tasks, tasks).body, err);
+  Json json = Json::object{
+    {"kill_message_sent", true}
+  };
+  bool kill_message_sent = json["kill_message_sent"].bool_value();
 
   if (kill_message_sent){
-    console::success("Successfully added the " + kill_id + " to the kill task queue.");
+    console::success("Successfully added the project with token" + project_token + " to the kill task queue.");
   } else{
-    console::error("Unable to add the " + kill_id + " to the kill task queue.");
+    console::error("Unable to add the project with token" + project_token + " to the kill task queue.");
   }
 }
 
