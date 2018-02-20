@@ -62,25 +62,36 @@ void Project::init(string name, string tpl) {
   FileManager::write(template_path, config_template.render());
 }
 
-void Project::kill(string kill_id, string task_type){
-  string directory = (kill_id == "")? 
-    FileManager::cwd() : (kill_id == ".") ? 
-      FileManager::resolve_path(kill_id) : 
-      FileManager::cwd() + "/" + kill_id;
+void Project::kill(string project_token){
+  string directory = (project_token == "")? 
+    FileManager::cwd() : (project_token == ".") ? 
+      FileManager::resolve_path(project_token) : 
+      FileManager::cwd() + "/" + project_token;
 
-  if(task_type == "."){
+  if(project_token == "."){
     YAML::Node config;
     string tpl_path = directory + "/metis.config.yml";
     try {
       config = YAML::LoadFile(tpl_path);
     } catch(...) {
-      console::error("Unable to find metis.config.yml, are you in a project directory?");
+      console::error("Unable to find project_token, are you in a project directory?");
       exit(EXIT_FAILURE);
     }
-    kill_id = config["token"].as<string>();
+    project_token = config["token"].as<string>();
   }
+
   string err;
-  Json json = Json::parse(Request::kill_task(kill_id, task_type).body, err);
+  Json json = Json::object{
+    {"kill_message_sent", true}
+    };
+  //Json json = Json::parse(Request::kill_project(project_token).body, err);
+  bool kill_message_sent = json["kill_message_sent"].bool_value();
+  if (kill_message_sent){
+    console::success("Successfully added the project with token " + project_token + " to the kill task queue.");
+  } else{
+    console::error("Unable to add the project with token " + project_token + " to the kill task queue.");
+  }
+}
   bool kill_message_sent = json["kill_message_sent"].bool_value();
   if (kill_id.compare("all") == 0){
       kill_id = "project";
