@@ -203,7 +203,31 @@ RestClient::Response Request::_kill_project(string project_token, string project
   return this->connection->post(uri, body.dump()); 
 }
 
+RestClient::Response Request::_kill_project_task(string project_task){
+  API_HEADERS();
+  string uri = "";
+
+  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_ALL_URL;
+
     return this->connection->del(uri);
+}
+
+RestClient::Response Request::_kill_project_task(string project_task, string tasks){
+  API_HEADERS();
+  string uri = "";
+  vector<string> tasks_list;
+
+  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_TASK_URL;
+
+  tasks_list = string_split(tasks, ',');
+
+  Json body = Json::object {
+    {"task_ids", tasks_list}
+  };
+
+  return this->connection->post(uri, body.dump());
+}
+
 RestClient::Response Request::_kill_task(string task){
   API_HEADERS();
   string uri = "";
