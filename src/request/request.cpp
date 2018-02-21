@@ -177,25 +177,51 @@ RestClient::Response Request::_create_task(string name, string project_id) {
 RestClient::Response Request::_kill_project(string project_token){
   API_HEADERS();
   string uri = "";
+  Json body = Json::object{
+    {"project_token", project_token}
+  };
 
-  uri = PROJECT_URL + "/" + project_token + KILL_ALL_URL;
+  uri = PROJECT_URL + "/" + project_token + KILL_TASK_URL;
 
-  return this->connection->del(uri);
+  return this->connection->post(uri, body.dump());
 }
 
 RestClient::Response Request::_kill_project(string project_token, string project_tasks, string tasks){
   API_HEADERS();
   string uri = ""; 
   Json body;
+  Json task;
   vector<string> tasks_list;
   vector<string> project_tasks_list;
+  vector<Json> tasks_with_proj_tasks;
 
   uri = PROJECT_URL + "/" + project_token + KILL_TASK_URL;
 
   if(project_tasks.compare("") == 0 && tasks.compare("") != 0){
     tasks_list = string_split(tasks, ',');
     body = Json::object{
+      {"project_token", project_token},
       {"task_ids", tasks_list}
+    };
+  } else if (project_tasks.compare("") != 0 && tasks.compare("") == 0){
+    project_tasks_list = string_split(project_tasks, ',');
+    body = Json::object{
+      {"project_token", project_token},
+      {"project_task_ids", project_tasks_list}
+    };
+  } else {
+    tasks_list = string_split(tasks, ',');
+    project_tasks_list = string_split(project_tasks, ',');
+    for(int i = 0; i < tasks_list.size(); i++){
+      task = Json::object{
+        {"task_id", tasks_list[i]},
+        {"project_task_ids", project_tasks_list}
+      };
+      tasks_with_proj_tasks.push_back(task);
+    }
+    body = Json::object{
+      {"project_token", project_token},
+      {"tasks", tasks_with_proj_tasks}
     };
   }
 
@@ -205,10 +231,13 @@ RestClient::Response Request::_kill_project(string project_token, string project
 RestClient::Response Request::_kill_project_task(string project_task){
   API_HEADERS();
   string uri = "";
+  Json body = Json::object{
+    {"project_task_id", project_task}
+  };
 
-  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_ALL_URL;
+  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_TASK_URL;
 
-  return this->connection->del(uri);
+  return this->connection->post(uri, body.dump());
 }
 
 RestClient::Response Request::_kill_project_task(string project_task, string tasks){
@@ -221,6 +250,7 @@ RestClient::Response Request::_kill_project_task(string project_task, string tas
   tasks_list = string_split(tasks, ',');
 
   Json body = Json::object {
+    {"project_task_id", project_task},
     {"task_ids", tasks_list}
   };
 
@@ -230,10 +260,13 @@ RestClient::Response Request::_kill_project_task(string project_task, string tas
 RestClient::Response Request::_kill_task(string task){
   API_HEADERS();
   string uri = "";
+  Json body = Json::object{
+    {"uuid", task}
+  };
 
-  uri = TASKS_URL + "/" + task + KILL_ALL_URL;
+  uri = TASKS_URL + "/" + task + KILL_TASK_URL;
 
-  return this->connection->del(uri);
+  return this->connection->post(uri, body.dump());
 }
 
 RestClient::Response Request::_kill_task(string task, string project_tasks){
@@ -246,6 +279,7 @@ RestClient::Response Request::_kill_task(string task, string project_tasks){
   project_tasks_list = string_split(project_tasks, ',');
 
   Json body = Json::object {
+    {"uuid", task},
     {"project_task_ids", project_tasks_list}
   };
 
