@@ -242,9 +242,8 @@ void kill_task(int argc, char **argv, int cmd_index){
     project_token = string(argv[2]);
     
     Project::kill(project_token);
-
-    exit(EXIT_SUCCESS);
   }
+  
   if(argc > 3) {
     if(string(argv[2]).compare("--project_tasks") != 0 && string(argv[2]).compare("--tasks") != 0){
       project_token = string(argv[2]);
@@ -252,7 +251,7 @@ void kill_task(int argc, char **argv, int cmd_index){
   }
 
   if(flags.find("--project_tasks")->second != -1){
-    int proj_task_index = flags.find("--task")->second;
+    int proj_task_index = flags.find("--project_tasks")->second;
 
     if(proj_task_index + 1 < argc) {
       project_tasks = argv[proj_task_index + 1];
@@ -260,16 +259,21 @@ void kill_task(int argc, char **argv, int cmd_index){
   }
 
   if(flags.find("--tasks")->second != -1){
-    int task_index = flags.find("--task")->second;
+    int task_index = flags.find("--tasks")->second;
 
     if(task_index + 1 < argc) {
       tasks = argv[task_index + 1];
     }
   }
 
-  if(project_token.compare(".") != 0){
+  if(project_token.compare(".") != 0 && argc > 3){
     Project::kill(project_token, project_tasks, tasks);
-  } else {
+  } 
+  
+  if(argc == 2){
+    Project::kill(project_token);
+  } 
+  if(project_token.compare(".") == 0 && argc > 3) {
     Project::kill(project_tasks, tasks);
   }
 }
