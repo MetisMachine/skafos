@@ -5,6 +5,8 @@
 #include "request/request.h"
 #include "jinja/jinja.h"
 #include "jinja/stringhelper.h"
+#include "yaml-cpp/yaml.h"
+#include "project_env/project_env.h"
 
 using namespace std;
 using namespace json11;
@@ -59,6 +61,73 @@ void Project::init(string name, string tpl) {
   config_template.setValue("project_task_name", project_task_name);
 
   FileManager::write(template_path, config_template.render());
+}
+
+void Project::kill(string project_token){
+  if(project_token.compare(".") == 0){
+    project_token = PROJECT_TOKEN;
+  }
+
+  string err;
+  Json json = Json::parse(Request::kill_project(project_token).body, err);
+  string kill_message_sent = json["ok"]["intent"].string_value();
+  if (kill_message_sent.compare("") != 0){
+    console::success("Successfully added the project with token " + project_token + " to the kill task queue.");
+  } else{
+    string err_message = json["error"].string_value();
+    console::error("Unable to add the project with token, " + project_token + ", to the kill task queue. " + err_message);
+  }
+}
+
+void Project::kill(string project_tasks, string tasks){
+  Json json;
+  string err;
+  string project_token = ".";
+
+  if(project_tasks.find(",") == std::string::npos && tasks.find(",") == std::string::npos && tasks.compare("") != 0 && project_tasks.compare("") != 0){
+    json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
+  } else if(project_tasks.find(",") == std::string::npos && project_tasks.compare("") != 0){
+    if(tasks.compare("") == 0){
+      json = Json::parse(Request::kill_project_task(project_tasks).body, err);
+    } else {
+      json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
+    } 
+  } else if(tasks.find(",") == std::string::npos && tasks.compare("") != 0){
+
+    if(project_tasks.compare("") == 0){
+      json = Json::parse(Request::kill_task(tasks).body, err);
+    } else{
+      json = Json::parse(Request::kill_task(tasks, project_tasks).body, err);
+    }
+  } 
+  if(project_tasks.find(",") != std::string::npos && tasks.find(",") != std::string::npos){
+    console::error("Please provide a project token in your skafos kill command.");
+  } else if (tasks.find(",") != std::string::npos && project_tasks.compare("") == 0){
+    console::error("Please provide a project token in your skafos kill command.");
+  } else if (project_tasks.find(",") != std::string::npos && tasks.compare("") == 0){
+    console::error("Please provide a project token in your skafos kill command.");
+  } 
+  else {
+    string kill_message_sent = json["ok"]["intent"].string_value();
+    if (kill_message_sent.compare("") != 0){
+      console::success("Successfully added to the kill task queue.");
+    } else{
+      string err_message = json["message"].string_value();
+      console::error("Unable to add to the kill task queue. " + err_message);
+    }
+  }
+}
+
+void Project::kill(string project_token, string project_tasks, string tasks){
+  string err;
+  Json json = Json::parse(Request::kill_project(project_token, project_tasks, tasks).body, err);
+  string kill_message_sent = json["ok"]["intent"].string_value();
+  if (kill_message_sent.compare("") != 0){
+    console::success("Successfully added the project with token " + project_token + " and associated tasks to the kill task queue.");
+  } else{
+    string err_message = json["error"].string_value();
+    console::error("Unable to add the project with token, " + project_token + ", to the kill task queue. " + err_message);
+  }
 }
 
 bool Project::exists(std::string directory) {

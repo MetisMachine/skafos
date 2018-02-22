@@ -19,8 +19,15 @@ public:
   static RestClient::Response delete_env_var(std::string project_id, std::string key);
   static RestClient::Response fetch(std::string project_id, std::string table);
   static RestClient::Response create_task(std::string name, std::string project_id);
+  static RestClient::Response kill_project(std::string project_token);
+  static RestClient::Response kill_project(std::string porject_token, std::string project_tasks, std::string tasks);
+  static RestClient::Response kill_project_task(std::string project_task);
+  static RestClient::Response kill_project_task(std::string project_task, std::string tasks);
+  static RestClient::Response kill_task(std::string task);
+  static RestClient::Response kill_task(std::string task, std::string project_tasks);
 
   static void download(std::string url, std::string save_path);
+  static std::vector<std::string> string_split(const std::string& s, char delimiter);
 
 private:
   static Request *instance_;
@@ -44,6 +51,12 @@ private:
   RestClient::Response _delete_env_var(std::string project_id, std::string key);
   RestClient::Response _fetch(std::string project_id, std::string table);
   RestClient::Response _create_task(std::string name, std::string project_id);
+  RestClient::Response _kill_project(std::string project_token);
+  RestClient::Response _kill_project(std::string project_token, std::string project_tasks, std::string tasks);
+  RestClient::Response _kill_project_task(std::string project_task);
+  RestClient::Response _kill_project_task(std::string project_task, std::string tasks);
+  RestClient::Response _kill_task(std::string task);
+  RestClient::Response _kill_task(std::string task, std::string project_tasks);
 
   static void _download(std::string url, std::string save_path);
 };

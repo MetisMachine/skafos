@@ -52,15 +52,17 @@ struct command templates_cmd    = {"templates", {"--update", "--search"}, true, 
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
+struct command kill_task_cmd    = {"kill", {"--tasks", "--project_tasks"}, true, true};
 
-struct command command_list[7]  = {
+struct command command_list[8]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
   templates_cmd, 
   logs_cmd, 
   env_cmd,
-  fetch_cmd
+  fetch_cmd,
+  kill_task_cmd
 };
 
 int Dispatch::name_match(string arg) {
@@ -230,6 +232,52 @@ void fetch_table(int argc, char **argv, int cmd_index) {
   exit(EXIT_FAILURE);
 }
 
+void kill_task(int argc, char **argv, int cmd_index){
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+  string project_token          = ".";
+  string project_tasks          = "";
+  string tasks                  = "";
+
+  if(argc == 3) {
+    project_token = string(argv[2]);
+    
+    Project::kill(project_token);
+  }
+  
+  if(argc > 3) {
+    if(string(argv[2]).compare("--project_tasks") != 0 && string(argv[2]).compare("--tasks") != 0){
+      project_token = string(argv[2]);
+    } 
+  }
+
+  if(flags.find("--project_tasks")->second != -1){
+    int proj_task_index = flags.find("--project_tasks")->second;
+
+    if(proj_task_index + 1 < argc) {
+      project_tasks = argv[proj_task_index + 1];
+    }
+  }
+
+  if(flags.find("--tasks")->second != -1){
+    int task_index = flags.find("--tasks")->second;
+
+    if(task_index + 1 < argc) {
+      tasks = argv[task_index + 1];
+    }
+  }
+
+  if(project_token.compare(".") != 0 && argc > 3){
+    Project::kill(project_token, project_tasks, tasks);
+  } 
+  
+  if(argc == 2){
+    Project::kill(project_token);
+  } 
+  if(project_token.compare(".") == 0 && argc > 3) {
+    Project::kill(project_tasks, tasks);
+  }
+}
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
@@ -241,6 +289,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("logs",       logs);
   disp.insert("env",        envvar);
   disp.insert("fetch",      fetch_table);
+  disp.insert("kill",       kill_task);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
