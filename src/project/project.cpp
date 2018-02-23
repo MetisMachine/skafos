@@ -67,14 +67,17 @@ void Project::kill(string project_token){
   if(project_token.compare(".") == 0){
     project_token = PROJECT_TOKEN;
   }
-  
+
   string err;
   Json json = Json::parse(Request::kill_project(project_token).body, err);
-  string kill_message_sent = json["ok"]["intent"].string_value();
+  string kill_message_sent = json["intent"].string_value();
   if (kill_message_sent.compare("") != 0){
     console::success("Successfully instructed the platform to kill the project with token " + project_token + ".");
   } else{
     string err_message = json["message"].string_value();
+    if (err_message.compare("") == 0){
+      err_message = json["error"].string_value();
+    }
     console::error("Unable to instruct the platform to kill the project with token " + project_token + ". " + err_message);
   }
 }
@@ -108,11 +111,14 @@ void Project::kill(string project_tasks, string tasks){
     console::error("Please provide a project token in your skafos kill command.");
   } 
   else {
-    string kill_message_sent = json["ok"]["intent"].string_value();
+    string kill_message_sent = json["intent"].string_value();
     if (kill_message_sent.compare("") != 0){
       console::success("Successfully instructed the platform to kill the specified task.");
     } else{
       string err_message = json["message"].string_value();
+      if (err_message.compare("") == 0){
+        err_message = json["error"].string_value();
+      }
       console::error("Unable to intstruct the platform to kill the specified task." + err_message);
     }
   }
@@ -121,11 +127,14 @@ void Project::kill(string project_tasks, string tasks){
 void Project::kill(string project_token, string project_tasks, string tasks){
   string err;
   Json json = Json::parse(Request::kill_project(project_token, project_tasks, tasks).body, err);
-  string kill_message_sent = json["ok"]["intent"].string_value();
+  string kill_message_sent = json["intent"].string_value();
   if (kill_message_sent.compare("") != 0){
     console::success("Successfully instructed the platform to kill the specified tasks for the project with token " + project_token + ".");
   } else{
     string err_message = json["message"].string_value();
+    if (err_message.compare("") == 0){
+      err_message = json["error"].string_value();
+    }
     console::error("Unable to instruct the platform to kill the specified tasks for the project with token " + project_token + ". " + err_message);
   }
 }
