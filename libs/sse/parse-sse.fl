@@ -34,12 +34,17 @@ static void set_reply_url(const char* url) {
 static void data_add(const char* string)
 {
   size_t new_len = (data_buf ? strlen(data_buf) : 0) + strlen(string) + 1;
+  size_t plus1_len = new_len + 1;
 
   if(data_buf == NULL) {
-    data_buf = malloc(new_len + 1);
-    memset(data_buf, 0, new_len + 1);
+    data_buf = malloc(plus1_len);
+    memset(data_buf, 0, plus1_len);
   } else {
-    data_buf = realloc(data_buf, new_len + 1);
+    void* m = malloc(plus1_len);
+    memset(m, 0, plus1_len);
+    memcpy(m, data_buf, strlen(data_buf));
+    free(data_buf);
+    data_buf = m;
   }
   strcat(data_buf, "\n");
   strcat(data_buf, string);
