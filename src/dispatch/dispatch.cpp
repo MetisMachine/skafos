@@ -46,7 +46,7 @@ struct FunctionCaller {
 };
 
 struct command setup_cmd        = {"setup", {}, false, true};
-struct command init_cmd         = {"init", {"--template"}, true, true};
+struct command init_cmd         = {"init", {"--template", "--master"}, true, true};
 struct command auth_cmd         = {"auth", {}, false, false};
 struct command templates_cmd    = {"templates", {"--update", "--search"}, true, true};
 struct command env_cmd          = {"env", {"--set"}, true, true};
@@ -103,6 +103,7 @@ void init(int argc, char **argv, int cmd_index) {
   map<string, int> init_flags = find_flags(argc, argv, cmd_index);
   string name                 = ".";
   string tpl                  = "base";
+  bool master                 = false;
   
   if(argc > 2) {
     if(string(argv[2]).compare("--template") != 0) {
@@ -118,7 +119,11 @@ void init(int argc, char **argv, int cmd_index) {
     }
   }
 
-  Project::init(name, tpl);
+  if(init_flags.find("--master")->second != -1) {
+    master = true;
+  }
+
+  Project::init(name, tpl, master);
 }
 
 void auth() {
