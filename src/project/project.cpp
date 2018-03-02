@@ -11,7 +11,7 @@
 using namespace std;
 using namespace json11;
 
-void Project::init(string name, string tpl) {
+void Project::init(string name, string tpl, bool master) {
   string directory = (name == "")? 
     FileManager::cwd() : (name == ".") ? 
       FileManager::resolve_path(name) : 
@@ -33,7 +33,9 @@ void Project::init(string name, string tpl) {
     exit(EXIT_FAILURE);
   }
 
-  string version = "master"; //(tpl_details.version.length() > 0)? tpl_details.version : "master";
+  string version = (!master && tpl_details.version.length() > 0)
+    ? tpl_details.version 
+    : "master";
 
   Template::download(tpl_details, version);
   
