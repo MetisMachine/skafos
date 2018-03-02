@@ -6,7 +6,7 @@
 
 class Project {
 public:
-  static void init(std::string name, std::string tpl);
+  static void init(std::string name, std::string tpl, bool master);
   static void kill(std::string project_token);
   static void kill(std::string project_tasks, std::string tasks);
   static void kill(std::string project_token, std::string project_tasks, std::string tasks);
