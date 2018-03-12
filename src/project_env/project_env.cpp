@@ -31,11 +31,11 @@ ProjectDetails ProjectEnv::_current() {
 
 ProjectDetails ProjectEnv::parse_project(string path) {
   ProjectDetails details;
-  ProjectTask prj_task_info;
-  std::vector<ProjectTask> prj_tasks;
+  ProjectJob prj_job_info;
+  std::vector<ProjectJob> jobs;
   std::string name = "";
   std::string entrypoint = "";
-  std::string task_id = "";
+  std::string job_id = "";
   std::string token = "";
 
   YAML::Node prj;
@@ -47,18 +47,18 @@ ProjectDetails ProjectEnv::parse_project(string path) {
     exit(EXIT_FAILURE);
   }
 
-  if (prj["project_tasks"]){
+  if (prj["project_jobs"]){
     console::debug("Using multi task (new) config file"); 
 
-    for (int j = 0; prj["project_tasks"][j] ; j++) {
-      name       = prj["project_tasks"][j]["name"].as<string>();
-      entrypoint = prj["project_tasks"][j]["entrypoint"].as<string>();
-      task_id    = prj["project_tasks"][j]["project_task_id"].as<string>();
+    for (int j = 0; prj["project_jobs"][j] ; j++) {
+      name       = prj["project_jobs"][j]["name"].as<string>();
+      entrypoint = prj["project_jobs"][j]["entrypoint"].as<string>();
+      job_id    = prj["project_jobs"][j]["job_id"].as<string>();
       
-      prj_task_info.name = name;
-      prj_task_info.entrypoint = entrypoint;
-      prj_task_info.task_id = task_id;
-      prj_tasks.push_back(prj_task_info);  
+      prj_job_info.name = name;
+      prj_job_info.entrypoint = entrypoint;
+      prj_job_info.job_id = job_id;
+      jobs.push_back(prj_job_info);  
     }
 
     token = prj["project_token"].as<string>();
@@ -70,15 +70,15 @@ ProjectDetails ProjectEnv::parse_project(string path) {
     name       = prj["name"].as<string>();
     entrypoint = prj["entrypoint"].as<string>();
 
-    prj_task_info.name = name;
-    prj_task_info.entrypoint = entrypoint;
-    prj_task_info.task_id = task_id;
-    prj_tasks.push_back(prj_task_info);
+    prj_job_info.name = name;
+    prj_job_info.entrypoint = entrypoint;
+    prj_job_info.job_id = job_id;
+    jobs.push_back(prj_job_info);
   
   }
 
   details.token         = token;
-  details.project_tasks = prj_tasks; 
+  details.jobs          = jobs; 
 
   return details;
 }
