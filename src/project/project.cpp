@@ -84,32 +84,32 @@ void Project::kill(string project_token){
   }
 }
 
-void Project::kill(string project_tasks, string tasks){
+void Project::kill(string jobs, string deployments){
   Json json;
   string err;
   string project_token = ".";
 
-  if(project_tasks.find(",") == std::string::npos && tasks.find(",") == std::string::npos && tasks.compare("") != 0 && project_tasks.compare("") != 0){
-    json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
-  } else if(project_tasks.find(",") == std::string::npos && project_tasks.compare("") != 0){
-    if(tasks.compare("") == 0){
-      json = Json::parse(Request::kill_project_task(project_tasks).body, err);
+  if(jobs.find(",") == std::string::npos && deployments.find(",") == std::string::npos && deployments.compare("") != 0 && jobs.compare("") != 0){
+    json = Json::parse(Request::kill_project_task(jobs, deployments).body, err);
+  } else if(jobs.find(",") == std::string::npos && jobs.compare("") != 0){
+    if(deployments.compare("") == 0){
+      json = Json::parse(Request::kill_project_task(jobs).body, err);
     } else {
-      json = Json::parse(Request::kill_project_task(project_tasks, tasks).body, err);
+      json = Json::parse(Request::kill_project_task(jobs, deployments).body, err);
     } 
-  } else if(tasks.find(",") == std::string::npos && tasks.compare("") != 0){
+  } else if(deployments.find(",") == std::string::npos && deployments.compare("") != 0){
 
-    if(project_tasks.compare("") == 0){
-      json = Json::parse(Request::kill_task(tasks).body, err);
+    if(jobs.compare("") == 0){
+      json = Json::parse(Request::kill_task(deployments).body, err);
     } else{
-      json = Json::parse(Request::kill_task(tasks, project_tasks).body, err);
+      json = Json::parse(Request::kill_task(deployments, jobs).body, err);
     }
   } 
-  if(project_tasks.find(",") != std::string::npos && tasks.find(",") != std::string::npos){
+  if(jobs.find(",") != std::string::npos && deployments.find(",") != std::string::npos){
     console::error("Please provide a project token in your skafos kill command.");
-  } else if (tasks.find(",") != std::string::npos && project_tasks.compare("") == 0){
+  } else if (deployments.find(",") != std::string::npos && jobs.compare("") == 0){
     console::error("Please provide a project token in your skafos kill command.");
-  } else if (project_tasks.find(",") != std::string::npos && tasks.compare("") == 0){
+  } else if (jobs.find(",") != std::string::npos && deployments.compare("") == 0){
     console::error("Please provide a project token in your skafos kill command.");
   } 
   else {
@@ -126,9 +126,9 @@ void Project::kill(string project_tasks, string tasks){
   }
 }
 
-void Project::kill(string project_token, string project_tasks, string tasks){
+void Project::kill(string project_token, string jobs, string deployments){
   string err;
-  Json json = Json::parse(Request::kill_project(project_token, project_tasks, tasks).body, err);
+  Json json = Json::parse(Request::kill_project(project_token, jobs, deployments).body, err);
   string kill_message_sent = json["intent"].string_value();
   if (kill_message_sent.compare("") != 0){
     console::success("Successfully instructed the platform to kill the specified tasks for the project with token " + project_token + ".");
