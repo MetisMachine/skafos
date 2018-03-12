@@ -52,7 +52,7 @@ struct command templates_cmd    = {"templates", {"--update", "--search"}, true, 
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
-struct command kill_task_cmd    = {"kill", {"--tasks", "--project_tasks"}, true, true};
+struct command kill_task_cmd    = {"kill", {"--deployments", "--jobs"}, true, true};
 
 struct command command_list[8]  = {
   setup_cmd, 
@@ -250,21 +250,21 @@ void kill_task(int argc, char **argv, int cmd_index){
   }
   
   if(argc > 3) {
-    if(string(argv[2]).compare("--project_tasks") != 0 && string(argv[2]).compare("--tasks") != 0){
+    if(string(argv[2]).compare("--jobs") != 0 && string(argv[2]).compare("--deployments") != 0){
       project_token = string(argv[2]);
     } 
   }
 
-  if(flags.find("--project_tasks")->second != -1){
-    int proj_task_index = flags.find("--project_tasks")->second;
+  if(flags.find("--jobs")->second != -1){
+    int proj_task_index = flags.find("--jobs")->second;
 
     if(proj_task_index + 1 < argc) {
       project_tasks = argv[proj_task_index + 1];
     }
   }
 
-  if(flags.find("--tasks")->second != -1){
-    int task_index = flags.find("--tasks")->second;
+  if(flags.find("--deployments")->second != -1){
+    int task_index = flags.find("--deployments")->second;
 
     if(task_index + 1 < argc) {
       tasks = argv[task_index + 1];
