@@ -8,16 +8,16 @@ using namespace json11;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
 
-const string LOGIN_URL          = "/users/login";
-const string PING_URL           = "/ping";
-const string TOKEN_URL          = "/api_tokens/";
-const string PROJECT_URL        = "/projects";
-const string ENV_VARS_URL       = "/env_vars";
-const string FETCH_URL          = "/data";
-const string PROJECT_TASKS_URL  = "/project_tasks";
-const string KILL_ALL_URL       = "/kill_all";
-const string KILL_TASK_URL      = "/kill";
-const string TASKS_URL          = "/tasks";
+const string LOGIN_URL            = "/users/login";
+const string PING_URL             = "/ping";
+const string TOKEN_URL            = "/api_tokens/";
+const string PROJECT_URL          = "/projects";
+const string ENV_VARS_URL         = "/env_vars";
+const string FETCH_URL            = "/data";
+const string JOBS_URL             = "/jobs";
+const string KILL_ALL_URL         = "/kill_all";
+const string KILL_DEPLOYMENT_URL  = "/kill";
+const string DEPLOYMENTS_URL      = "/deployments";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -162,14 +162,14 @@ RestClient::Response Request::_fetch(string project_id, string table) {
   return this->connection->get(uri);
 }
 
-RestClient::Response Request::_create_task(string name, string project_id) {
+RestClient::Response Request::_create_deployment(string name, string project_id) {
   API_HEADERS();
 
   Json body = Json::object {
     {"name", name}
   };
 
-  string uri = PROJECT_URL + "/" + project_id + "/" + PROJECT_TASKS_URL + "/";
+  string uri = PROJECT_URL + "/" + project_id + "/" + JOBS_URL + "/";
 
   return this->connection->post(uri, body.dump());
 }
@@ -181,106 +181,106 @@ RestClient::Response Request::_kill_project(string project_token){
     {"project_token", project_token}
   };
 
-  uri = PROJECT_URL + "/" + project_token + KILL_TASK_URL;
+  uri = PROJECT_URL + "/" + project_token + KILL_DEPLOYMENT_URL;
 
   return this->connection->post(uri, body.dump());
 }
 
-RestClient::Response Request::_kill_project(string project_token, string project_tasks, string tasks){
+RestClient::Response Request::_kill_project(string project_token, string jobs, string deployments){
   API_HEADERS();
   string uri = ""; 
   Json body;
-  Json task;
-  vector<string> tasks_list;
-  vector<string> project_tasks_list;
-  vector<Json> tasks_with_proj_tasks;
+  Json deployment;
+  vector<string> deployments_list;
+  vector<string> jobs_list;
+  vector<Json> deployments_with_jobs;
 
-  uri = PROJECT_URL + "/" + project_token + KILL_TASK_URL;
+  uri = PROJECT_URL + "/" + project_token + KILL_DEPLOYMENT_URL;
 
-  if(project_tasks.compare("") == 0 && tasks.compare("") != 0){
-    tasks_list = string_split(tasks, ',');
+  if(jobs.compare("") == 0 && deployments.compare("") != 0){
+    deployments_list = string_split(deployments, ',');
     body = Json::object{
       {"project_token", project_token},
-      {"task_ids", tasks_list}
+      {"deployment_ids", deployments_list}
     };
-  } else if (project_tasks.compare("") != 0 && tasks.compare("") == 0){
-    project_tasks_list = string_split(project_tasks, ',');
+  } else if (jobs.compare("") != 0 && deployments.compare("") == 0){
+    jobs_list = string_split(jobs, ',');
     body = Json::object{
       {"project_token", project_token},
-      {"project_task_ids", project_tasks_list}
+      {"job_ids", jobs_list}
     };
   } else {
-    tasks_list = string_split(tasks, ',');
-    project_tasks_list = string_split(project_tasks, ',');
-    for(int i = 0; i < tasks_list.size(); i++){
-      task = Json::object{
-        {"task_id", tasks_list[i]},
-        {"project_task_ids", project_tasks_list}
+    deployments_list = string_split(deployments, ',');
+    jobs_list = string_split(jobs, ',');
+    for(int i = 0; i < deployments_list.size(); i++){
+      deployment = Json::object{
+        {"deployment_id", deployments_list[i]},
+        {"job_ids", jobs_list}
       };
-      tasks_with_proj_tasks.push_back(task);
+      deployments_with_jobs.push_back(deployment);
     }
     body = Json::object{
       {"project_token", project_token},
-      {"tasks", tasks_with_proj_tasks}
+      {"deployments", deployments_with_jobs}
     };
   }
 
   return this->connection->post(uri, body.dump()); 
 }
 
-RestClient::Response Request::_kill_project_task(string project_task){
+RestClient::Response Request::_kill_job(string job){
   API_HEADERS();
   string uri = "";
   Json body = Json::object{
-    {"project_task_id", project_task}
+    {"job_id", job}
   };
 
-  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_TASK_URL;
+  uri = JOBS_URL + "/" + job + KILL_DEPLOYMENT_URL;
 
   return this->connection->post(uri, body.dump());
 }
 
-RestClient::Response Request::_kill_project_task(string project_task, string tasks){
+RestClient::Response Request::_kill_job(string job, string deployments){
   API_HEADERS();
   string uri = "";
-  vector<string> tasks_list;
+  vector<string> deployments_list;
 
-  uri = PROJECT_TASKS_URL + "/" + project_task + KILL_TASK_URL;
+  uri = JOBS_URL + "/" + job + KILL_DEPLOYMENT_URL;
 
-  tasks_list = string_split(tasks, ',');
+  deployments_list = string_split(deployments, ',');
 
   Json body = Json::object {
-    {"project_task_id", project_task},
-    {"task_ids", tasks_list}
+    {"job_id", job},
+    {"deployment_ids", deployments_list}
   };
 
   return this->connection->post(uri, body.dump());
 }
 
-RestClient::Response Request::_kill_task(string task){
+RestClient::Response Request::_kill_deployment(string deployment){
   API_HEADERS();
   string uri = "";
   Json body = Json::object{
-    {"uuid", task}
+    {"uuid", deployment}
   };
 
-  uri = TASKS_URL + "/" + task + KILL_TASK_URL;
+  uri = DEPLOYMENTS_URL + "/" + deployment + KILL_DEPLOYMENT_URL;
 
   return this->connection->post(uri, body.dump());
 }
 
-RestClient::Response Request::_kill_task(string task, string project_tasks){
+RestClient::Response Request::_kill_deployment(string deployment, string jobs){
   API_HEADERS();
   string uri = "";
-  vector<string> project_tasks_list;
+  vector<string> jobs_list;
 
-  uri = TASKS_URL + "/" + task + KILL_TASK_URL;
+  uri = DEPLOYMENTS_URL + "/" + deployment + KILL_DEPLOYMENT_URL;
 
-  project_tasks_list = string_split(project_tasks, ',');
+  jobs_list = string_split(jobs, ',');
 
   Json body = Json::object {
-    {"uuid", task},
-    {"project_task_ids", project_tasks_list}
+    {"uuid", deployment},
+    {"job_ids", jobs_list}
   };
 
   return this->connection->post(uri, body.dump());
@@ -369,32 +369,32 @@ RestClient::Response Request::fetch(string project_id, string table) {
   return instance()->_fetch(project_id, table);
 }
 
-RestClient::Response Request::create_task(string name, string project_id) {
-  return instance()->_create_task(name, project_id);
+RestClient::Response Request::create_deployment(string name, string project_id) {
+  return instance()->_create_deployment(name, project_id);
 }
 
 RestClient::Response Request::kill_project(string project_token) {
   return instance()->_kill_project(project_token);
 }
 
-RestClient::Response Request::kill_project(string project_token, string project_tasks, string tasks) {
-  return instance()->_kill_project(project_token, project_tasks, tasks);
+RestClient::Response Request::kill_project(string project_token, string jobs, string deployments) {
+  return instance()->_kill_project(project_token, jobs, deployments);
 }
 
-RestClient::Response Request::kill_project_task(string project_task){
-  return instance()->_kill_project_task(project_task);
+RestClient::Response Request::kill_job(string job){
+  return instance()->_kill_job(job);
 }
 
-RestClient::Response Request::kill_project_task(string project_task, string tasks){
-  return instance()->_kill_project_task(project_task, tasks);
+RestClient::Response Request::kill_job(string job, string deployments){
+  return instance()->_kill_job(job, deployments);
 }
 
-RestClient::Response Request::kill_task(string task){
-  return instance()->_kill_task(task);
+RestClient::Response Request::kill_deployment(string deployment){
+  return instance()->_kill_deployment(deployment);
 }
 
-RestClient::Response Request::kill_task(string task, string project_tasks){
-  return instance()->_kill_task(task, project_tasks);
+RestClient::Response Request::kill_deployment(string deployment, string jobs){
+  return instance()->_kill_deployment(deployment, jobs);
 }
 
 // DOWNLOAD

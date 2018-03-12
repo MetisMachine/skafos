@@ -18,13 +18,13 @@ public:
   static RestClient::Response add_env_var(std::string project_id, std::string key, std::string value);
   static RestClient::Response delete_env_var(std::string project_id, std::string key);
   static RestClient::Response fetch(std::string project_id, std::string table);
-  static RestClient::Response create_task(std::string name, std::string project_id);
+  static RestClient::Response create_deployment(std::string name, std::string project_id);
   static RestClient::Response kill_project(std::string project_token);
-  static RestClient::Response kill_project(std::string porject_token, std::string project_tasks, std::string tasks);
-  static RestClient::Response kill_project_task(std::string project_task);
-  static RestClient::Response kill_project_task(std::string project_task, std::string tasks);
-  static RestClient::Response kill_task(std::string task);
-  static RestClient::Response kill_task(std::string task, std::string project_tasks);
+  static RestClient::Response kill_project(std::string porject_token, std::string jobs, std::string deployments);
+  static RestClient::Response kill_job(std::string job);
+  static RestClient::Response kill_job(std::string job, std::string deployments);
+  static RestClient::Response kill_deployment(std::string deployment);
+  static RestClient::Response kill_deployment(std::string deployment, std::string jobs);
 
   static void download(std::string url, std::string save_path);
   static std::vector<std::string> string_split(const std::string& s, char delimiter);
@@ -50,13 +50,13 @@ private:
   RestClient::Response _add_env_var(std::string project_id, std::string key, std::string value);
   RestClient::Response _delete_env_var(std::string project_id, std::string key);
   RestClient::Response _fetch(std::string project_id, std::string table);
-  RestClient::Response _create_task(std::string name, std::string project_id);
+  RestClient::Response _create_deployment(std::string name, std::string project_id);
   RestClient::Response _kill_project(std::string project_token);
-  RestClient::Response _kill_project(std::string project_token, std::string project_tasks, std::string tasks);
-  RestClient::Response _kill_project_task(std::string project_task);
-  RestClient::Response _kill_project_task(std::string project_task, std::string tasks);
-  RestClient::Response _kill_task(std::string task);
-  RestClient::Response _kill_task(std::string task, std::string project_tasks);
+  RestClient::Response _kill_project(std::string project_token, std::string jobs, std::string deployments);
+  RestClient::Response _kill_job(std::string job);
+  RestClient::Response _kill_job(std::string job, std::string deployments);
+  RestClient::Response _kill_deployment(std::string deployment);
+  RestClient::Response _kill_deployment(std::string deployment, std::string jobs);
 
   static void _download(std::string url, std::string save_path);
 };

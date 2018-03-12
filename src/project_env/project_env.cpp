@@ -47,13 +47,30 @@ ProjectDetails ProjectEnv::parse_project(string path) {
     exit(EXIT_FAILURE);
   }
 
-  if (prj["project_jobs"]){
-    console::debug("Using multi task (new) config file"); 
+  if (prj["jobs"]){
+    console::debug("Using multi jobs (new) config file"); 
 
-    for (int j = 0; prj["project_jobs"][j] ; j++) {
-      name       = prj["project_jobs"][j]["name"].as<string>();
-      entrypoint = prj["project_jobs"][j]["entrypoint"].as<string>();
-      job_id    = prj["project_jobs"][j]["job_id"].as<string>();
+    for (int j = 0; prj["jobs"][j] ; j++) {
+      name       = prj["jobs"][j]["name"].as<string>();
+      entrypoint = prj["jobs"][j]["entrypoint"].as<string>();
+      job_id     = prj["jobs"][j]["job_id"].as<string>();
+      
+      prj_job_info.name = name;
+      prj_job_info.entrypoint = entrypoint;
+      prj_job_info.job_id = job_id;
+      jobs.push_back(prj_job_info);  
+    }
+
+    token = prj["project_token"].as<string>();
+    
+  }
+  else if (prj["project_tasks"]){
+    console::debug("Using multi project_tasks (old) config file"); 
+
+    for (int j = 0; prj["project_tasks"][j] ; j++) {
+      name       = prj["project_tasks"][j]["name"].as<string>();
+      entrypoint = prj["project_tasks"][j]["entrypoint"].as<string>();
+      job_id    = prj["project_tasks"][j]["project_task_id"].as<string>();
       
       prj_job_info.name = name;
       prj_job_info.entrypoint = entrypoint;

@@ -54,13 +54,13 @@ void Project::init(string name, string tpl, bool master) {
   string proj   = replace(project_name, "/", "");
   Json json     = Json::parse(Request::create_project(proj).body, err);
   string token  = json["token"].string_value();
-  string project_task_id = json["project_tasks"][0]["id"].string_value();
-  string project_task_name = json["project_tasks"][0]["name"].string_value();
+  string job_id = json["jobs"][0]["id"].string_value();
+  string job_name = json["jobs"][0]["name"].string_value();
 
   config_template.setValue("token", token);
   config_template.setValue("name", proj);
-  config_template.setValue("project_task_id", project_task_id);
-  config_template.setValue("project_task_name", project_task_name);
+  config_template.setValue("job_id", job_id);
+  config_template.setValue("job_name", job_name);
 
   FileManager::write(template_path, config_template.render());
 }
@@ -90,19 +90,19 @@ void Project::kill(string jobs, string deployments){
   string project_token = ".";
 
   if(jobs.find(",") == std::string::npos && deployments.find(",") == std::string::npos && deployments.compare("") != 0 && jobs.compare("") != 0){
-    json = Json::parse(Request::kill_project_task(jobs, deployments).body, err);
+    json = Json::parse(Request::kill_job(jobs, deployments).body, err);
   } else if(jobs.find(",") == std::string::npos && jobs.compare("") != 0){
     if(deployments.compare("") == 0){
-      json = Json::parse(Request::kill_project_task(jobs).body, err);
+      json = Json::parse(Request::kill_job(jobs).body, err);
     } else {
-      json = Json::parse(Request::kill_project_task(jobs, deployments).body, err);
+      json = Json::parse(Request::kill_job(jobs, deployments).body, err);
     } 
   } else if(deployments.find(",") == std::string::npos && deployments.compare("") != 0){
 
     if(jobs.compare("") == 0){
-      json = Json::parse(Request::kill_task(deployments).body, err);
+      json = Json::parse(Request::kill_deployment(deployments).body, err);
     } else{
-      json = Json::parse(Request::kill_task(deployments, jobs).body, err);
+      json = Json::parse(Request::kill_deployment(deployments, jobs).body, err);
     }
   } 
   if(jobs.find(",") != std::string::npos && deployments.find(",") != std::string::npos){
@@ -115,13 +115,13 @@ void Project::kill(string jobs, string deployments){
   else {
     string kill_message_sent = json["intent"].string_value();
     if (kill_message_sent.compare("") != 0){
-      console::success("Successfully instructed the platform to kill the specified task.");
+      console::success("Successfully instructed the platform to kill the specified deployment.");
     } else{
       string err_message = json["message"].string_value();
       if (err_message.compare("") == 0){
         err_message = json["error"].string_value();
       }
-      console::error("Unable to intstruct the platform to kill the specified task." + err_message);
+      console::error("Unable to intstruct the platform to kill the specified deployment." + err_message);
     }
   }
 }
@@ -131,13 +131,13 @@ void Project::kill(string project_token, string jobs, string deployments){
   Json json = Json::parse(Request::kill_project(project_token, jobs, deployments).body, err);
   string kill_message_sent = json["intent"].string_value();
   if (kill_message_sent.compare("") != 0){
-    console::success("Successfully instructed the platform to kill the specified tasks for the project with token " + project_token + ".");
+    console::success("Successfully instructed the platform to kill the specified deployments for the project with token " + project_token + ".");
   } else{
     string err_message = json["message"].string_value();
     if (err_message.compare("") == 0){
       err_message = json["error"].string_value();
     }
-    console::error("Unable to instruct the platform to kill the specified tasks for the project with token " + project_token + ". " + err_message);
+    console::error("Unable to instruct the platform to kill the specified deployments for the project with token " + project_token + ". " + err_message);
   }
 }
 

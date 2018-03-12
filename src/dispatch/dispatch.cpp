@@ -52,7 +52,7 @@ struct command templates_cmd    = {"templates", {"--update", "--search"}, true, 
 struct command env_cmd          = {"env", {"--set"}, true, true};
 struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
-struct command kill_task_cmd    = {"kill", {"--deployments", "--jobs"}, true, true};
+struct command kill_deployment_cmd    = {"kill", {"--deployments", "--jobs"}, true, true};
 
 struct command command_list[8]  = {
   setup_cmd, 
@@ -62,7 +62,7 @@ struct command command_list[8]  = {
   logs_cmd, 
   env_cmd,
   fetch_cmd,
-  kill_task_cmd
+  kill_deployment_cmd
 };
 
 int Dispatch::name_match(string arg) {
@@ -219,7 +219,7 @@ void logs(int argc, char **argv, int cmd_index){
     exit(EXIT_FAILURE);
   }
   
-  console::info("Connecting to task logs...");
+  console::info("Connecting to project logs...");
   Logs::print(project, numlines, follow);
 }
 
@@ -237,11 +237,11 @@ void fetch_table(int argc, char **argv, int cmd_index) {
   exit(EXIT_FAILURE);
 }
 
-void kill_task(int argc, char **argv, int cmd_index){
+void kill_deployment(int argc, char **argv, int cmd_index){
   map<string, int> flags = find_flags(argc, argv, cmd_index);
-  string project_token          = ".";
-  string project_tasks          = "";
-  string tasks                  = "";
+  string project_token        = ".";
+  string jobs                 = "";
+  string deployments          = "";
 
   if(argc == 3) {
     project_token = string(argv[2]);
@@ -256,30 +256,30 @@ void kill_task(int argc, char **argv, int cmd_index){
   }
 
   if(flags.find("--jobs")->second != -1){
-    int proj_task_index = flags.find("--jobs")->second;
+    int job_index = flags.find("--jobs")->second;
 
-    if(proj_task_index + 1 < argc) {
-      project_tasks = argv[proj_task_index + 1];
+    if(job_index + 1 < argc) {
+      jobs = argv[job_index + 1];
     }
   }
 
   if(flags.find("--deployments")->second != -1){
-    int task_index = flags.find("--deployments")->second;
+    int deployment_index = flags.find("--deployments")->second;
 
-    if(task_index + 1 < argc) {
-      tasks = argv[task_index + 1];
+    if(deployment_index + 1 < argc) {
+      deployments = argv[deployment_index + 1];
     }
   }
 
   if(project_token.compare(".") != 0 && argc > 3){
-    Project::kill(project_token, project_tasks, tasks);
+    Project::kill(project_token, jobs, deployments);
   } 
   
   if(argc == 2){
     Project::kill(project_token);
   } 
   if(project_token.compare(".") == 0 && argc > 3) {
-    Project::kill(project_tasks, tasks);
+    Project::kill(jobs, deployments);
   }
 }
 
@@ -294,7 +294,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("logs",       logs);
   disp.insert("env",        envvar);
   disp.insert("fetch",      fetch_table);
-  disp.insert("kill",       kill_task);
+  disp.insert("kill",       kill_deployment);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
