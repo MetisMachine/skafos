@@ -20,7 +20,7 @@ public:
   static RestClient::Response fetch(std::string project_id, std::string table);
   static RestClient::Response create_deployment(std::string name, std::string project_id);
   static RestClient::Response kill_project(std::string project_token);
-  static RestClient::Response kill_project(std::string porject_token, std::string jobs, std::string deployments);
+  static RestClient::Response kill_project(std::string project_token, std::string jobs, std::string deployments);
   static RestClient::Response kill_job(std::string job);
   static RestClient::Response kill_job(std::string job, std::string deployments);
   static RestClient::Response kill_deployment(std::string deployment);
@@ -32,7 +32,7 @@ public:
 private:
   static Request *instance_;
   static Request *instance();
-  
+
   RestClient::Connection *connection;
   Request();
   ~Request();
