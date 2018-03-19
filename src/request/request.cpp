@@ -65,14 +65,14 @@ RestClient::HeaderFields Request::_default_headers() {
 RestClient::HeaderFields Request::_api_headers() {
   RestClient::HeaderFields headers  = this->_default_headers();
   headers["x-api-token"]            = Env::instance()->get(METIS_API_TOKEN);
-  
+
   return headers;
 }
 
 RestClient::HeaderFields Request::_oauth_headers() {
   RestClient::HeaderFields headers  = this->_default_headers();
   headers["Authorization"]          = "Bearer " + Env::instance()->get(METIS_AUTH_TOKEN);
-  
+
   return headers;
 }
 
@@ -80,7 +80,7 @@ RestClient::Response Request::_authenticate(string email, string password) {
   DEFAULT_HEADERS();
 
   Json body = Json::object{
-    {"email",       email}, 
+    {"email",       email},
     {"password",    password},
     {"client_id",   CLIENT_ID},
     {"grant_type",  "password"}
@@ -91,7 +91,7 @@ RestClient::Response Request::_authenticate(string email, string password) {
 
 RestClient::Response Request::_ping() {
   API_HEADERS();
-  
+
   return this->connection->get(PING_URL);
 }
 
@@ -188,20 +188,27 @@ RestClient::Response Request::_kill_project(string project_token){
 
 RestClient::Response Request::_kill_project(string project_token, string jobs, string deployments){
   API_HEADERS();
-  string uri = ""; 
+  string uri = "";
   Json body;
   Json deployment;
   vector<string> deployments_list;
   vector<string> jobs_list;
   vector<Json> deployments_with_jobs;
+  vector<Json> deployments_without_jobs;
 
   uri = PROJECT_URL + "/" + project_token + KILL_DEPLOYMENT_URL;
 
   if(jobs.compare("") == 0 && deployments.compare("") != 0){
     deployments_list = string_split(deployments, ',');
+    for(int i = 0; i < deployments_list.size(); i++){
+      deployment = Json::object{
+        {"deployment_id", deployments_list[i]}
+      };
+      deployments_without_jobs.push_back(deployment);
+    }
     body = Json::object{
       {"project_token", project_token},
-      {"deployment_ids", deployments_list}
+      {"deployments", deployments_without_jobs}
     };
   } else if (jobs.compare("") != 0 && deployments.compare("") == 0){
     jobs_list = string_split(jobs, ',');
@@ -225,7 +232,7 @@ RestClient::Response Request::_kill_project(string project_token, string jobs, s
     };
   }
 
-  return this->connection->post(uri, body.dump()); 
+  return this->connection->post(uri, body.dump());
 }
 
 RestClient::Response Request::_kill_job(string job){
@@ -286,7 +293,7 @@ RestClient::Response Request::_kill_deployment(string deployment, string jobs){
   return this->connection->post(uri, body.dump());
 }
 
-// DOWNLOAD 
+// DOWNLOAD
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     return fwrite(ptr, size, nmemb, stream);
@@ -310,13 +317,13 @@ void Request::_download(string repo_url, string save_path) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
     curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    
+
     res = curl_easy_perform(curl);
 
     if(res != CURLE_OK) {
       console::error(
-        "Unable to download " 
-        + repo_url 
+        "Unable to download "
+        + repo_url
         + " ("
         + curl_easy_strerror(res)
         + ").");
