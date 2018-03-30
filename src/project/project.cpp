@@ -69,28 +69,22 @@ void Project::kill(string project_token){
   if(project_token.compare(".") == 0){
     project_token = PROJECT_TOKEN;
   }
-
+  string kill_type = "project";
+  string kill_details = project_token;
   string err;
   Json json = Json::parse(Request::kill_project(project_token).body, err);
-  string kill_message_sent = json["intent"].string_value();
-  if (kill_message_sent.compare("") != 0){
-    console::success("Successfully instructed the platform to kill the project with token " + project_token + ".");
-  } else{
-    string err_message = json["message"].string_value();
-    if (err_message.compare("") == 0){
-      err_message = json["error"].string_value();
-    }
-    console::error("Unable to instruct the platform to kill the project with token " + project_token + ". " + err_message);
-  }
+  Project::kill_message(json, kill_type, kill_details);
 }
 
 void Project::kill(string jobs, string deployments){
   Json json;
+  string kill_type = "job";
+  string kill_details = "";
   string err;
   string project_token = ".";
 
   if(jobs.find(",") == std::string::npos && deployments.find(",") == std::string::npos && deployments.compare("") != 0 && jobs.compare("") != 0){
-    json = Json::parse(Request::kill_job(jobs, deployments).body, err);
+    json = Json::parse(Request::kill_job(jobs, deployments).body, err);  
   } else if(jobs.find(",") == std::string::npos && jobs.compare("") != 0){
     if(deployments.compare("") == 0){
       json = Json::parse(Request::kill_job(jobs).body, err);
@@ -101,8 +95,10 @@ void Project::kill(string jobs, string deployments){
 
     if(jobs.compare("") == 0){
       json = Json::parse(Request::kill_deployment(deployments).body, err);
+      kill_type = "deployment";
     } else{
       json = Json::parse(Request::kill_deployment(deployments, jobs).body, err);
+      kill_type = "deployment";
     }
   } 
   if(jobs.find(",") != std::string::npos && deployments.find(",") != std::string::npos){
@@ -113,32 +109,16 @@ void Project::kill(string jobs, string deployments){
     console::error("Please provide a project token in your skafos kill command.");
   } 
   else {
-    string kill_message_sent = json["intent"].string_value();
-    if (kill_message_sent.compare("") != 0){
-      console::success("Successfully instructed the platform to kill the specified deployment.");
-    } else{
-      string err_message = json["message"].string_value();
-      if (err_message.compare("") == 0){
-        err_message = json["error"].string_value();
-      }
-      console::error("Unable to intstruct the platform to kill the specified deployment." + err_message);
-    }
+    Project::kill_message(json, kill_type, kill_details);
   }
 }
 
 void Project::kill(string project_token, string jobs, string deployments){
   string err;
+  string kill_type = "outside directory";
+  string kill_details = project_token;
   Json json = Json::parse(Request::kill_project(project_token, jobs, deployments).body, err);
-  string kill_message_sent = json["intent"].string_value();
-  if (kill_message_sent.compare("") != 0){
-    console::success("Successfully instructed the platform to kill the specified deployments for the project with token " + project_token + ".");
-  } else{
-    string err_message = json["message"].string_value();
-    if (err_message.compare("") == 0){
-      err_message = json["error"].string_value();
-    }
-    console::error("Unable to instruct the platform to kill the specified deployments for the project with token " + project_token + ". " + err_message);
-  }
+  Project::kill_message(json, kill_type, kill_details);
 }
 
 bool Project::exists(std::string directory) {
@@ -149,6 +129,30 @@ bool Project::exists(std::string directory) {
         return true;
       }
   }
-
   return false;
+}
+
+ void Project::kill_message(json11::Json kill_json, string kill_type, string kill_details){
+    string kill_message_sent = kill_json["intent"].string_value();
+    if (kill_message_sent.compare("") != 0){
+      if (kill_type.compare("job") == 0 || kill_type.compare("deployment") == 0){
+        console::success("Successfully instructed the platform to kill the specified " +  kill_type + ".");
+      } else if (kill_type.compare("project") == 0){
+        console::success("Successfully instructed the platform to kill the " + kill_type + " with token " + kill_details + ".");
+      } else{
+        console::success("Successfully instructed the platform to kill the specified jobs for the project with token " + kill_details + ".");
+      }
+    } else{
+      string err_message = kill_json["message"].string_value();
+      if (err_message.compare("") == 0){
+        err_message = kill_json["error"].string_value();
+      }
+      if (kill_type.compare("job") == 0 || kill_type.compare("deployment") == 0){
+        console::error("Unable to intstruct the platform to kill the specified " + kill_type + "." + err_message);
+      } else if (kill_type.compare("project") == 0){
+        console::error("Unable to instruct the platform to kill the " + kill_type + " with token " + kill_details + ". " + err_message);
+      } else {
+        console::error("Unable to instruct the platform to kill the specified jobs for the project with token " + kill_details + ". " + err_message);
+      }
+    }
 }
