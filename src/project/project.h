@@ -10,6 +10,7 @@ public:
   static void kill(std::string project_token);
   static void kill(std::string jobs, std::string deployments);
   static void kill(std::string project_token, std::string jobs, std::string deployments);
+  static void kill_message(json11::Json kill_json, std::string kill_type, std::string kill_details);
  
 private:
   static bool exists(std::string directory);

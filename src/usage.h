@@ -10,7 +10,7 @@ Usage:
     skafos env [<key>] [--set <value>] [--delete]
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
-    skafos kill [<project_token>] [--deployments <deployment_ids>] [--jobs <job_ids>]
+    skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
     skafos -h | --help
     skafos -v | --version
 Commands:
