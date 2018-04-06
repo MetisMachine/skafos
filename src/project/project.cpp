@@ -12,6 +12,7 @@ using namespace std;
 using namespace json11;
 
 void Project::init(string name, string tpl, bool master) {
+  Template::update();
   string directory = (name == "")? 
     FileManager::cwd() : (name == ".") ? 
       FileManager::resolve_path(name) : 
