@@ -3,6 +3,7 @@
 #include "http.h"
 #include "env/env.h"
 #include "common.h"
+#include <algorithm>
 
 using namespace json11;
 
@@ -20,9 +21,8 @@ void sse_event(const char* data) {
 
   if (eventtype.compare("message") == 0 && json["data"].is_string()) {
     std::string message = json["data"].string_value();
-
+    message.erase(std::remove(message.begin(), message.end(), '\n'), message.end());
     console::info(message);
-    std::cout << std::endl;
   }
 }
 
