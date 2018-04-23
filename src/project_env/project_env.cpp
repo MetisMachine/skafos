@@ -96,6 +96,7 @@ ProjectDetails ProjectEnv::parse_project(string path) {
 
   details.token         = token;
   details.jobs          = jobs; 
+  details.name          = name;
 
   return details;
 }

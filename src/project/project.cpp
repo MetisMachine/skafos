@@ -67,13 +67,10 @@ void Project::init(string name, string tpl, bool master) {
   FileManager::write(template_path, config_template.render());
 }
 
-void Project::remote_add(string project_token){
+void Project::remote_add(string& project_name){
   std::string selected_org;
   std::string err;
 
-  if(project_token.compare(".") == 0){
-    project_token = PROJECT_TOKEN;
-  }
   Json json = Json::parse(Request::organization_info().body, err);
   auto list = json["data"].array_items();
 
@@ -102,7 +99,7 @@ void Project::remote_add(string project_token){
     selected_org = list[index]["id"].string_value();
   }
     console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.");
-    console::info("$ git remote add skafos https://vasi.metismachine.io/" + selected_org + "/" + project_token);
+    console::info("$ git remote add skafos https://vasi.metismachine.io/" + selected_org + "/" + project_name);
     console::info("You can then push changes for deployment using the git push skafos <branch_name> command.");
 }
 

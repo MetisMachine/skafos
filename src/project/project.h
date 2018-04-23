@@ -11,7 +11,7 @@ public:
   static void kill(std::string jobs, std::string deployments);
   static void kill(std::string project_token, std::string jobs, std::string deployments);
   static void kill_message(json11::Json kill_json, std::string kill_type, std::string kill_details);
-  static void remote_add(std::string project_token);
+  static void remote_add(std::string& project_name);
  
 private:
   static bool exists(std::string directory);

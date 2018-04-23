@@ -14,6 +14,7 @@ struct ProjectJob {
 struct ProjectDetails {
   std::vector<ProjectJob> jobs;
   std::string token;
+  std::string name;
 };
 
 class ProjectEnv {
