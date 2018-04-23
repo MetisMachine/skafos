@@ -1,4 +1,3 @@
-#include <limits>
 #include <algorithm>
 #include "project.h"
 #include "templates/templates.h"
@@ -93,9 +92,9 @@ void Project::remote_add(string project_token){
   }
     string opt_select;
     cout << "Enter your choice and press return: ";
-    while(!(cin >> opt_select)) {
+    while(!(cin >> opt_select) && std::stoi(opt_select) - 1 < list.size()) {
       cin.clear();
-      cin.ignore(std::numeric_limits<streamsize>::max(), '\n');
+      cin.ignore(1, '\n');
       cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
     }
 
