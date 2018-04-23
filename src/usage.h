@@ -11,17 +11,19 @@ Usage:
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
+    skafos remote info [<project_token>]
     skafos -h | --help
     skafos -v | --version
 Commands:
-    setup       Setup development environment.
-    init        Create a new project.
-    auth        Authenticate request.
-    templates   Manage templates.
-    env         Get or set environment variables.
-    logs        Get logs for a project.
-    fetch       Fetch results from a given table.
-    kill        Kill an entire project or specific jobs/deployments.
+    setup         Setup development environment.
+    init          Create a new project.
+    auth          Authenticate request.
+    templates     Manage templates.
+    env           Get or set environment variables.
+    logs          Get logs for a project.
+    fetch         Fetch results from a given table.
+    kill          Kill an entire project or specific jobs/deployments.
+    remote info   Print command to add a new remote. 
 Options:
     -v --version    Shows version.
 

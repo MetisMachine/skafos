@@ -45,16 +45,17 @@ struct FunctionCaller {
     }
 };
 
-struct command setup_cmd        = {"setup", {}, false, true};
-struct command init_cmd         = {"init", {"--template", "--master"}, true, true};
-struct command auth_cmd         = {"auth", {}, false, false};
-struct command templates_cmd    = {"templates", {"--update", "--search"}, true, true};
-struct command env_cmd          = {"env", {"--set"}, true, true};
-struct command logs_cmd         = {"logs", {"-n", "--tail"}, true, true};
-struct command fetch_cmd        = {"fetch", {"--table"}, true, true};
-struct command kill_deployment_cmd    = {"kill", {"--deployments", "--jobs"}, true, true};
+struct command setup_cmd              = {"setup", {}, false, true};
+struct command init_cmd               = {"init", {"--template", "--master"}, true, true};
+struct command auth_cmd               = {"auth", {}, false, false};
+struct command templates_cmd          = {"templates", {"--update", "--search"}, true, true};
+struct command env_cmd                = {"env", {"--set"}, true, true};
+struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
+struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
+struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
+struct command remote_cmd             = {"remote", {}, true, true};
 
-struct command command_list[8]  = {
+struct command command_list[9]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -62,7 +63,8 @@ struct command command_list[8]  = {
   logs_cmd, 
   env_cmd,
   fetch_cmd,
-  kill_deployment_cmd
+  kill_deployment_cmd,
+  remote_cmd
 };
 
 int Dispatch::name_match(string arg) {
@@ -283,6 +285,15 @@ void kill_deployment(int argc, char **argv, int cmd_index){
   }
 }
 
+void remote(int argc, char **argv, int cmd_index){
+   string project_token = ".";
+   if(argc == 4) {
+      project_token = string(argv[3]);
+    }
+
+  Project::remote_add(project_token);
+}
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
@@ -295,6 +306,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("env",        envvar);
   disp.insert("fetch",      fetch_table);
   disp.insert("kill",       kill_deployment);
+  disp.insert("remote",     remote);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

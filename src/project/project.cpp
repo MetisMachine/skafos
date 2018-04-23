@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "project.h"
 #include "templates/templates.h"
 #include "file/file.h"
@@ -64,6 +65,45 @@ void Project::init(string name, string tpl, bool master) {
   config_template.setValue("job_name", job_name);
 
   FileManager::write(template_path, config_template.render());
+}
+
+void Project::remote_add(string project_token){
+  std::string selected_org;
+  std::string err;
+
+  if(project_token.compare(".") == 0){
+    project_token = PROJECT_TOKEN;
+  }
+  Json json = Json::parse(Request::organization_info().body, err);
+  auto list = json["data"].array_items();
+
+  string list_size = std::to_string(list.size());
+  
+  if(stoi(list_size) == 1){
+    selected_org = list[0]["id"].string_value();
+  } else{
+    cout << "Please select the organization for the project." << endl;
+  int opt_iter = 1;
+  for(auto i : list) {
+    std::string org_id = Json(i)["display_name"].string_value();
+    org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
+    cout << std::to_string(opt_iter) << ". "+ org_id << endl;
+    opt_iter++;
+  }
+    string opt_select;
+    cout << "Enter your choice and press return: ";
+    while(!(cin >> opt_select) && std::stoi(opt_select) - 1 < list.size()) {
+      cin.clear();
+      cin.ignore(1, '\n');
+      cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
+    }
+
+    int index = std::stoi(opt_select) - 1;
+    selected_org = list[index]["id"].string_value();
+  }
+    console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.");
+    console::info("$ git remote add skafos https://vasi.metismachine.io/" + selected_org + "/" + project_token);
+    console::info("You can then push changes for deployment using the git push skafos <branch_name> command.");
 }
 
 void Project::kill(string project_token){

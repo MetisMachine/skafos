@@ -18,6 +18,7 @@ const string JOBS_URL             = "/jobs";
 const string KILL_ALL_URL         = "/kill_all";
 const string KILL_DEPLOYMENT_URL  = "/kill";
 const string DEPLOYMENTS_URL      = "/deployments";
+const string ORGANIZATIONS_URL    = "/organizations";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -293,6 +294,12 @@ RestClient::Response Request::_kill_deployment(string deployment, string jobs){
   return this->connection->post(uri, body.dump());
 }
 
+RestClient::Response Request::_organization_info(){
+  API_HEADERS();
+
+  return this->connection->get(ORGANIZATIONS_URL);
+}
+
 // DOWNLOAD
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -402,6 +409,10 @@ RestClient::Response Request::kill_deployment(string deployment){
 
 RestClient::Response Request::kill_deployment(string deployment, string jobs){
   return instance()->_kill_deployment(deployment, jobs);
+}
+
+RestClient::Response Request::organization_info(){
+  return instance()->_organization_info();
 }
 
 // DOWNLOAD
