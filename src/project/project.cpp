@@ -66,29 +66,12 @@ void Project::init(string name, string tpl, bool master) {
   FileManager::write(template_path, config_template.render());
 }
 
-  Json json = Json::parse(Request::organization_info().body, err);
-  auto list = json["data"].array_items();
-
-  string list_size = std::to_string(list.size());
-  
-  if(stoi(list_size) == 1){
-    selected_org = list[0]["id"].string_value();
-  } else{
-    cout << "Please select the organization for the project." << endl;
-  int opt_iter = 1;
-  for(auto i : list) {
-    std::string org_id = Json(i)["display_name"].string_value();
-    org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
-    cout << std::to_string(opt_iter) << ". "+ org_id << endl;
-    opt_iter++;
   }
-    string opt_select;
-    cout << "Enter your choice and press return: ";
-    cin >> opt_select;
+    console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.");
+    console::info("$ git remote add skafos https://vasi.metismachine.io/" + selected_org + "/" + project_token);
+    console::info("You can then push changes for deployment using the git push skafos <branch_name> command.");
+}
 
-    int index = std::stoi(opt_select) - 1;
-    selected_org = list[index]["id"].string_value();
-  }
 void Project::kill(string project_token){
   if(project_token.compare(".") == 0){
     project_token = PROJECT_TOKEN;
