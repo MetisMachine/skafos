@@ -1,3 +1,5 @@
+#include <limits>
+#include <algorithm>
 #include "project.h"
 #include "templates/templates.h"
 #include "file/file.h"
@@ -91,7 +93,11 @@ void Project::remote_add(string project_token){
   }
     string opt_select;
     cout << "Enter your choice and press return: ";
-    cin >> opt_select;
+    while(!(cin >> opt_select)) {
+      cin.clear();
+      cin.ignore(std::numeric_limits<streamsize>::max(), '\n');
+      cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
+    }
 
     int index = std::stoi(opt_select) - 1;
     selected_org = list[index]["id"].string_value();
