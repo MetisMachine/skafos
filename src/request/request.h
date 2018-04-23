@@ -25,6 +25,7 @@ public:
   static RestClient::Response kill_job(std::string job, std::string deployments);
   static RestClient::Response kill_deployment(std::string deployment);
   static RestClient::Response kill_deployment(std::string deployment, std::string jobs);
+  static RestClient::Response organization_info();
 
   static void download(std::string url, std::string save_path);
   static std::vector<std::string> string_split(const std::string& s, char delimiter);
@@ -57,6 +58,7 @@ private:
   RestClient::Response _kill_job(std::string job, std::string deployments);
   RestClient::Response _kill_deployment(std::string deployment);
   RestClient::Response _kill_deployment(std::string deployment, std::string jobs);
+  RestClient::Response _organization_info();
 
   static void _download(std::string url, std::string save_path);
 };
