@@ -11,7 +11,7 @@ Usage:
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
-    skafos remote info [<project_token>]
+    skafos remote info [<project_name>]
     skafos -h | --help
     skafos -v | --version
 Commands:
