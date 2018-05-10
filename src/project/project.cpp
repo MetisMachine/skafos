@@ -67,7 +67,11 @@ void Project::init(string name, string tpl, bool master) {
   FileManager::write(template_path, config_template.render());
 }
 
-void Project::remote_add(string& project_name){
+void Project::remote_add(string project_token){
+  if(project_token.compare(".") == 0){
+    project_token = PROJECT_TOKEN;
+  }
+
   std::string selected_org;
   std::string err;
 
@@ -99,7 +103,7 @@ void Project::remote_add(string& project_name){
     selected_org = list[index]["id"].string_value();
   }
     console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.");
-    console::info("$ git remote add skafos" + VASI_URL + selected_org + "/" + project_name);
+    console::info("$ git remote add skafos" + VASI_URL + selected_org + "/" + project_token);
     console::info("You can then push changes for deployment using the git push skafos <branch_name> command.");
 }
 
