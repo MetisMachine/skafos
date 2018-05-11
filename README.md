@@ -1,3 +1,34 @@
+## Building
+
+### Linux
+
+To build and install the Skafos CLI, you can run:
+
+```
+$ make install
+```
+
+If you want to put the result in a different location than `/usr/bin`, please
+run it like this:
+
+```
+$ PREFIX=/opt/skafos make install
+```
+
+#### Debian
+
+To make a Debian package you can also run:
+
+```
+$ make build_dist_deb
+```
+
+This will result in a package you can install on a debian based system.
+
+### macOS
+
+You can install [https://brew.sh/](Homebrew), or use the same process as Linux.
+
 ## Usage:
     skafos (setup|init|auth)...
     skafos init [<name>] [--template <template_name>] [--master]
