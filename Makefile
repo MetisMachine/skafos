@@ -3,8 +3,15 @@
 VERSION_FILE=VERSION
 VERSION=`cat $(VERSION_FILE)`
 BUILD_DIR=_build
+PREFIX?=/usr/bin
 
 all: build_dist
+
+install: build_dist
+	install $(BUILD_DIR)/bin/skafos $(PREFIX)
+
+install_dev: build_dev
+	install $(BUILD_DIR)/bin/skadev $(PREFIX)
 
 _start_release:
 	@echo "Creating release for version $(VERSION)..."
