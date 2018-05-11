@@ -286,12 +286,13 @@ void kill_deployment(int argc, char **argv, int cmd_index){
 }
 
 void remote(int argc, char **argv, int cmd_index){
-  string project_name = ProjectEnv::current().name != "" ? ProjectEnv::current().name : ProjectEnv::current().token;
-  if(argc == 4) {
-    project_name = string(argv[3]);
-  }
+  string project_token = ".";
 
-  Project::remote_add(project_name);
+  if(argc == 4) {
+    project_token = string(argv[3]);
+  } 
+
+  Project::remote_add(project_token);
 }
 
 
