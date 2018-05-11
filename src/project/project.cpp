@@ -103,7 +103,7 @@ void Project::remote_add(string project_token){
     selected_org = list[index]["id"].string_value();
   }
     console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.");
-    console::info("$ git remote add skafos" + VASI_URL + selected_org + "/" + project_token);
+    console::info("$ git remote add skafos " + VASI_URL + selected_org + "/" + project_token);
     console::info("You can then push changes for deployment using the git push skafos <branch_name> command.");
 }
 
