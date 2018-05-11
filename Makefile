@@ -4,7 +4,7 @@ VERSION_FILE=VERSION
 VERSION=`cat $(VERSION_FILE)`
 BUILD_DIR=_build
 
-all: build
+all: build_dist
 
 _start_release:
 	@echo "Creating release for version $(VERSION)..."
@@ -27,11 +27,7 @@ _env_for_staging:
 _env_for_prod:
 	@cp build_envs/production_env.h src/cli_env.h
 
-build: clean _create_dev_version_h _env_for_staging
-	@cd $(BUILD_DIR) \
-	&& echo "Building skafos..." \
-	&& STAGING=1 cmake .. -Wno-dev \
-	&& make
+build: build_dev
 
 build_dev: clean _create_dev_version_h _env_for_staging
 	@cd $(BUILD_DIR) \
@@ -43,7 +39,13 @@ build_dist: clean _create_version_h _env_for_prod
 	@cd $(BUILD_DIR) \
 	&& echo "Building skafos..." \
 	&& cmake .. -Wno-dev \
-	&& make	\
+	&& make
+
+build_dist_deb: clean _create_version_h _env_for_prod
+	@cd $(BUILD_DIR) \
+	&& echo "Building skafos for Debian..." \
+	&& cmake .. -Wno-dev \
+	&& make \
 	&& cpack --config CPackConfig.cmake
 
 clean:
