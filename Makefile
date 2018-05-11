@@ -39,7 +39,7 @@ build: build_dev
 build_dev: clean _create_dev_version_h _env_for_staging
 	@cd $(BUILD_DIR) \
 	&& echo "Building skafos..." \
-	&& cmake .. -Wno-dev \
+	&& STAGING=1 cmake .. -Wno-dev \
 	&& make
 
 build_dist: clean _create_version_h _env_for_prod
