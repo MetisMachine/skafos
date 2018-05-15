@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "x86-Debug",
+      "generator": "Visual Studio 15 2017",
+      "configurationType": "Debug",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-m -v:minimal",
+      "variables": [
+        {
+          "name": "CMAKE_TOOLCHAIN_FILE",
+          "value": "C:\\Contracts\\MetisMachine\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+        }
+      ]
+    }
+  ]
+}

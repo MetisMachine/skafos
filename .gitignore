@@ -43,3 +43,6 @@ metis.config.yml
 
 # Lib trash
 libs/sse/parse-sse.c
+
+# Visual Studio
+.vs

@@ -36,9 +36,7 @@ else()
   endif(NOT MSVC)
   
   if(MSVC)
-    if(NOT CMAKE_CXX_STANDARD)
-	  message(STATUS "Something's wrong with your compiler dude.")
-	endif(NOT CMAKE_CXX_STANDARD)
+    message(STATUS "Building with Visual Studio")
   elseif(COMPILER_SUPPORTS_CXX11)
       message(STATUS "C++11 is supported.")
   
@@ -107,6 +105,7 @@ else()
 set(EXE_NAME skafos)
 endif()
 
+target_include_directories(${EXEC_NAME} PRIVATE ${CURL_INCLUDE_DIRS})
 add_executable(${EXE_NAME} ${SOURCES})
 target_link_libraries(${EXE_NAME} sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
 
