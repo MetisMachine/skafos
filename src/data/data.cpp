@@ -26,7 +26,7 @@ void Data::fetch(string table) {
   }
 
   console::info("CURL Request:");
-  string curl_cmd = "curl -D - -H \"X-API-Token: " + Env::instance()->get(METIS_API_TOKEN) + "\" -H \"Accept: application/json\" http://api.metismachine.io/v1/data/" + PROJECT_TOKEN +"/" + table;
+  string curl_cmd = "curl -D - -H \"X-API-Token: " + Env::instance()->get(METIS_API_TOKEN) + "\" -H \"Accept: application/json\" https://api.metismachine.io/v1/data/" + PROJECT_TOKEN +"/" + table;
   console::info(curl_cmd);
   
 }
