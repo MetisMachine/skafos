@@ -13,6 +13,7 @@ public:
   static RestClient::Response tokens();
   static RestClient::Response generate_token();
   static RestClient::Response create_project(std::string name);
+  static RestClient::Response create_job(std::string name, std::string project_token);
   static RestClient::Response env_vars(std::string project_id);
   static RestClient::Response env_var(std::string project_id, std::string key);
   static RestClient::Response add_env_var(std::string project_id, std::string key, std::string value);
@@ -46,6 +47,7 @@ private:
   RestClient::Response _tokens();
   RestClient::Response _generate_token();
   RestClient::Response _create_project(std::string name);
+  RestClient::Response _create_job(std::string name, std::string project_token);
   RestClient::Response _env_vars(std::string project_id);
   RestClient::Response _env_var(std::string project_id, std::string key);
   RestClient::Response _add_env_var(std::string project_id, std::string key, std::string value);

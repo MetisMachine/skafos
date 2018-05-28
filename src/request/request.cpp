@@ -2,6 +2,7 @@
 
 #include "request.h"
 #include "env/env.h"
+#include "project_env/project_env.h"
 
 using namespace std;
 using namespace json11;
@@ -116,6 +117,20 @@ RestClient::Response Request::_create_project(string name) {
   };
 
   return this->connection->post(PROJECT_URL, body.dump());
+}
+
+RestClient::Response Request::_create_job(string name, string project_token="") {
+  API_HEADERS();
+
+  if (project_token.size() < 1){
+    project_token = PROJECT_TOKEN;
+  }
+  Json body = Json::object{
+    {"name",  name},
+    {"project_token", project_token}
+  };
+
+  return this->connection->post(JOBS_URL, body.dump());
 }
 
 RestClient::Response Request::_env_vars(string project_id) {
@@ -361,6 +376,10 @@ RestClient::Response Request::generate_token() {
 
 RestClient::Response Request::create_project(string name) {
   return instance()->_create_project(name);
+}
+
+RestClient::Response Request::create_job(string name, string project_token) {
+  return instance()->_create_job(name, project_token);
 }
 
 RestClient::Response Request::env_vars(string project_id) {

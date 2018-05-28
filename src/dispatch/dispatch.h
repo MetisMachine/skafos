@@ -18,4 +18,5 @@ class Dispatch {
     static int find_flags(int argc, char **argv, int cmdIndex);
 };
 
+// template <typename T> bool contains(std::vector<T> & vectorOfElements, const T & element);
 #endif
