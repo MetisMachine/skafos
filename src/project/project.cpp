@@ -67,6 +67,28 @@ void Project::init(string name, string tpl, bool master) {
   FileManager::write(template_path, config_template.render());
 }
 
+void Project::create_job(string name, string project_token){
+  string err;
+  Json job_json     = Json::parse(Request::create_job(name, project_token).body, err);
+  string error_message = job_json["error"].string_value();
+  if (error_message.size() > 0){
+    console::error("There was an error creating job: " + name + "\n" + error_message);
+  } else if(job_json["id"].string_value().size() > 0){
+    console::success("Add the following to your project's metis.config.yml file: \n");
+    YAML::Emitter out;
+    out << YAML::Literal << "\n";
+    out << YAML::BeginSeq;
+    out << YAML::BeginMap;
+    out << YAML::Key << "job_id" << YAML::Value << job_json["id"].string_value();
+    out << YAML::Key << "name" << YAML::Value << name;
+    out << YAML::Key << "entrypoint" << YAML::Value << "<change_me>";
+    out << YAML::EndMap;
+    out << YAML::EndSeq;
+
+    cout << out.c_str() << "\n";
+  }
+}
+
 void Project::remote_add(string project_token){
   if(project_token.compare(".") == 0){
     project_token = PROJECT_TOKEN;

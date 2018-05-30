@@ -50,22 +50,35 @@ struct command init_cmd               = {"init", {"--template", "--master"}, tru
 struct command auth_cmd               = {"auth", {}, false, false};
 struct command templates_cmd          = {"templates", {"--update", "--search"}, true, true};
 struct command env_cmd                = {"env", {"--set"}, true, true};
+struct command create_cmd             = {"create", {"--project"}, true, true};
 struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
 struct command remote_cmd             = {"remote", {}, true, true};
 
-struct command command_list[9]  = {
+struct command command_list[10]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
   templates_cmd, 
+  create_cmd,
   logs_cmd, 
   env_cmd,
   fetch_cmd,
   kill_deployment_cmd,
   remote_cmd
 };
+
+
+template <typename T>
+bool contains(std::vector<T> & vectorOfElements, const T & element)
+{
+	// Find the iterator if element in list
+	auto it = std::find(vectorOfElements.begin(), vectorOfElements.end(), element);
+	//return if iterator points to end or not. It points to end then it means element
+	// does not exists in list
+	return it != vectorOfElements.end();
+}
 
 int Dispatch::name_match(string arg) {
   for (int j = 0; j < sizeof(command_list)/sizeof(command_list[0]) ; j++) {
@@ -181,6 +194,48 @@ void envvar(int argc, char **argv, int cmd_index) {
 
   EnvVar::list();
   exit(EXIT_SUCCESS);
+}
+
+void create(int argc, char **argv, int cmd_index) {
+  map<string, int> create_flags = find_flags(argc, argv, cmd_index);
+  string creation_name        = "";
+  string kind                 = "";
+  string project_token        = "";
+  vector<string> kinds        = {"job"};
+
+  if(argc < 4) {
+    console::error("A type and name is required.");
+    exit(EXIT_FAILURE);
+  }
+
+  kind = string(argv[2]);
+  cout << "The kind = " << kind << "\n";
+  if (!contains(kinds, kind)){
+    console::error("Invalid Creation Type.");
+    exit(EXIT_FAILURE);
+  }
+
+  creation_name = string(argv[3]);
+  if (creation_name.size() < 1) {
+    console::error("Invalid Name.");
+    exit(EXIT_FAILURE);
+  }
+
+  if(create_flags.find("--project")->second != -1) {
+    int project_index = create_flags.find("--project")->second;
+    if(project_index + 1 < argc) {
+      project_token = argv[project_index + 1];
+    }
+  } else {
+    string config_path  = FileManager::cwd() + "/metis.config.yml";
+    project_token      = (FileManager::file_exists(config_path))? ProjectEnv::current().token : "";
+  }
+
+  if(project_token.size() < 1) {
+    console::error("A project token is required");
+    exit(EXIT_FAILURE);
+  }
+  Project::create_job(creation_name, project_token);
 }
 
 void logs(int argc, char **argv, int cmd_index){
@@ -303,11 +358,13 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("init",       init);
   disp.insert("auth",       auth);
   disp.insert("templates",  templates);
+  disp.insert("create",     create);
   disp.insert("logs",       logs);
   disp.insert("env",        envvar);
   disp.insert("fetch",      fetch_table);
   disp.insert("kill",       kill_deployment);
   disp.insert("remote",     remote);
+  
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

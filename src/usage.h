@@ -8,6 +8,7 @@ Usage:
     skafos init [<name>] [--template <template_name>] [--master]
     skafos templates [--update] [--search <search_term>]
     skafos env [<key>] [--set <value>] [--delete]
+    skafos create [<kind>] [<name>] [--project <token>]
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
@@ -19,6 +20,7 @@ Commands:
     init          Create a new project.
     auth          Authenticate request.
     templates     Manage templates.
+    create        Create a Job for a project.
     env           Get or set environment variables.
     logs          Get logs for a project.
     fetch         Fetch results from a given table.

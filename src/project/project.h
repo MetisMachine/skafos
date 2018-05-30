@@ -7,6 +7,7 @@
 class Project {
 public:
   static void init(std::string name, std::string tpl, bool master);
+  static void create_job(std::string name, std::string project_token);
   static void kill(std::string project_token);
   static void kill(std::string jobs, std::string deployments);
   static void kill(std::string project_token, std::string jobs, std::string deployments);
