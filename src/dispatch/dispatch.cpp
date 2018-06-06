@@ -7,6 +7,7 @@
 #include <typeinfo>
 #include <typeindex>
 #include <cassert>
+#include <algorithm>
 #include "common.h"
 #include "auth/auth.h"
 #include "version.h"

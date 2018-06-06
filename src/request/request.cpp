@@ -19,7 +19,7 @@ const string JOBS_URL             = "/jobs";
 const string KILL_ALL_URL         = "/kill_all";
 const string KILL_DEPLOYMENT_URL  = "/kill";
 const string DEPLOYMENTS_URL      = "/deployments";
-const string ORGANIZATIONS_URL    = "/organizations";
+const string ORGANIZATIONS_URL    = "/old/organizations";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
