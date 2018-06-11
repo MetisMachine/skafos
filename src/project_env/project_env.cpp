@@ -49,7 +49,7 @@ ProjectDetails ProjectEnv::parse_project(string path) {
   try {
     prj = YAML::LoadFile(path);
   } catch(YAML::ParserException& e) {
-    console::error(e.what());
+    console::error(e.what()); 
     exit(EXIT_FAILURE);
   }
 
