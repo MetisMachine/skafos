@@ -30,6 +30,12 @@ ProjectDetails ProjectEnv::_current() {
 }
 
 ProjectDetails ProjectEnv::parse_project(string path) {
+  if(!FileManager::file_exists(path)) {
+    console::error("Unable to find metis.config.yml.");
+
+    exit(EXIT_FAILURE);
+  }
+
   ProjectDetails details;
   ProjectJob prj_job_info;
   std::vector<ProjectJob> jobs;
@@ -42,8 +48,8 @@ ProjectDetails ProjectEnv::parse_project(string path) {
   
   try {
     prj = YAML::LoadFile(path);
-  } catch(...) {
-    console::error("Unable to find metis.config.yml, are you in a project directory?");
+  } catch(YAML::ParserException& e) {
+    console::error(e.what());
     exit(EXIT_FAILURE);
   }
 
