@@ -1,3 +1,10 @@
+# Skafos CLI
+
+## Need help? Talk to these people
+
+1. [Wess Cope](mailto:wess@metismachine.com)
+2. [Jeremy Tregunna](mailto:jeremy@metismachine.com)
+
 ## Building
 
 ### Linux
