@@ -4,6 +4,7 @@
 #include "common.h"
 #include "templates/templates.h"
 
+
 class Project {
 public:
   static void init(std::string name, std::string tpl, bool master);
@@ -16,6 +17,9 @@ public:
  
 private:
   static bool exists(std::string directory);
+
+  static void template_init(std::string name, std::string tpl, bool master);
+  static void existing_init(std::string name, bool master);
 };
 
 #endif

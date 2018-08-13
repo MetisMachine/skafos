@@ -12,16 +12,61 @@
 using namespace std;
 using namespace json11;
 
+#define project_directory(name) (name == "")?   \
+  FileManager::cwd() : (name == ".") ?          \
+  FileManager::resolve_path(name) :             \
+  FileManager::cwd() + "/" + name
+
 void Project::init(string name, string tpl, bool master) {
-  Template::update();
-  string directory = (name == "")? 
-    FileManager::cwd() : (name == ".") ? 
-      FileManager::resolve_path(name) : 
-      FileManager::cwd() + "/" + name;
+  string directory = project_directory(name);
 
   string project_name = directory.substr(directory.find_last_of("/"));
     
   if(exists(directory)) {
+    string config_path = directory + "metis.config.yml";
+
+    if(exists(config_path)) {
+      console::error("A metis.config.yml file is present in this directory. Unable to initialize a project");
+      exit(EXIT_FAILURE);
+    }
+
+    existing_init(name, master);
+  } else {
+    template_init(name, tpl, master);
+  }
+}
+
+void Project::create_job(string name, string project_token){
+  string err;
+  Json job_json     = Json::parse(Request::create_job(name, project_token).body, err);
+  string error_message = job_json["error"].string_value();
+  if (error_message.size() > 0){
+    console::error("There was an error creating job: " + name + "\n" + error_message);
+  } else if(job_json["id"].string_value().size() > 0){
+    console::success("Add the following to your project's metis.config.yml file: \n");
+    YAML::Emitter out;
+    out << YAML::Literal << "\n";
+    out << YAML::BeginSeq;
+    out << YAML::BeginMap;
+    out << YAML::Key << "job_id" << YAML::Value << job_json["id"].string_value();
+    out << YAML::Key << "name" << YAML::Value << name;
+    out << YAML::Key << "entrypoint" << YAML::Value << "<change_me>";
+    out << YAML::EndMap;
+    out << YAML::EndSeq;
+
+    cout << out.c_str() << "\n";
+  }
+}
+
+void Project::template_init(string name, string tpl, bool master) { 
+  Template::update();
+  
+  string directory    = project_directory(name);
+  string project_name = directory.substr(directory.find_last_of("/"));
+    
+  if(exists(directory)) {
+    string config_path = directory + "metis.config.yml";
+    
     console::error("Not an empty directory, we don't want to overwrite any current projects");
     exit(EXIT_FAILURE);
   }
@@ -65,28 +110,36 @@ void Project::init(string name, string tpl, bool master) {
   config_template.setValue("job_name", job_name);
 
   FileManager::write(template_path, config_template.render());
+
 }
 
-void Project::create_job(string name, string project_token){
+void Project::existing_init(string name, bool master) {
+  const string source = "project_token: {{token}}\n" 
+                        "name: {{name}}\n" 
+                        "jobs:\n" 
+                        "  - job_id: {{job_id}}\n" 
+                        "    language: python\n" 
+                        "    name: Main\n" 
+                        "    entrypoint: \"main.py\"\n";
+  
   string err;
-  Json job_json     = Json::parse(Request::create_job(name, project_token).body, err);
-  string error_message = job_json["error"].string_value();
-  if (error_message.size() > 0){
-    console::error("There was an error creating job: " + name + "\n" + error_message);
-  } else if(job_json["id"].string_value().size() > 0){
-    console::success("Add the following to your project's metis.config.yml file: \n");
-    YAML::Emitter out;
-    out << YAML::Literal << "\n";
-    out << YAML::BeginSeq;
-    out << YAML::BeginMap;
-    out << YAML::Key << "job_id" << YAML::Value << job_json["id"].string_value();
-    out << YAML::Key << "name" << YAML::Value << name;
-    out << YAML::Key << "entrypoint" << YAML::Value << "<change_me>";
-    out << YAML::EndMap;
-    out << YAML::EndSeq;
+  string directory    = project_directory(name);
+  string config_path  = directory + "/metis.config.yml";
+  string project_name = directory.substr(directory.find_last_of("/"));
+  string proj         = replace(project_name, "/", "");
+  Json json           = Json::parse(Request::create_project(proj).body, err);
+  string token        = json["token"].string_value();
+  string job_id       = json["jobs"][0]["id"].string_value();
+  string job_name     = json["jobs"][0]["name"].string_value();
 
-    cout << out.c_str() << "\n";
-  }
+  Jinja::Template config_template(source);
+
+  config_template.setValue("token", token);
+  config_template.setValue("name", proj);
+  config_template.setValue("job_id", job_id);
+  config_template.setValue("job_name", job_name);  
+
+  FileManager::write(config_path, config_template.render());
 }
 
 void Project::remote_add(string project_token){
