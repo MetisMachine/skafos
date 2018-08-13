@@ -162,6 +162,7 @@ void Project::remote_add(string project_token){
   int opt_iter = 1;
   for(auto i : list) {
     std::string org_id = Json(i)["display_name"].string_value();
+    
     org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
     cout << std::to_string(opt_iter) << ". "+ org_id << endl;
     opt_iter++;
