@@ -25,7 +25,7 @@ void Project::init(string name, string tpl, bool master) {
   if(exists(directory)) {
     string config_path = directory + "metis.config.yml";
 
-    if(exists(config_path)) {
+    if(FileManager::file_exists(config_path)) {
       console::error("A metis.config.yml file is present in this directory. Unable to initialize a project");
       exit(EXIT_FAILURE);
     }
