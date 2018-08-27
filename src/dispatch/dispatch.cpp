@@ -56,8 +56,9 @@ struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
 struct command remote_cmd             = {"remote", {}, true, true};
+struct command organizations_cmd      = {"organizations", {}, true, true};
 
-struct command command_list[10]  = {
+struct command command_list[11]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -67,7 +68,8 @@ struct command command_list[10]  = {
   env_cmd,
   fetch_cmd,
   kill_deployment_cmd,
-  remote_cmd
+  remote_cmd,
+  organizations_cmd
 };
 
 
@@ -351,21 +353,35 @@ void remote(int argc, char **argv, int cmd_index){
   Project::remote_add(project_token);
 }
 
+void organizations(int argc, char **argv, int cmd_index) {
+  switch(argc) {
+    case 2:
+      console::info("Setting default org");
+      break;
+    case 1:
+      console::info("Listing single orgs");
+      break;
+    case 0:
+      console::info("Listing all orgs");
+      break;
+  }
+}
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
 
-  disp.insert("setup",      setup);
-  disp.insert("init",       init);
-  disp.insert("auth",       auth);
-  disp.insert("templates",  templates);
-  disp.insert("create",     create);
-  disp.insert("logs",       logs);
-  disp.insert("env",        envvar);
-  disp.insert("fetch",      fetch_table);
-  disp.insert("kill",       kill_deployment);
-  disp.insert("remote",     remote);
-  
+  disp.insert("setup",         setup);
+  disp.insert("init",          init);
+  disp.insert("auth",          auth);
+  disp.insert("templates",     templates);
+  disp.insert("create",        create);
+  disp.insert("logs",          logs);
+  disp.insert("env",           envvar);
+  disp.insert("fetch",         fetch_table);
+  disp.insert("kill",          kill_deployment);
+  disp.insert("remote",        remote);
+  disp.insert("organizations", organizations);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

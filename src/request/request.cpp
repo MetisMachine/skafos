@@ -9,17 +9,18 @@ using namespace json11;
 
 #define ENDPOINT(str) Url{(API_URL + str)}
 
-const string LOGIN_URL            = "/users/login";
-const string PING_URL             = "/ping";
-const string TOKEN_URL            = "/api_tokens/";
-const string PROJECT_URL          = "/projects";
-const string ENV_VARS_URL         = "/env_vars";
-const string FETCH_URL            = "/data";
-const string JOBS_URL             = "/jobs";
-const string KILL_ALL_URL         = "/kill_all";
-const string KILL_DEPLOYMENT_URL  = "/kill";
-const string DEPLOYMENTS_URL      = "/deployments";
-const string ORGANIZATIONS_URL    = "/old/organizations";
+const string LOGIN_URL             = "/users/login";
+const string PING_URL              = "/ping";
+const string TOKEN_URL             = "/api_tokens/";
+const string PROJECT_URL           = "/projects";
+const string ENV_VARS_URL          = "/env_vars";
+const string FETCH_URL             = "/data";
+const string JOBS_URL              = "/jobs";
+const string KILL_ALL_URL          = "/kill_all";
+const string KILL_DEPLOYMENT_URL   = "/kill";
+const string DEPLOYMENTS_URL       = "/deployments";
+const string OLD_ORGANIZATIONS_URL = "/old/organizations";
+const string ORGANIZATIONS_URL     = "/organizations";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -312,6 +313,12 @@ RestClient::Response Request::_kill_deployment(string deployment, string jobs){
 RestClient::Response Request::_organization_info(){
   API_HEADERS();
 
+  return this->connection->get(OLD_ORGANIZATIONS_URL);
+}
+
+RestClient::Response Request::_my_organizations() {
+  API_HEADERS();
+
   return this->connection->get(ORGANIZATIONS_URL);
 }
 
@@ -432,6 +439,10 @@ RestClient::Response Request::kill_deployment(string deployment, string jobs){
 
 RestClient::Response Request::organization_info(){
   return instance()->_organization_info();
+}
+
+RestClient::Response Request::my_organizations() {
+  return instance()->_my_organizations();
 }
 
 // DOWNLOAD
