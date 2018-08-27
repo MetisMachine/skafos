@@ -56,7 +56,7 @@ struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
 struct command remote_cmd             = {"remote", {}, true, true};
-struct command organizations_cmd      = {"organizations", {}, true, true};
+struct command organizations_cmd      = {"orgs", {}, true, true};
 
 struct command command_list[11]  = {
   setup_cmd, 
@@ -381,7 +381,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("fetch",         fetch_table);
   disp.insert("kill",          kill_deployment);
   disp.insert("remote",        remote);
-  disp.insert("organizations", organizations);
+  disp.insert("orgs",          organizations);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

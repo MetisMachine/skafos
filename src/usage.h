@@ -13,6 +13,7 @@ Usage:
     skafos fetch --table <table_name>
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
     skafos remote info [<project_token>]
+    skafos orgs [<name>] [--default]
     skafos -h | --help
     skafos -v | --version
 Commands:
