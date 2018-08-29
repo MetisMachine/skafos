@@ -21,6 +21,7 @@ Env::Env() {
   paths.env         = metis;
   paths.templates   = home + "/" + metis + "/" + METIS_TEMPLATE_DIR;
   paths.credentials = home + "/" + metis + "/" + METIS_CREDENTIALS;
+  paths.defaults    = home + "/" + metis + "/" + METIS_DEFAULTS;
   paths.cache       = home + "/" + metis + "/" + METIS_TEMPLATE_DIR + "/" + METIS_CACHE_DIR;
 }
 
@@ -89,6 +90,17 @@ void Env::write_credentials(Json object) {
 
   string creds_string = creds.dump();
   FileManager::write(paths.credentials, creds_string);
+}
+
+void Env::write_default_org(std::string org_name) {
+  FileManager::create_path(0755, paths.home, paths.env);
+
+  Json org = Json::object{
+    {"org_name", org_name}
+  };
+
+  auto str = org.dump();
+  FileManager::write(paths.defaults, str);
 }
 
 void Env::verify_auth() {

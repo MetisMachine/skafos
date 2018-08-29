@@ -322,6 +322,13 @@ RestClient::Response Request::_my_organizations() {
   return this->connection->get(ORGANIZATIONS_URL);
 }
 
+RestClient::Response Request::_org_by_name(std::string name) {
+  API_HEADERS();
+
+  std::string uri = ORGANIZATIONS_URL + "/" + name;
+  return this->connection->get(uri);
+}
+
 // DOWNLOAD
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -443,6 +450,10 @@ RestClient::Response Request::organization_info(){
 
 RestClient::Response Request::my_organizations() {
   return instance()->_my_organizations();
+}
+
+RestClient::Response Request::org_by_name(std::string name) {
+  return instance()->_org_by_name(name);
 }
 
 // DOWNLOAD

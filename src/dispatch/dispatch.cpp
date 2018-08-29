@@ -18,6 +18,7 @@
 #include "project/project.h"
 #include "project_env/project_env.h"
 #include "data/data.h"
+#include "organization/organization.h"
 
 using namespace std;
 
@@ -55,7 +56,7 @@ struct command create_cmd             = {"create", {"--project"}, true, true};
 struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
-struct command remote_cmd             = {"remote", {}, true, true};
+struct command remote_cmd             = {"remote", {"--default"}, true, true};
 struct command organizations_cmd      = {"orgs", {}, true, true};
 
 struct command command_list[11]  = {
@@ -355,14 +356,20 @@ void remote(int argc, char **argv, int cmd_index){
 
 void organizations(int argc, char **argv, int cmd_index) {
   switch(argc) {
+    case 4:
+      if (string(argv[3]) == "--default") {
+        std::string name = std::string(argv[2]);
+        Organization::set_default(name);
+      } else {
+        console::error("You must supply an organization name and the --default argument to switch default organizations.");
+      }
+      break;
+    case 3:
+      console::error("You must supply an organization name and the --default argument to switch default organizations.");
+      break;
     case 2:
-      console::info("Setting default org");
-      break;
-    case 1:
-      console::info("Listing single orgs");
-      break;
-    case 0:
-      console::info("Listing all orgs");
+      console::info("All your organizations:\n");
+      Organization::list();
       break;
   }
 }
