@@ -83,7 +83,7 @@ bool Env::load_credentials() {
 
 bool Env::load_defaults() {
   if(FileManager::file_exists(paths.defaults)) {
-    string defaults = FileManager::read(paths.credentials);
+    string defaults = FileManager::read(paths.defaults);
     string err;
     Json json = Json::parse(defaults, err);
 

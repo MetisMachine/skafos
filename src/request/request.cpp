@@ -127,9 +127,9 @@ RestClient::Response Request::_create_project(string name, string org_name) {
     {"name",  name}
   };
 
-  console::warn("Hitting an endpoint that doesn't exist yet!");
-
-  return this->connection->post(ORGANIZATIONS_URL + "/" + org_name + "/projects", body.dump());
+  auto uri = ORGANIZATIONS_URL + "/" + org_name + "/projects";
+  console::debug("Organizations url: " + uri);
+  return this->connection->post(uri, body.dump());
 }
 
 RestClient::Response Request::_create_job(string name, string project_token="") {

@@ -5,7 +5,7 @@ static const char USAGE[] =
 R"(
 Usage:
     skafos (setup|init|auth)...
-    skafos init [<name>] [--template <template_name>] [--master]
+    skafos init [<name>] [--org <org_name>] [--template <template_name>] [--master]
     skafos templates [--update] [--search <search_term>]
     skafos env [<key>] [--set <value>] [--delete]
     skafos create [<kind>] [<name>] [--project <token>]
