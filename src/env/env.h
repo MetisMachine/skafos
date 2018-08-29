@@ -13,6 +13,7 @@
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
 const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
 const std::string METIS_CREDENTIALS   = "credentials.json";
+const std::string METIS_DEFAULTS      = "defaults.json";
 const std::string METIS_TEMPLATE_DIR  = "templates";
 const std::string METIS_TEMPLATE_LIST = "https://github.com/MetisMachine/templates.list/archive/master.zip";
 const std::string METIS_CACHE_DIR     = ".cache";
@@ -22,6 +23,7 @@ struct metis_path {
   std::string env;
   std::string templates;
   std::string credentials;
+  std::string defaults;
   std::string cache;
 };
 
@@ -36,6 +38,7 @@ public:
   void setup();
   bool load_credentials();
   void write_credentials(json11::Json object);
+  void write_default_org(std::string org_name);
   void verify_auth();
 
 private:

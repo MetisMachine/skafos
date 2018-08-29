@@ -18,6 +18,7 @@
 #include "project/project.h"
 #include "project_env/project_env.h"
 #include "data/data.h"
+#include "organization/organization.h"
 
 using namespace std;
 
@@ -55,9 +56,10 @@ struct command create_cmd             = {"create", {"--project"}, true, true};
 struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
-struct command remote_cmd             = {"remote", {}, true, true};
+struct command remote_cmd             = {"remote", {"--default"}, true, true};
+struct command organizations_cmd      = {"orgs", {}, true, true};
 
-struct command command_list[10]  = {
+struct command command_list[11]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -67,7 +69,8 @@ struct command command_list[10]  = {
   env_cmd,
   fetch_cmd,
   kill_deployment_cmd,
-  remote_cmd
+  remote_cmd,
+  organizations_cmd
 };
 
 
@@ -351,21 +354,41 @@ void remote(int argc, char **argv, int cmd_index){
   Project::remote_add(project_token);
 }
 
+void organizations(int argc, char **argv, int cmd_index) {
+  switch(argc) {
+    case 4:
+      if (string(argv[3]) == "--default") {
+        std::string name = std::string(argv[2]);
+        Organization::set_default(name);
+      } else {
+        console::error("You must supply an organization name and the --default argument to switch default organizations.");
+      }
+      break;
+    case 3:
+      console::error("You must supply an organization name and the --default argument to switch default organizations.");
+      break;
+    case 2:
+      console::info("All your organizations:\n");
+      Organization::list();
+      break;
+  }
+}
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
 
-  disp.insert("setup",      setup);
-  disp.insert("init",       init);
-  disp.insert("auth",       auth);
-  disp.insert("templates",  templates);
-  disp.insert("create",     create);
-  disp.insert("logs",       logs);
-  disp.insert("env",        envvar);
-  disp.insert("fetch",      fetch_table);
-  disp.insert("kill",       kill_deployment);
-  disp.insert("remote",     remote);
-  
+  disp.insert("setup",         setup);
+  disp.insert("init",          init);
+  disp.insert("auth",          auth);
+  disp.insert("templates",     templates);
+  disp.insert("create",        create);
+  disp.insert("logs",          logs);
+  disp.insert("env",           envvar);
+  disp.insert("fetch",         fetch_table);
+  disp.insert("kill",          kill_deployment);
+  disp.insert("remote",        remote);
+  disp.insert("orgs",          organizations);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
