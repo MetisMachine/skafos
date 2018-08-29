@@ -27,6 +27,7 @@ Commands:
     fetch         Fetch results from a given table.
     kill          Kill an entire project or specific jobs/deployments.
     remote info   Print command to add a new remote. 
+    org           List or set your default organization.
 Options:
     -v --version    Shows version.
 
