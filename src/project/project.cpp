@@ -17,9 +17,16 @@ using namespace json11;
   FileManager::resolve_path(name) :             \
   FileManager::cwd() + "/" + name
 
-void Project::init(string name, string tpl, bool master) {
+void Project::init(string name, string org_name, string tpl, bool master) {
   string directory = project_directory(name);
+  Env::instance()->load_defaults();
+  string default_org_name = Env::instance()->get(METIS_DEFAULT_ORG);
 
+  if(org_name == "") {
+    org_name = default_org_name;
+  }
+
+  // -- begin create project without org
   string project_name = directory.substr(directory.find_last_of("/"));
     
   if(exists(directory)) {
@@ -30,10 +37,19 @@ void Project::init(string name, string tpl, bool master) {
       exit(EXIT_FAILURE);
     }
 
-    existing_init(name, master);
+    existing_init(name, org_name, master);
   } else {
-    template_init(name, tpl, master);
+    template_init(name, org_name, tpl, master);
   }
+  // -- end create project without org
+
+  // -- begin create project with org name
+  // * Check for org name argument, use that if present, if not next bullet point
+  // * if defaults.json exists and contains "org_name" as a key, use that
+  // *     ^--- if it doesn't, use existing without org behaviour
+  // *     ^--- if errors, show error
+  // * support templates
+  // -- end create project with org name
 }
 
 void Project::create_job(string name, string project_token){
@@ -58,7 +74,7 @@ void Project::create_job(string name, string project_token){
   }
 }
 
-void Project::template_init(string name, string tpl, bool master) { 
+void Project::template_init(string name, string org_name, string tpl, bool master) { 
   Template::update();
   
   string directory    = project_directory(name);
@@ -99,7 +115,7 @@ void Project::template_init(string name, string tpl, bool master) {
   
   string err;
   string proj   = replace(project_name, "/", "");
-  Json json     = Json::parse(Request::create_project(proj).body, err);
+  Json json     = Json::parse(Request::create_project(proj, org_name).body, err);
   string token  = json["token"].string_value();
   string job_id = json["jobs"][0]["id"].string_value();
   string job_name = json["jobs"][0]["name"].string_value();
@@ -113,7 +129,7 @@ void Project::template_init(string name, string tpl, bool master) {
 
 }
 
-void Project::existing_init(string name, bool master) {
+void Project::existing_init(string name, string org_name, bool master) {
   const string source = "project_token: {{token}}\n" 
                         "name: {{name}}\n" 
                         "jobs:\n" 
@@ -127,7 +143,7 @@ void Project::existing_init(string name, bool master) {
   string config_path  = directory + "/metis.config.yml";
   string project_name = directory.substr(directory.find_last_of("/"));
   string proj         = replace(project_name, "/", "");
-  Json json           = Json::parse(Request::create_project(proj).body, err);
+  Json json           = Json::parse(Request::create_project(proj, org_name).body, err);
   string token        = json["token"].string_value();
   string job_id       = json["jobs"][0]["id"].string_value();
   string job_name     = json["jobs"][0]["name"].string_value();

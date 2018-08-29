@@ -7,7 +7,7 @@
 
 class Project {
 public:
-  static void init(std::string name, std::string tpl, bool master);
+  static void init(std::string name, std::string org_name, std::string tpl, bool master);
   static void create_job(std::string name, std::string project_token);
   static void kill(std::string project_token);
   static void kill(std::string jobs, std::string deployments);
@@ -18,8 +18,8 @@ public:
 private:
   static bool exists(std::string directory);
 
-  static void template_init(std::string name, std::string tpl, bool master);
-  static void existing_init(std::string name, bool master);
+  static void template_init(std::string name, std::string org_name, std::string tpl, bool master);
+  static void existing_init(std::string name, std::string org_name, bool master);
 };
 
 #endif

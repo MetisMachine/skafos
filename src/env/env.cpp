@@ -81,6 +81,24 @@ bool Env::load_credentials() {
   return false;
 }
 
+bool Env::load_defaults() {
+  if(FileManager::file_exists(paths.defaults)) {
+    string defaults = FileManager::read(paths.credentials);
+    string err;
+    Json json = Json::parse(defaults, err);
+
+    if(err.length() > 0) {
+      console::error("Unable to load or read defaults: " + err);
+      return false;
+    }
+
+    string org_name = json["org_name"].string_value();
+    this->set(METIS_DEFAULT_ORG, org_name);
+    return true;
+  }
+  return false;
+}
+
 void Env::write_credentials(Json object) {  
   FileManager::create_path(0755, paths.home, paths.env);
 
