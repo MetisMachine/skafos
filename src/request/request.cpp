@@ -120,6 +120,18 @@ RestClient::Response Request::_create_project(string name) {
   return this->connection->post(PROJECT_URL, body.dump());
 }
 
+RestClient::Response Request::_create_project(string name, string org_name) {
+  API_HEADERS();
+
+  Json body = Json::object{
+    {"name",  name}
+  };
+
+  auto uri = ORGANIZATIONS_URL + "/" + org_name + "/projects";
+  console::debug("Organizations url: " + uri);
+  return this->connection->post(uri, body.dump());
+}
+
 RestClient::Response Request::_create_job(string name, string project_token="") {
   API_HEADERS();
 
@@ -390,6 +402,10 @@ RestClient::Response Request::generate_token() {
 
 RestClient::Response Request::create_project(string name) {
   return instance()->_create_project(name);
+}
+
+RestClient::Response Request::create_project(string name, string org_name) {
+  return instance()->_create_project(name, org_name);
 }
 
 RestClient::Response Request::create_job(string name, string project_token) {

@@ -12,6 +12,7 @@
 
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
 const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
+const std::string METIS_DEFAULT_ORG   = "METIS_DEFAULT_ORG";
 const std::string METIS_CREDENTIALS   = "credentials.json";
 const std::string METIS_DEFAULTS      = "defaults.json";
 const std::string METIS_TEMPLATE_DIR  = "templates";
@@ -37,6 +38,7 @@ public:
   void set(std::string key, std::string val);
   void setup();
   bool load_credentials();
+  bool load_defaults();
   void write_credentials(json11::Json object);
   void write_default_org(std::string org_name);
   void verify_auth();

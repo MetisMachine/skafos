@@ -48,7 +48,7 @@ struct FunctionCaller {
 };
 
 struct command setup_cmd              = {"setup", {}, false, true};
-struct command init_cmd               = {"init", {"--template", "--master"}, true, true};
+struct command init_cmd               = {"init", {"--org", "--template", "--master"}, true, true};
 struct command auth_cmd               = {"auth", {}, false, false};
 struct command templates_cmd          = {"templates", {"--update", "--search"}, true, true};
 struct command env_cmd                = {"env", {"--set"}, true, true};
@@ -56,8 +56,8 @@ struct command create_cmd             = {"create", {"--project"}, true, true};
 struct command logs_cmd               = {"logs", {"-n", "--tail"}, true, true};
 struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
-struct command remote_cmd             = {"remote", {"--default"}, true, true};
-struct command organizations_cmd      = {"orgs", {}, true, true};
+struct command remote_cmd             = {"remote", {}, true, true};
+struct command organizations_cmd      = {"orgs", {"--set-default"}, true, true};
 
 struct command command_list[11]  = {
   setup_cmd, 
@@ -122,12 +122,18 @@ void init(int argc, char **argv, int cmd_index) {
   map<string, int> init_flags = find_flags(argc, argv, cmd_index);
   string name                 = ".";
   string tpl                  = "base";
+  string org_name             = "";
   bool master                 = false;
   
   if(argc > 2) {
     if(string(argv[2]).compare("--template") != 0) {
       name = string(argv[2]);
     }
+  }
+
+  if(init_flags.find("--org")->second != -1) {
+    int idx = init_flags.find("--org")->second;
+    org_name = argv[idx + 1];
   }
 
   if(init_flags.find("--template")->second != -1) {
@@ -142,7 +148,7 @@ void init(int argc, char **argv, int cmd_index) {
     master = true;
   }
 
-  Project::init(name, tpl, master);
+  Project::init(name, org_name, tpl, master);
 }
 
 void auth() {
@@ -357,15 +363,15 @@ void remote(int argc, char **argv, int cmd_index){
 void organizations(int argc, char **argv, int cmd_index) {
   switch(argc) {
     case 4:
-      if (string(argv[3]) == "--default") {
+      if (string(argv[3]) == "--set-default") {
         std::string name = std::string(argv[2]);
         Organization::set_default(name);
       } else {
-        console::error("You must supply an organization name and the --default argument to switch default organizations.");
+        console::error("You must supply an organization name and the --set-default argument to switch default organizations.");
       }
       break;
     case 3:
-      console::error("You must supply an organization name and the --default argument to switch default organizations.");
+      console::error("You must supply an organization name and the --set-default argument to switch default organizations.");
       break;
     case 2:
       console::info("All your organizations:\n");

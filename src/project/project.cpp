@@ -17,8 +17,14 @@ using namespace json11;
   FileManager::resolve_path(name) :             \
   FileManager::cwd() + "/" + name
 
-void Project::init(string name, string tpl, bool master) {
+void Project::init(string name, string org_name, string tpl, bool master) {
   string directory = project_directory(name);
+  Env::instance()->load_defaults();
+  string default_org_name = Env::instance()->get(METIS_DEFAULT_ORG);
+
+  if(org_name.size() == 0) {
+    org_name = default_org_name;
+  }
 
   string project_name = directory.substr(directory.find_last_of("/"));
     
@@ -30,9 +36,9 @@ void Project::init(string name, string tpl, bool master) {
       exit(EXIT_FAILURE);
     }
 
-    existing_init(name, master);
+    existing_init(name, org_name, master);
   } else {
-    template_init(name, tpl, master);
+    template_init(name, org_name, tpl, master);
   }
 }
 
@@ -58,7 +64,7 @@ void Project::create_job(string name, string project_token){
   }
 }
 
-void Project::template_init(string name, string tpl, bool master) { 
+void Project::template_init(string name, string org_name, string tpl, bool master) { 
   Template::update();
   
   string directory    = project_directory(name);
@@ -99,21 +105,31 @@ void Project::template_init(string name, string tpl, bool master) {
   
   string err;
   string proj   = replace(project_name, "/", "");
-  Json json     = Json::parse(Request::create_project(proj).body, err);
-  string token  = json["token"].string_value();
-  string job_id = json["jobs"][0]["id"].string_value();
-  string job_name = json["jobs"][0]["name"].string_value();
+  Json json;
+  if (org_name.size() == 0) {
+    json = Json::parse(Request::create_project(proj).body, err);
+  } else {
+    console::info("Creating project " + project_name + " under organization " + org_name);
+    json = Json::parse(Request::create_project(proj, org_name).body, err);
+  }
 
-  config_template.setValue("token", token);
-  config_template.setValue("name", proj);
-  config_template.setValue("job_id", job_id);
-  config_template.setValue("job_name", job_name);
+  if(json["error"].string_value().size() > 0) {
+    console::error("Unable to create your project: " + json["error"].string_value());
+  } else {
+    string token  = json["token"].string_value();
+    string job_id = json["jobs"][0]["id"].string_value();
+    string job_name = json["jobs"][0]["name"].string_value();
 
-  FileManager::write(template_path, config_template.render());
+    config_template.setValue("token", token);
+    config_template.setValue("name", proj);
+    config_template.setValue("job_id", job_id);
+    config_template.setValue("job_name", job_name);
 
+    FileManager::write(template_path, config_template.render());
+  }
 }
 
-void Project::existing_init(string name, bool master) {
+void Project::existing_init(string name, string org_name, bool master) {
   const string source = "project_token: {{token}}\n" 
                         "name: {{name}}\n" 
                         "jobs:\n" 
@@ -127,7 +143,14 @@ void Project::existing_init(string name, bool master) {
   string config_path  = directory + "/metis.config.yml";
   string project_name = directory.substr(directory.find_last_of("/"));
   string proj         = replace(project_name, "/", "");
-  Json json           = Json::parse(Request::create_project(proj).body, err);
+  Json json;
+  if (org_name.size() == 0) {
+    json = Json::parse(Request::create_project(proj).body, err);
+  } else {
+    console::info("Creating project " + project_name + " under organization " + org_name);
+    json = Json::parse(Request::create_project(proj, org_name).body, err);
+  }
+
   string token        = json["token"].string_value();
   string job_id       = json["jobs"][0]["id"].string_value();
   string job_name     = json["jobs"][0]["name"].string_value();
