@@ -58,8 +58,9 @@ struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
 struct command remote_cmd             = {"remote", {}, true, true};
 struct command organizations_cmd      = {"orgs", {"--set-default"}, true, true};
+struct command whoami_cmd             = {"whoami", {}, false, true};
 
-struct command command_list[11]  = {
+struct command command_list[12]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -70,7 +71,8 @@ struct command command_list[11]  = {
   fetch_cmd,
   kill_deployment_cmd,
   remote_cmd,
-  organizations_cmd
+  organizations_cmd,
+  whoami_cmd
 };
 
 
