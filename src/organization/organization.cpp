@@ -11,7 +11,7 @@ void Organization::list() {
   if (error_message.size() > 0) {
     console::error("There was an error listing your organizations: " + error_message + "\n");
   } else if (json.is_array()) {
-    console::info("Your organizations:\n");
+    console::info("Your organizations: ");
     auto orgs = json.array_items();
     for (int i = 0; i < orgs.size(); i++) {
       console::info("   " + orgs[i]["display_name"].string_value());
