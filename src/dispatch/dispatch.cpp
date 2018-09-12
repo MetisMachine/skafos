@@ -19,6 +19,7 @@
 #include "project_env/project_env.h"
 #include "data/data.h"
 #include "organization/organization.h"
+#include "whoami/whoami.h"
 
 using namespace std;
 
@@ -376,10 +377,13 @@ void organizations(int argc, char **argv, int cmd_index) {
       console::error("You must supply an organization name and the --set-default argument to switch default organizations.");
       break;
     case 2:
-      console::info("All your organizations:\n");
       Organization::list();
       break;
   }
+}
+
+void whoami() {
+  Whoami::information();
 }
 
 
