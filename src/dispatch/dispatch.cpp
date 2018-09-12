@@ -397,6 +397,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("kill",          kill_deployment);
   disp.insert("remote",        remote);
   disp.insert("orgs",          organizations);
+  disp.insert("whoami",        whoami);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
