@@ -121,6 +121,12 @@ void Env::write_default_org(std::string org_name) {
   FileManager::write(paths.defaults, str);
 }
 
+void Env::delete_defaults() {
+  if(FileManager::file_exists(paths.defaults)){
+    FileManager::delete_file(paths.defaults);
+  }
+}
+
 void Env::verify_auth() {
   if(Env::instance()->authenticated() == false) {
     Auth::authenticate(); 

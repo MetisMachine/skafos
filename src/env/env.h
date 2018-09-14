@@ -41,6 +41,7 @@ public:
   bool load_defaults();
   void write_credentials(json11::Json object);
   void write_default_org(std::string org_name);
+  void delete_defaults();
   void verify_auth();
 
 private:
