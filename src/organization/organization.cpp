@@ -11,7 +11,7 @@ void Organization::list() {
   if (error_message.size() > 0) {
     console::error("There was an error listing your organizations: " + error_message + "\n");
   } else if (json.is_array()) {
-    console::info("Your organizations:\n");
+    console::info("Your organizations: ");
     auto orgs = json.array_items();
     for (int i = 0; i < orgs.size(); i++) {
       console::info("   " + orgs[i]["display_name"].string_value());
@@ -25,7 +25,7 @@ void Organization::set_default(std::string org_name) {
   std::string error_message = json["error"].string_value();
 
   if (error_message.size() > 0) {
-    console::error("There was an error listing your organizations: " + error_message + "\n");
+    console::error("There was an error setting your default organization: " + error_message + "\n");
   } else {
     Env::instance()->write_default_org(org_name);
     console::info(org_name + " is now your default organization");

@@ -21,6 +21,7 @@ const string KILL_DEPLOYMENT_URL   = "/kill";
 const string DEPLOYMENTS_URL       = "/deployments";
 const string OLD_ORGANIZATIONS_URL = "/old/organizations";
 const string ORGANIZATIONS_URL     = "/organizations";
+const string ME_URL                = "/users/me";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -341,6 +342,12 @@ RestClient::Response Request::_org_by_name(std::string name) {
   return this->connection->get(uri);
 }
 
+RestClient::Response Request::_whoami() {
+  API_HEADERS();
+
+  return this->connection->get(ME_URL);
+}
+
 // DOWNLOAD
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -470,6 +477,10 @@ RestClient::Response Request::my_organizations() {
 
 RestClient::Response Request::org_by_name(std::string name) {
   return instance()->_org_by_name(name);
+}
+
+RestClient::Response Request::whoami() {
+  return instance()->_whoami();
 }
 
 // DOWNLOAD

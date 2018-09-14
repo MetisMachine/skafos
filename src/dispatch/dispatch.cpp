@@ -19,6 +19,7 @@
 #include "project_env/project_env.h"
 #include "data/data.h"
 #include "organization/organization.h"
+#include "whoami/whoami.h"
 
 using namespace std;
 
@@ -58,8 +59,9 @@ struct command fetch_cmd              = {"fetch", {"--table"}, true, true};
 struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"}, true, true};
 struct command remote_cmd             = {"remote", {}, true, true};
 struct command organizations_cmd      = {"orgs", {"--set-default"}, true, true};
+struct command whoami_cmd             = {"whoami", {}, false, true};
 
-struct command command_list[11]  = {
+struct command command_list[12]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -70,7 +72,8 @@ struct command command_list[11]  = {
   fetch_cmd,
   kill_deployment_cmd,
   remote_cmd,
-  organizations_cmd
+  organizations_cmd,
+  whoami_cmd
 };
 
 
@@ -374,10 +377,13 @@ void organizations(int argc, char **argv, int cmd_index) {
       console::error("You must supply an organization name and the --set-default argument to switch default organizations.");
       break;
     case 2:
-      console::info("All your organizations:\n");
       Organization::list();
       break;
   }
+}
+
+void whoami() {
+  Whoami::information();
 }
 
 
@@ -395,6 +401,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("kill",          kill_deployment);
   disp.insert("remote",        remote);
   disp.insert("orgs",          organizations);
+  disp.insert("whoami",        whoami);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();

@@ -14,6 +14,7 @@ Usage:
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
     skafos remote info [<project_token>]
     skafos orgs [<name>] [--set-default]
+    skafos whoami
     skafos -h | --help
     skafos -v | --version
 Commands:
@@ -28,6 +29,7 @@ Commands:
     kill          Kill an entire project or specific jobs/deployments.
     remote info   Print command to add a new remote. 
     orgs          List or set your default organization.
+    whoami        List your current user info and settings.
 Options:
     -v --version    Shows version.
 

@@ -30,6 +30,7 @@ public:
   static RestClient::Response organization_info();
   static RestClient::Response my_organizations();
   static RestClient::Response org_by_name(std::string name);
+  static RestClient::Response whoami();
 
   static void download(std::string url, std::string save_path);
   static std::vector<std::string> string_split(const std::string& s, char delimiter);
@@ -67,6 +68,7 @@ private:
   RestClient::Response _organization_info();
   RestClient::Response _my_organizations();
   RestClient::Response _org_by_name(std::string name);
+  RestClient::Response _whoami();
 
   static void _download(std::string url, std::string save_path);
 };

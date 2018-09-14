@@ -30,6 +30,7 @@ void Auth::authenticate() {
   } else {
     string err;
 
+    Env::instance()->delete_defaults();
     Env::instance()->write_credentials(Json::parse(oauth.body, err));
     Env::instance()->load_credentials();
 
