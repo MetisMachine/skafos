@@ -343,6 +343,16 @@ RestClient::Response Request::_org_by_name(std::string name) {
   return this->connection->get(uri);
 }
 
+RestClient::Response Request::_set_default_org(std::string name) {
+  API_HEADERS();
+
+  Json body = Json::object{
+    {"default_org", name}
+  };
+
+  return this->connection->post(DEFAULT_ORG_URL, body.dump());
+}
+
 RestClient::Response Request::_whoami() {
   API_HEADERS();
 
