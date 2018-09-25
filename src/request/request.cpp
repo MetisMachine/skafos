@@ -353,6 +353,12 @@ RestClient::Response Request::_set_default_org(std::string name) {
   return this->connection->post(DEFAULT_ORG_URL, body.dump());
 }
 
+RestClient::Response Request::_my_default_org() {
+  API_HEADERS();
+
+  return this->connection->get(DEFAULT_ORG_URL);
+}
+
 RestClient::Response Request::_whoami() {
   API_HEADERS();
 
@@ -488,6 +494,14 @@ RestClient::Response Request::my_organizations() {
 
 RestClient::Response Request::org_by_name(std::string name) {
   return instance()->_org_by_name(name);
+}
+
+RestClient::Response Request::set_default_org(std::string name) {
+  return instance()->_set_default_org(name);
+}
+
+RestClient::Response Request::my_default_org() {
+  return instance()->_my_default_org();
 }
 
 RestClient::Response Request::whoami() {
