@@ -192,16 +192,18 @@ void Project::remote_add(string project_token){
       cout << std::to_string(opt_iter) << ". "+ org_id << endl;
       opt_iter++;
     }
-    string opt_select;
     cout << "Enter your choice and press return: ";
-    while(!(cin >> opt_select) && std::stoi(opt_select) - 1 < list.size()) {
+    string opt_select;
+    cin >> opt_select;
+    auto idx = stoi(opt_select) - 1;
+    if(idx >= list.size()) {
       cin.clear();
       cin.ignore(1, '\n');
       cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
+      return;
+    } else {
+      selected_org = list[idx]["id"].string_value();
     }
-
-    int index = std::stoi(opt_select) - 1;
-    selected_org = list[index]["id"].string_value();
   }
     console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.\n");
     console::info("$ git remote add skafos " + VASI_URL + selected_org + "/" + project_token + "\n");
