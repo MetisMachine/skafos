@@ -22,6 +22,7 @@ const string DEPLOYMENTS_URL       = "/deployments";
 const string OLD_ORGANIZATIONS_URL = "/old/organizations";
 const string ORGANIZATIONS_URL     = "/organizations";
 const string ME_URL                = "/users/me";
+const string DEFAULT_ORG_URL       = "/organizations/default";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
