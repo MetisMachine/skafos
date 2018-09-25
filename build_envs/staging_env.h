@@ -6,7 +6,7 @@
 
 const std::string ENVIRONMENT = "staging";
 const std::string CLIENT_ID   = "f1f6e59f3f6f8ffecde29d34ad18f673";
-const std::string API_URL     = "https://api.metis.wtf/v1";
+const std::string API_URL     = "http://localhost:4000/v1";
 const std::string LOGGING_URL = "https://api.metis.wtf/logs/";
 const std::string VASI_URL    = "https://vasi.metis.wtf/";
 
