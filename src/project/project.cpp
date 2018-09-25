@@ -173,8 +173,9 @@ void Project::remote_add(string project_token){
   std::string selected_org;
   std::string err;
 
-  Json json = Json::parse(Request::organization_info().body, err);
-  auto list = json["data"].array_items();
+  RestClient::Response req = Request::my_organizations();
+  Json json = Json::parse(req.body, err);
+  auto list = json.array_items();
 
   string list_size = std::to_string(list.size());
   
@@ -182,14 +183,15 @@ void Project::remote_add(string project_token){
     selected_org = list[0]["id"].string_value();
   } else{
     cout << "Please select the organization for the project." << endl;
-  int opt_iter = 1;
-  for(auto i : list) {
-    std::string org_id = Json(i)["display_name"].string_value();
+    int opt_iter = 1;
+    for(auto i : list) {
+      auto j = Json(i);
+      std::string org_id = j["display_name"].string_value();
     
-    org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
-    cout << std::to_string(opt_iter) << ". "+ org_id << endl;
-    opt_iter++;
-  }
+      org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
+      cout << std::to_string(opt_iter) << ". "+ org_id << endl;
+      opt_iter++;
+    }
     string opt_select;
     cout << "Enter your choice and press return: ";
     while(!(cin >> opt_select) && std::stoi(opt_select) - 1 < list.size()) {
