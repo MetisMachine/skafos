@@ -38,23 +38,31 @@ You can install [https://brew.sh/](Homebrew), or use the same process as Linux.
 
 ## Usage:
     skafos (setup|init|auth)...
-    skafos init [<name>] [--template <template_name>] [--master]
+    skafos init [<name>] [--org <org_name>] [--template <template_name>] [--master]
     skafos templates [--update] [--search <search_term>]
     skafos env [<key>] [--set <value>] [--delete]
+    skafos create [<kind>] [<name>] [--project <token>]
     skafos logs [<project_token>] [-n <num>] [--tail]
     skafos fetch --table <table_name>
     skafos kill [<project_token>] [--deployments <deployment_ids>] [--job_ids <job_ids>]
+    skafos remote info [<project_token>]
+    skafos orgs [<name>] [--set-default]
+    skafos whoami
     skafos -h | --help
     skafos -v | --version
 ## Commands:
-    setup       Setup development environment.
-    init        Create a new project.
-    auth        Authenticate request.
-    templates   Manage templates.
-    env         Get or set environment variables.
-    logs        Get logs for a project.
-    fetch       Fetch results from a given table.
-    kill        Kill an entire project or specific jobs/deployments.
+    setup         Setup development environment.
+    init          Create a new project.
+    auth          Authenticate request.
+    templates     Manage templates.
+    create        Create a Job for a project.
+    env           Get or set environment variables.
+    logs          Get logs for a project.
+    fetch         Fetch results from a given table.
+    kill          Kill an entire project or specific jobs/deployments.
+    remote info   Print command to add a new remote. 
+    orgs          List or set your default organization.
+    whoami        List your current user info and settings.
 ## Options:
     -V --version             Shows version.
 
