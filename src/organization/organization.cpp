@@ -25,12 +25,15 @@ void Organization::list() {
 }
 
 void Organization::set_default(std::string org_name) {
+  RestClient::Response resp = Request::set_default_org(org_name);
   std::string err;
-  Json json = Json::parse(Request::org_by_name(org_name).body, err);
-  std::string error_message = json["error"].string_value();
+  Json json = Json::parse(resp.body, err);
 
-  if (error_message.size() > 0) {
-    console::error("There was an error setting your default organization: " + error_message + "\n");
+  int status_code = resp.code;
+  std::string error_message = json["message"].string_value();
+
+  if (status_code != 201) {
+    console::error("There was an error setting your default organization: " + std::to_string(status_code) + " - " + error_message + "\n");
   } else {
     Env::instance()->write_default_org(org_name);
     console::info(org_name + " is now your default organization");
