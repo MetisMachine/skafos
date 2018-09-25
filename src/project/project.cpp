@@ -173,8 +173,9 @@ void Project::remote_add(string project_token){
   std::string selected_org;
   std::string err;
 
-  Json json = Json::parse(Request::organization_info().body, err);
-  auto list = json["data"].array_items();
+  RestClient::Response req = Request::my_organizations();
+  Json json = Json::parse(req.body, err);
+  auto list = json.array_items();
 
   string list_size = std::to_string(list.size());
   
@@ -182,24 +183,27 @@ void Project::remote_add(string project_token){
     selected_org = list[0]["id"].string_value();
   } else{
     cout << "Please select the organization for the project." << endl;
-  int opt_iter = 1;
-  for(auto i : list) {
-    std::string org_id = Json(i)["display_name"].string_value();
+    int opt_iter = 1;
+    for(auto i : list) {
+      auto j = Json(i);
+      std::string org_id = j["display_name"].string_value();
     
-    org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
-    cout << std::to_string(opt_iter) << ". "+ org_id << endl;
-    opt_iter++;
-  }
-    string opt_select;
+      org_id.erase(std::remove(org_id.begin(), org_id.end(), '"'), org_id.end());
+      cout << std::to_string(opt_iter) << ". "+ org_id << endl;
+      opt_iter++;
+    }
     cout << "Enter your choice and press return: ";
-    while(!(cin >> opt_select) && std::stoi(opt_select) - 1 < list.size()) {
+    string opt_select;
+    cin >> opt_select;
+    auto idx = stoi(opt_select) - 1;
+    if(idx >= list.size()) {
       cin.clear();
       cin.ignore(1, '\n');
-      cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
+      cout << "Invalid choice. Valid numbers are [1-" << list_size << "].";
+      return;
+    } else {
+      selected_org = list[idx]["id"].string_value();
     }
-
-    int index = std::stoi(opt_select) - 1;
-    selected_org = list[index]["id"].string_value();
   }
     console::info("To add a new remote, copy the git remote add skafos command below and run it on the terminal.\n");
     console::info("$ git remote add skafos " + VASI_URL + selected_org + "/" + project_token + "\n");
