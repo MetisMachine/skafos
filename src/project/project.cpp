@@ -199,7 +199,7 @@ void Project::remote_add(string project_token){
     if(idx >= list.size()) {
       cin.clear();
       cin.ignore(1, '\n');
-      cout << "Invalid choice. Valid numbers are [1-" << list_size << "]. Try again: ";
+      cout << "Invalid choice. Valid numbers are [1-" << list_size << "].";
       return;
     } else {
       selected_org = list[idx]["id"].string_value();
