@@ -46,6 +46,14 @@ void Auth::authenticate() {
 
     console::debug("Loading credentials...");
     Env::instance()->load_credentials();
+
+    console::info("Loading defaults...");
+    
+    auto default_org = Json::parse(Request::my_default_org().body, err);
+
+    Env::instance()->write_default_org(default_org["display_name"].string_value());
+
+    Env::instance()->load_defaults();
   }
 }
 
