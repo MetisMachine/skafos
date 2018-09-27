@@ -65,57 +65,72 @@ void Project::create_job(string name, string project_token){
 }
 
 void Project::template_init(string name, string org_name, string tpl, bool master) { 
-  Template::update();
-  
+
   string directory    = project_directory(name);
   string project_name = directory.substr(directory.find_last_of("/"));
-    
-  if(exists(directory)) {
-    string config_path = directory + "metis.config.yml";
-    
-    console::error("Not an empty directory, we don't want to overwrite any current projects");
-    exit(EXIT_FAILURE);
-  }
 
-  FileManager::create_path(0755, directory);
-
-  TemplateDetails tpl_details = Template::find(tpl);
-  if(tpl_details.repo.length() < 1) {
-    console::error("Unable to find template: " + tpl);
-
-    exit(EXIT_FAILURE);
-  }
-
-  string version = (!master && tpl_details.version.length() > 0)
-    ? tpl_details.version 
-    : "master";
-
-  Template::download(tpl_details, version);
-  
-  console::info("Setting up template in project...");
-
-  string cache_path = ENV_PATHS.cache + "/" + tpl + ".zip";
- 
-  FileManager::unzip(cache_path, directory);
-
-  console::info("Creating configuration file");
-
-  string template_path            = directory + "/metis.config.yml";
-  Jinja::Template config_template = FileManager::read(template_path);
-  
-  string err;
   string proj   = replace(project_name, "/", "");
+
   Json json;
+  string err;
+  int status_code;
+  string error_message;
+  RestClient::Response resp;
   if (org_name.size() == 0) {
-    json = Json::parse(Request::create_project(proj).body, err);
+    resp = Request::create_project(proj);
+    json = Json::parse(resp.body, err);
   } else {
-    console::info("Creating project " + project_name + " under organization " + org_name);
-    json = Json::parse(Request::create_project(proj, org_name).body, err);
+    resp = Request::create_project(proj, org_name);
+    json = Json::parse(resp.body, err);
   }
 
-  if(json["error"].string_value().size() > 0) {
-    console::error("Unable to create your project: " + json["error"].string_value());
+  status_code = resp.code;
+  error_message = json["message"].string_value();
+
+  if(status_code != 201) {
+    if (org_name.size() == 0) {
+      console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
+    } else {
+      console::error("Unable to create your project under organization " + org_name + ": " + std::to_string(status_code) + " - " + error_message + "\n");
+    }
   } else {
+    Template::update();
+    
+    console::info("Creating project " + project_name + " under organization " + org_name);
+      
+    if(exists(directory)) {
+      string config_path = directory + "metis.config.yml";
+      
+      console::error("Not an empty directory, we don't want to overwrite any current projects");
+      exit(EXIT_FAILURE);
+    }
+
+    FileManager::create_path(0755, directory);
+
+    TemplateDetails tpl_details = Template::find(tpl);
+    if(tpl_details.repo.length() < 1) {
+      console::error("Unable to find template: " + tpl);
+
+      exit(EXIT_FAILURE);
+    }
+
+    string version = (!master && tpl_details.version.length() > 0)
+      ? tpl_details.version 
+      : "master";
+
+    Template::download(tpl_details, version);
+    
+    console::info("Setting up template in project...");
+
+    string cache_path = ENV_PATHS.cache + "/" + tpl + ".zip";
+  
+    FileManager::unzip(cache_path, directory);
+
+    console::info("Creating configuration file");
+
+    string template_path            = directory + "/metis.config.yml";
+    Jinja::Template config_template = FileManager::read(template_path);
+
     string token  = json["token"].string_value();
     string job_id = json["jobs"][0]["id"].string_value();
     string job_name = json["jobs"][0]["name"].string_value();
@@ -144,25 +159,41 @@ void Project::existing_init(string name, string org_name, bool master) {
   string project_name = directory.substr(directory.find_last_of("/"));
   string proj         = replace(project_name, "/", "");
   Json json;
+  int status_code;
+  string error_message;
+  RestClient::Response resp;
   if (org_name.size() == 0) {
-    json = Json::parse(Request::create_project(proj).body, err);
+    resp = Request::create_project(proj);
+    json = Json::parse(resp.body, err);
   } else {
-    console::info("Creating project " + project_name + " under organization " + org_name);
-    json = Json::parse(Request::create_project(proj, org_name).body, err);
+    resp = Request::create_project(proj, org_name);
+    json = Json::parse(resp.body, err);
   }
 
-  string token        = json["token"].string_value();
-  string job_id       = json["jobs"][0]["id"].string_value();
-  string job_name     = json["jobs"][0]["name"].string_value();
+  status_code = resp.code;
+  error_message = json["message"].string_value();
 
-  Jinja::Template config_template(source);
+  if(status_code != 201) {
+    if (org_name.size() == 0) {
+      console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
+    } else {
+      console::error("Unable to create your project under organization " + org_name + ": " + std::to_string(status_code) + " - " + error_message + "\n");
+    }
+  } else {
 
-  config_template.setValue("token", token);
-  config_template.setValue("name", proj);
-  config_template.setValue("job_id", job_id);
-  config_template.setValue("job_name", job_name);  
+    string token        = json["token"].string_value();
+    string job_id       = json["jobs"][0]["id"].string_value();
+    string job_name     = json["jobs"][0]["name"].string_value();
 
-  FileManager::write(config_path, config_template.render());
+    Jinja::Template config_template(source);
+
+    config_template.setValue("token", token);
+    config_template.setValue("name", proj);
+    config_template.setValue("job_id", job_id);
+    config_template.setValue("job_name", job_name);  
+
+    FileManager::write(config_path, config_template.render());
+  }
 }
 
 void Project::remote_add(string project_token){

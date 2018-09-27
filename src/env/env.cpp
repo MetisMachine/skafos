@@ -38,7 +38,9 @@ void Env::setup() {
 }
 
 bool Env::authenticated() {
-  return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong"));
+  Env::instance()->load_defaults();
+  string default_org_name = Env::instance()->get(METIS_DEFAULT_ORG);
+  return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong") && (Request::org_by_name(default_org_name).code == 200));
 }
 
 string Env::get(string key) {
