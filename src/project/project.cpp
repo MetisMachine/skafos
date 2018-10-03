@@ -87,7 +87,7 @@ void Project::template_init(string name, string org_name, string tpl, bool maste
   status_code = resp.code;
   error_message = json["message"].string_value();
 
-  if(status_code != 201) {
+  if(not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
     if (org_name.size() == 0) {
       console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
     } else {
@@ -173,7 +173,7 @@ void Project::existing_init(string name, string org_name, bool master) {
   status_code = resp.code;
   error_message = json["message"].string_value();
 
-  if(status_code != 201) {
+  if(not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
     if (org_name.size() == 0) {
       console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
     } else {
