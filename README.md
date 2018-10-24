@@ -73,9 +73,4 @@ If you need help, feel free to reach out:
 - https://twitter.com/metismachine
 - https://github.com/metismachine
 
-Skafos is currently under a private beta but don't despair 
-because we are offering an opportunity for you to get early access. 
-
-Please go to https://metismachine.typeform.com/to/JzdHLh to make it so. 
-
 Fire it up!
