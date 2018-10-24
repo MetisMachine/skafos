@@ -66,3 +66,10 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
             all_scalar = all_scalar && false;
           }
         }
+        if (not(all_scalar)) {
+          cout << "not all items are scalars" << endl;
+          for(unsigned int j=0; j<value.size(); j++){
+            nested = nested_yaml(value[j]);
+            nested.SetStyle(YAML::EmitterStyle::Block);
+            builder[key][j] = nested;
+          }
