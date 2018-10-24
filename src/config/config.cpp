@@ -29,3 +29,12 @@ void Config::yaml_to_file(YAML::Node node, std::string output_path) {
   std::ofstream fout(output_path);
   fout << node;
 }
+
+int Config::edit(std::string file_path) {
+  std::string cmd = "vi " + file_path;
+  int result = system(cmd.c_str());
+  return result;
+  // TODO: load file as yaml node instead
+  // string res = FileManager::read(filename);
+}
+
