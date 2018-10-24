@@ -20,7 +20,11 @@
 #include "data/data.h"
 #include "organization/organization.h"
 #include "whoami/whoami.h"
+#include "yaml-cpp/yaml.h"
+#include "config/config.h"
 
+
+using namespace json11;
 using namespace std;
 
 typedef void (*VoidFunctionType)(void);
@@ -60,8 +64,9 @@ struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"},
 struct command remote_cmd             = {"remote", {}, true, true};
 struct command organizations_cmd      = {"orgs", {"--set-default"}, true, true};
 struct command whoami_cmd             = {"whoami", {}, false, true};
+struct command edit_cmd               = {"edit", {}, false, false};
 
-struct command command_list[12]  = {
+struct command command_list[13]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -73,7 +78,8 @@ struct command command_list[12]  = {
   kill_deployment_cmd,
   remote_cmd,
   organizations_cmd,
-  whoami_cmd
+  whoami_cmd,
+  edit_cmd
 };
 
 
@@ -386,6 +392,21 @@ void whoami() {
   Whoami::information();
 }
 
+void edit() {
+  // Testing with request:
+  // RestClient::Response resp = Request::org_by_name("potato");
+  // std::string err;
+  // Json json = Json::parse(resp.body, err);
+
+  YAML::Node config;
+  config = Config::load_file("put path here for testing");
+  Json::object my_json = Config::yaml_to_json(config);
+  Json json = my_json;
+  YAML::Node json_as_node;
+  json_as_node = Config::load_json(json);
+  YAML::Node yaml_block = Config::to_yaml_block(json_as_node);
+  Config::yaml_to_file(yaml_block, "put path to output file");
+}
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
@@ -402,6 +423,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("remote",        remote);
   disp.insert("orgs",          organizations);
   disp.insert("whoami",        whoami);
+  disp.insert("edit",          edit);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
