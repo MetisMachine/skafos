@@ -188,3 +188,14 @@ Json::object Config::yaml_to_json(YAML::Node node) {
     cout << "value: " << value << endl;
     cout << endl;
     bool all_scalar = true;
+
+    switch (value.Type()) {
+      case YAML::NodeType::Scalar:
+        cout << "value scalar: " << value << endl;
+        // TODO: check if boolean
+        if (is_number(value.as<std::string>())) {
+          builder[key] = value.as<int>();
+        }  else {
+          builder[key] = value.as<std::string>();
+        }
+        break;
