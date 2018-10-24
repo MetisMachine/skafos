@@ -94,3 +94,4 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
   return builder;
 }
 
+YAML::Node Config::nested_yaml(YAML::Node value) {
