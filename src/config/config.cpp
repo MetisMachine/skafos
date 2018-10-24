@@ -199,3 +199,13 @@ Json::object Config::yaml_to_json(YAML::Node node) {
           builder[key] = value.as<std::string>();
         }
         break;
+      case YAML::NodeType::Sequence:
+        cout << "sequence" << endl;
+        for(unsigned i=0; i<value.size(); i++) {
+          YAML::Node sequence_item = value[i];
+          if (sequence_item.IsScalar()){
+            all_scalar = all_scalar && true;
+          } else{
+            all_scalar = all_scalar && false;
+          }
+        }
