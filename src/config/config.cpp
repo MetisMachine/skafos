@@ -174,6 +174,40 @@ bool is_number(const std::string& s){
             return !s.empty() && it == s.end();
         } 
 
+Json::array Config::nested_sequence(YAML::Node value) {
+  Json::object nested_object;
+  Json::array nested_list;
+  Json::array to_list;
+  bool all_scalar = true;
+  for(unsigned i=0; i<value.size(); i++) {
+    YAML::Node sequence_item= value[i];
+    if (sequence_item.IsScalar()){
+      all_scalar = all_scalar && true;
+    } else{
+      all_scalar = all_scalar && false;
+    }
+  }
+  if (not(all_scalar)) {
+    cout << "not all items are scalars" << endl;
+    for(unsigned int j=0; j<value.size(); j++){
+      if (value[j].IsSequence()){
+        nested_list = nested_sequence(value[j]);
+        to_list.push_back(nested_list);
+      } else {
+        nested_object = nested_json(value[j]);
+        to_list.push_back(nested_object);
+      }
+    }
+  } else {
+    for(unsigned int j=0; j<value.size(); j++){
+      YAML::Node one_item = value[j];
+      cout << "one_item: " << one_item << endl;
+      to_list.push_back(one_item.as<std::string>());
+    }
+  }
+  return to_list;
+}
+
 Json::object Config::nested_json(YAML::Node value) {
   Json::object builder;
   Json::object nested_object;
