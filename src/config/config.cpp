@@ -174,3 +174,10 @@ bool is_number(const std::string& s){
             return !s.empty() && it == s.end();
         } 
 
+
+Json::object Config::yaml_to_json(YAML::Node node) {
+  Json::object builder;
+  Json::object nested_object;
+  Json::array nested_list;
+  YAML::Node nested;
+  Json::array to_list;
