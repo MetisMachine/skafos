@@ -236,3 +236,12 @@ Json::object Config::yaml_to_json(YAML::Node node) {
         nested_object = nested_json(value);
         builder[key] = nested_object;
         break;
+      case YAML::NodeType::Undefined:
+          cout << "undefined" << endl;
+        break;
+      case YAML::NodeType::Null:
+        cout << "null" << endl;
+    }
+  }
+  return builder;
+}
