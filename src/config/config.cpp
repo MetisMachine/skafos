@@ -53,3 +53,7 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
     bool all_scalar = true;
 
     switch (value.Type()) {
+      case YAML::NodeType::Scalar:
+        value.SetStyle(YAML::EmitterStyle::Block);
+        builder[key] = value;
+        break;
