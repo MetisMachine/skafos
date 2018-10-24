@@ -121,3 +121,47 @@ YAML::Node Config::nested_yaml(YAML::Node value) {
       return value;
     }
   } else {
+    for(YAML::const_iterator it = value.begin(); it != value.end(); ++it){
+    std::string key = it->first.as<std::string>();
+    YAML::Node nested_value = it->second;
+    all_scalar = true;
+    switch (nested_value.Type()) {
+      case YAML::NodeType::Scalar:
+        nested_value.SetStyle(YAML::EmitterStyle::Block);
+        builder[key] = nested_value;
+        break;
+      case YAML::NodeType::Sequence:
+        for(unsigned i=0; i<nested_value.size(); i++) {
+          YAML::Node sequence_item= nested_value[i];
+          if (sequence_item.IsScalar()){
+            all_scalar = all_scalar && true;
+          } else{
+            all_scalar = all_scalar && false;
+          }
+        }
+        if (not(all_scalar)) {
+          for(unsigned int j=0; j<nested_value.size(); j++){
+            double_nested = nested_yaml(nested_value[j]);
+            double_nested.SetStyle(YAML::EmitterStyle::Block);
+            builder[key][j] = double_nested;
+          }
+        } else {
+          nested_value.SetStyle(YAML::EmitterStyle::Block);
+          builder[key] = nested_value;
+        }
+        break;
+      case YAML::NodeType::Map:
+        nested = nested_yaml(nested_value);
+        nested.SetStyle(YAML::EmitterStyle::Block);
+        builder[key] = nested;
+        break;
+      case YAML::NodeType::Undefined:
+        cout << "undefined" << endl;
+        break;
+      case YAML::NodeType::Null:
+        cout << "null" << endl;
+      }
+    }
+  }
+  return builder;
+}
