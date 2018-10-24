@@ -229,3 +229,10 @@ Json::object Config::yaml_to_json(YAML::Node node) {
             to_list.push_back(one_item.as<std::string>());
           }
         }
+        builder[key] = to_list;
+        break;
+      case YAML::NodeType::Map:
+        cout << "map" << endl;
+        nested_object = nested_json(value);
+        builder[key] = nested_object;
+        break;
