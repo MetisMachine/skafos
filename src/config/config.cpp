@@ -83,3 +83,14 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
         nested.SetStyle(YAML::EmitterStyle::Block);
         builder[key] = nested;
         break;
+      // TO DO: Handle nulls and invalids better
+      case YAML::NodeType::Undefined:
+          cout << "undefined" << endl;
+        break;
+      case YAML::NodeType::Null:
+        cout << "null" << endl;
+    }
+  }
+  return builder;
+}
+
