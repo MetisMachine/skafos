@@ -57,3 +57,12 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
         value.SetStyle(YAML::EmitterStyle::Block);
         builder[key] = value;
         break;
+      case YAML::NodeType::Sequence:
+        for(unsigned i=0; i<value.size(); i++) {
+          YAML::Node sequence_item= value[i];
+          if (sequence_item.IsScalar()){
+            all_scalar = all_scalar && true;
+          } else{
+            all_scalar = all_scalar && false;
+          }
+        }
