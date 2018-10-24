@@ -174,6 +174,71 @@ bool is_number(const std::string& s){
             return !s.empty() && it == s.end();
         } 
 
+Json::object Config::nested_json(YAML::Node value) {
+  Json::object builder;
+  Json::object nested_object;
+  Json::array to_list;
+  Json::array nested_list;
+  YAML::Node nested;
+  YAML::Node double_nested;
+  bool all_scalar = true;
+  for(YAML::const_iterator it = value.begin(); it != value.end(); ++it){
+  std::string key = it->first.as<std::string>();
+  YAML::Node nested_value = it->second;
+  all_scalar = true;
+  switch (nested_value.Type()) {
+    case YAML::NodeType::Scalar:
+      // TODO: check if boolean
+      if (is_number(nested_value.as<std::string>())) {
+        builder[key] = nested_value.as<int>();
+      }  else {
+        builder[key] = nested_value.as<std::string>();
+      }
+      break;
+    case YAML::NodeType::Sequence:
+      for(unsigned i=0; i<nested_value.size(); i++) {
+        YAML::Node sequence_item= nested_value[i];
+        if (sequence_item.IsScalar()){
+          all_scalar = all_scalar && true;
+        } else{
+          all_scalar = all_scalar && false;
+        }
+      }
+      if (not(all_scalar)) {
+        cout << "not all items are scalars" << endl;
+          for(unsigned int j=0; j<nested_value.size(); j++){ 
+            cout << nested_value[j] << endl;
+            if (nested_value[j].IsSequence()){
+              nested_list = nested_sequence(nested_value[j]);
+              to_list.push_back(nested_list);
+            } else {
+              nested_object = nested_json(nested_value[j]);
+              to_list.push_back(nested_object);
+            }
+          }
+      } else {
+        for(unsigned int j=0; j<nested_value.size(); j++){
+          YAML::Node one_item = nested_value[j];
+          cout << "one_item: " << one_item << endl;
+          to_list.push_back(one_item.as<std::string>());
+        }
+      }
+      builder[key] = to_list;
+      break;
+    case YAML::NodeType::Map:
+      cout << "nested map" << endl;
+      nested_object = nested_json(nested_value);
+      builder[key] = nested_object;
+      break;
+    case YAML::NodeType::Undefined:
+      cout << "nested undefined" << endl;
+      break;
+    case YAML::NodeType::Null:
+      cout << "nested null" << endl;
+    }
+  }
+  return builder;
+}
 
 Json::object Config::yaml_to_json(YAML::Node node) {
   Json::object builder;
