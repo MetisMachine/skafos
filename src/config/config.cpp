@@ -220,3 +220,12 @@ Json::object Config::yaml_to_json(YAML::Node node) {
                 to_list.push_back(nested_object);
               }
             }
+        } else {
+          for(unsigned int j=0; j<value.size(); j++){
+            // nested = nested_yaml(value[j]);
+            YAML::Node one_item = value[j];
+            cout << "one_item: " << one_item << endl;
+            // TODO: handle different value types like scalar switch statement
+            to_list.push_back(one_item.as<std::string>());
+          }
+        }
