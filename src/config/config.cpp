@@ -95,3 +95,29 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
 }
 
 YAML::Node Config::nested_yaml(YAML::Node value) {
+  YAML::Node builder;
+  YAML::Node nested;
+  YAML::Node double_nested;
+  bool all_scalar = true;
+  if (value.IsSequence()){
+    for(unsigned i=0; i<value.size(); i++) {
+      YAML::Node sequence_item= value[i];
+      if (sequence_item.IsScalar()){
+        all_scalar = all_scalar && true;
+      } else{
+        all_scalar = all_scalar && false;
+      }
+    }
+    if (not(all_scalar)) {
+      cout << "not all items are scalars" << endl;
+
+      for(unsigned int j=0; j<value.size(); j++){
+        nested = nested_yaml(value[j]);
+        nested.SetStyle(YAML::EmitterStyle::Block);
+        builder[j] = nested;
+      }
+    } else {
+      value.SetStyle(YAML::EmitterStyle::Block);
+      return value;
+    }
+  } else {
