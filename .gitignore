@@ -7,6 +7,7 @@ _build/*
 .vscode
 .idea
 metis.config.yml
+skafos.model.yml
 
 # Prerequisites
 *.d
