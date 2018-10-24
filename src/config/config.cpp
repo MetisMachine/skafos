@@ -181,3 +181,10 @@ Json::object Config::yaml_to_json(YAML::Node node) {
   Json::array nested_list;
   YAML::Node nested;
   Json::array to_list;
+  for(YAML::const_iterator it = node.begin(); it != node.end(); ++it){
+    std::string key = it->first.as<std::string>();
+    YAML::Node value = it->second;
+    cout<< "key: " << key << endl;
+    cout << "value: " << value << endl;
+    cout << endl;
+    bool all_scalar = true;
