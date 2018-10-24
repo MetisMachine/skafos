@@ -73,3 +73,8 @@ YAML::Node Config::to_yaml_block(YAML::Node node) {
             nested.SetStyle(YAML::EmitterStyle::Block);
             builder[key][j] = nested;
           }
+        } else {
+          value.SetStyle(YAML::EmitterStyle::Block);
+          builder[key] = value;
+        }
+        break;
