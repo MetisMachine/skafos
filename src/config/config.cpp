@@ -209,3 +209,14 @@ Json::object Config::yaml_to_json(YAML::Node node) {
             all_scalar = all_scalar && false;
           }
         }
+        if (not(all_scalar)) {
+          cout << "not all items are scalars" << endl;
+            for(unsigned int j=0; j<value.size(); j++){
+              if (value[j].IsSequence()){
+                nested_list = nested_sequence(value[j]);
+                to_list.push_back(nested_list);
+              } else {
+                nested_object = nested_json(value[j]);
+                to_list.push_back(nested_object);
+              }
+            }
