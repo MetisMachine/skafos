@@ -1,6 +1,7 @@
 #include "file/file.h"
 #include "organization.h"
 #include "env/env.h"
+#include "helpers/helpers.h"
 
 using namespace json11;
 
@@ -12,7 +13,7 @@ void Organization::list() {
   int status_code = resp.code;
   std::string error_message = json["message"].string_value();
 
-  if (not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
+  if (not(Helpers::success(status_code))) {
     console::error("There was an error listing your organizations: " + std::to_string(status_code) + " - " + error_message + "\n");
   } else if (json.is_array()) {
     console::info("Your organizations: ");
@@ -33,7 +34,7 @@ void Organization::set_default(std::string org_name) {
   int status_code = resp.code;
   std::string error_message = json["message"].string_value();
 
-  if (not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
+  if (not(Helpers::success(status_code))) {
     console::error("There was an error setting your default organization: " + std::to_string(status_code) + " - " + error_message + "\n");
   } else {
     Env::instance()->write_default_org(org_name);

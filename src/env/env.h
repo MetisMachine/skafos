@@ -6,11 +6,11 @@
 #include "request/request.h"
 #include "auth/auth.h"
 #include "templates/templates.h"
+#include "helpers/helpers.h"
 
 #define VERIFY_AUTH Env::instance()->verify_auth
 #define ENV_PATHS Env::instance()->paths
 
-const std::list<int> SUCCESS_CODES    = {200, 201, 202, 203, 204};
 const std::string METIS_API_TOKEN     = "METIS_API_TOKEN";
 const std::string METIS_AUTH_TOKEN    = "METIS_OAUTH";
 const std::string METIS_DEFAULT_ORG   = "METIS_DEFAULT_ORG";

@@ -38,6 +38,7 @@ void Project::init(string name, string org_name, string tpl, bool master) {
 
     existing_init(name, org_name, master);
   } else {
+    console::info("Using current directory...");
     template_init(name, org_name, tpl, master);
   }
 }
@@ -87,7 +88,7 @@ void Project::template_init(string name, string org_name, string tpl, bool maste
   status_code = resp.code;
   error_message = json["message"].string_value();
 
-  if(not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
+  if (not(Helpers::success(status_code))) {
     if (org_name.size() == 0) {
       console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
     } else {
@@ -173,13 +174,15 @@ void Project::existing_init(string name, string org_name, bool master) {
   status_code = resp.code;
   error_message = json["message"].string_value();
 
-  if(not(std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), status_code) != SUCCESS_CODES.end())) {
+  if(not(Helpers::success(status_code))) {
     if (org_name.size() == 0) {
       console::error("Unable to create your project: " + std::to_string(status_code) + " - " + error_message + "\n");
     } else {
       console::error("Unable to create your project under organization " + org_name + ": " + std::to_string(status_code) + " - " + error_message + "\n");
     }
   } else {
+
+    console::info("Creating project in existing directory /" + proj + " under organization " + org_name);
 
     string token        = json["token"].string_value();
     string job_id       = json["jobs"][0]["id"].string_value();
@@ -192,6 +195,7 @@ void Project::existing_init(string name, string org_name, bool master) {
     config_template.setValue("job_id", job_id);
     config_template.setValue("job_name", job_name);  
 
+    console::info("Creating configuration file");
     FileManager::write(config_path, config_template.render());
   }
 }
