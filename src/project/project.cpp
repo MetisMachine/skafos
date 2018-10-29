@@ -35,10 +35,9 @@ void Project::init(string name, string org_name, string tpl, bool master) {
       console::error("A metis.config.yml file is present in this directory. Unable to initialize a project");
       exit(EXIT_FAILURE);
     }
-
+    console::info("Using current directory...");
     existing_init(name, org_name, master);
   } else {
-    console::info("Using current directory...");
     template_init(name, org_name, tpl, master);
   }
 }
