@@ -20,11 +20,7 @@
 #include "data/data.h"
 #include "organization/organization.h"
 #include "whoami/whoami.h"
-#include "yaml-cpp/yaml.h"
-#include "config/config.h"
 
-
-using namespace json11;
 using namespace std;
 
 typedef void (*VoidFunctionType)(void);
@@ -389,6 +385,7 @@ void organizations(int argc, char **argv, int cmd_index) {
 void whoami() {
   Whoami::information();
 }
+
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
