@@ -77,7 +77,7 @@ struct command command_list[12]  = {
   kill_deployment_cmd,
   remote_cmd,
   organizations_cmd,
-  whoami_cmd,
+  whoami_cmd
 };
 
 

@@ -15,7 +15,6 @@ Usage:
     skafos remote info [<project_token>]
     skafos orgs [<name>] [--set-default]
     skafos whoami
-    skafos edit
     skafos -h | --help
     skafos -v | --version
 Commands:
