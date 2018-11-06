@@ -398,15 +398,28 @@ void edit() {
   // std::string err;
   // Json json = Json::parse(resp.body, err);
 
+
+
   YAML::Node config;
-  config = Config::load_file("put path here for testing");
-  Json::object my_json = Config::yaml_to_json(config);
-  Json json = my_json;
-  YAML::Node json_as_node;
-  json_as_node = Config::load_json(json);
-  YAML::Node yaml_block = Config::to_yaml_block(json_as_node);
-  Config::yaml_to_file(yaml_block, "put path to output file");
-}
+  try {
+    config = Config::load_file("file path");
+    // cout << "config: " << config << endl;
+    Json::object my_json = Config::yaml_to_json(config);
+    Json json = my_json;
+    string string_json = json.dump();
+    cout << "yaml to json: " << string_json << endl;
+    YAML::Node json_as_node;
+    json_as_node = Config::load_json(json);
+    YAML::Node yaml_block = Config::to_yaml_block(json_as_node);
+    Config::yaml_to_file(yaml_block, "file path");
+  } catch (YAML::ParserException& e){
+    console::error("Parsing Error: unable to load yaml file");
+  } catch (const char* msg) {
+     console::error("Unable to edit yaml file: " + string(msg));
+   } catch (...){
+    console::error("Unable to edit yaml file");
+  }
+  }
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
