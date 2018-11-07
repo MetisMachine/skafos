@@ -55,6 +55,7 @@ void Project::create_job(string name, string project_token){
     out << YAML::BeginSeq;
     out << YAML::BeginMap;
     out << YAML::Key << "job_id" << YAML::Value << job_json["id"].string_value();
+    out << YAML::Key << "language" << YAML::Value << "python";
     out << YAML::Key << "name" << YAML::Value << name;
     out << YAML::Key << "entrypoint" << YAML::Value << "<change_me>";
     out << YAML::EndMap;
@@ -181,7 +182,7 @@ void Project::existing_init(string name, string org_name, bool master) {
     }
   } else {
 
-    console::info("Creating project in existing directory /" + proj + " under organization " + org_name);
+    console::info("Creating project in existing directory " + proj + " under organization " + org_name);
 
     string token        = json["token"].string_value();
     string job_id       = json["jobs"][0]["id"].string_value();
