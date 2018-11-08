@@ -33,6 +33,7 @@ public:
   static RestClient::Response set_default_org(std::string name);
   static RestClient::Response my_default_org();
   static RestClient::Response whoami();
+  static RestClient::Response list_models(std::string project_token, std::map<std::string, std::string> params);
 
   static void download(std::string url, std::string save_path);
   static std::vector<std::string> string_split(const std::string& s, char delimiter);
@@ -73,6 +74,7 @@ private:
   RestClient::Response _set_default_org(std::string name);
   RestClient::Response _my_default_org();
   RestClient::Response _whoami();
+  RestClient::Response _list_models(std::string project_token, std::map<std::string, std::string> params);
 
   static void _download(std::string url, std::string save_path);
 };
