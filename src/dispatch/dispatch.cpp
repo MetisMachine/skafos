@@ -389,6 +389,30 @@ void whoami() {
   Whoami::information();
 }
 
+void download_models(int argc, char **argv, int cmd_index, map<string, int> flags, map<string, string> params){
+  string output_path         = ".";
+  string project_token       = ".";
+
+  std::string model_name = string(argv[3]);
+  params.insert(std::pair<string,string> ("display_name", model_name));
+
+  int project_index = flags.find("--project")->second;
+  if (project_index != -1){
+    if (project_index + 1 < argc){
+      project_token = argv[project_index + 1];
+    }
+  }
+
+  int output_index = flags.find("-o")->second;
+  if (output_index != -1){
+    if (output_index + 1 < argc){
+      output_path = argv[output_index + 1];
+    }
+  }
+
+  Models::download(project_token, params, output_path);
+}
+
 void list_models (int argc, char **argv, int cmd_index, map<string, int> flags, map<string, string> params){
   string project_token       = ".";
   string model_name          = "";
@@ -459,10 +483,9 @@ void models(int argc, char **argv, int cmd_index) {
 
   action = string(argv[2]);
   if (action.compare("list") == 0){
-    console::debug("list models");
     list_models(argc, argv, cmd_index, flags, params);
   } else if (action.compare("download") == 0){
-    console::info("download models coming soon.");
+    download_models(argc, argv, cmd_index, flags, params);
   } 
 }
 
