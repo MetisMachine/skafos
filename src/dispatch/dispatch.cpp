@@ -386,6 +386,82 @@ void whoami() {
   Whoami::information();
 }
 
+void list_models (int argc, char **argv, int cmd_index, map<string, int> flags, map<string, string> params){
+  string project_token       = ".";
+  string model_name          = "";
+  string deployment_id;
+  string job_id;
+
+  if (flags.find(string(argv[3])) == flags.end()){ 
+    std::string model_name = string(argv[3]);
+    params.insert(std::pair<string,string> ("display_name", model_name));
+  }
+
+  int deployment_index = flags.find("--deployment")->second;
+  if (deployment_index != -1){
+    if (deployment_index + 1 < argc){
+      deployment_id = argv[deployment_index + 1];
+      params.insert(std::pair<string,string> ("deployment_id", deployment_id));
+    }
+  }
+
+  int job_index = flags.find("--job")->second;
+  if (job_index != -1){
+    if (job_index + 1 < argc){
+      job_id = argv[job_index + 1];
+      params.insert(std::pair<string,string> ("job_id", job_id));
+    }
+  }
+
+  int project_index = flags.find("--project")->second;
+  if (project_index != -1){
+    if (project_index + 1 < argc){
+      project_token = argv[project_index + 1];
+    }
+  }
+  
+  if (params.find("tag") != params.end() | params.find("version") != params.end()){
+    if (params.find("display_name") != params.end()){
+      Models::list(project_token, params);
+    } else {
+      console::error("A model name is required in order to list models by tag or version.");
+    }
+  } else{
+    Models::list(project_token, params);
+  }
+}
+
+void models(int argc, char **argv, int cmd_index) {
+  map<string, int> flags = find_flags(argc, argv, cmd_index);
+  string action;
+  string tag;
+  string version;
+  map<string, string> params;
+
+  int tag_index = flags.find("--tag")->second;
+  if (tag_index != -1){
+    if (tag_index + 1 < argc){
+      tag = argv[tag_index + 1];
+      params.insert(std::pair<string,string> ("tag", tag));
+    }
+  }
+
+  int version_index = flags.find("-v")->second;
+  if (version_index != -1){
+    if (version_index + 1 < argc){
+      version = argv[version_index + 1];
+      params.insert(std::pair<string,string> ("version", version));
+    }
+  }
+
+  action = string(argv[2]);
+  if (action.compare("list") == 0){
+    console::debug("list models");
+    list_models(argc, argv, cmd_index, flags, params);
+  } else if (action.compare("download") == 0){
+    console::info("download models coming soon.");
+  } 
+}
 
 int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   FunctionCaller disp;
@@ -402,6 +478,7 @@ int Dispatch::dispatch(int argc, char **argv, int cmd_index) {
   disp.insert("remote",        remote);
   disp.insert("orgs",          organizations);
   disp.insert("whoami",        whoami);
+  disp.insert("models",        models);
 
   if(command_list[cmd_index].needs_auth) {
     VERIFY_AUTH();
