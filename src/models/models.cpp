@@ -18,11 +18,18 @@ void Models::list(std::string project_token, std::map<std::string, std::string> 
     console::info("Your models: ");
     auto models = json.array_items();
     for (int i = 0; i < models.size(); i++) {
-      auto tags = models[i]["tags"].array_items();
-      std::string model_tags;
-      if (tags.size() == 0){
-        model_tags = "nil";
-      } else {
+      Json tags = models[i]["tags"];
+      std::string model_tags = tags_to_string(tags);
+
+      console::info("  Name: " + models[i]["display_name"].string_value() + 
+                    "\n    Version: " + models[i]["version"].string_value() + 
+                    "\n    Tags: " + model_tags);
+    }
+  } else {
+    console::error("There was an error listing your models \n");
+  }
+}
+
 void Models::download(std::string project_token, std::map<std::string, std::string> params, std::string output_path){
   if(project_token.compare(".") == 0){
     project_token = PROJECT_TOKEN;
@@ -67,10 +74,10 @@ void Models::download(std::string project_token, std::map<std::string, std::stri
         cin.ignore(1, '\n');
         cout << "Invalid choice. Valid numbers are [1-" << list_size << "].";
         return;
-          } else {
+      } else {
         selected_model = models[idx];
-          }
-        }
+      }
+    }
     std::string display_name = selected_model["display_name"].string_value();
     std::string version = selected_model["version"].string_value();
 
@@ -78,20 +85,33 @@ void Models::download(std::string project_token, std::map<std::string, std::stri
 
     std::string output_file = version + "_" + display_name + ".txt";
     std::string download_path;
-        
+    
     if (output_path.compare(".") == 0){
       download_path = FileManager::cwd() + "/" + output_file;
     } else {
       download_path = output_path + "/" + output_file;
-      }
+    }
 
     Request::download(model_url, download_path);
 
   } else {
     console::error("There was an error downloading your model \n");
   }
-    }
+}
+
+std::string Models::tags_to_string(Json tags){
+  auto tags_list = tags.array_items();
+  std::string model_tags;
+  if (tags_list.size() == 0){
+    model_tags = "nil";
   } else {
-    console::error("There was an error listing your models \n");
+    for (int j = 0; j < tags_list.size(); j++) {
+      if(j == tags_list.size() - 1){
+        model_tags = model_tags + " " + tags_list[j].string_value();
+      } else {
+        model_tags = model_tags + " " + tags_list[j].string_value() + ",";
+      }
+    }
   }
+  return model_tags;
 }
