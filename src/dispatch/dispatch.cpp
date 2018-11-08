@@ -20,6 +20,7 @@
 #include "data/data.h"
 #include "organization/organization.h"
 #include "whoami/whoami.h"
+#include "models/models.h"
 
 using namespace std;
 
@@ -60,8 +61,9 @@ struct command kill_deployment_cmd    = {"kill", {"--deployments", "--job_ids"},
 struct command remote_cmd             = {"remote", {}, true, true};
 struct command organizations_cmd      = {"orgs", {"--set-default"}, true, true};
 struct command whoami_cmd             = {"whoami", {}, false, true};
+struct command models_cmd             = {"models", {"-o", "--project", "--deployment", "--job", "-v", "--tag"}, true, true};
 
-struct command command_list[12]  = {
+struct command command_list[13]  = {
   setup_cmd, 
   init_cmd, 
   auth_cmd, 
@@ -73,7 +75,8 @@ struct command command_list[12]  = {
   kill_deployment_cmd,
   remote_cmd,
   organizations_cmd,
-  whoami_cmd
+  whoami_cmd,
+  models_cmd
 };
 
 
