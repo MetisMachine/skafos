@@ -40,7 +40,7 @@ void Env::setup() {
 bool Env::authenticated() {
   if (Env::instance()->load_defaults()){
     string default_org_name = Env::instance()->get(METIS_DEFAULT_ORG);
-    return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong") && (std::find(SUCCESS_CODES.begin(), SUCCESS_CODES.end(), Request::org_by_name(default_org_name).code) != SUCCESS_CODES.end()));
+    return (FileManager::file_exists(paths.credentials) && (Request::ping().body == "pong") && Helpers::success(Request::org_by_name(default_org_name).code));
   }
   return false;
 }

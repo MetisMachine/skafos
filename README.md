@@ -48,8 +48,9 @@ You can install [https://brew.sh/](Homebrew), or use the same process as Linux.
     skafos remote info [<project_token>]
     skafos orgs [<name>] [--set-default]
     skafos whoami
+    skafos models (list [<name>] [--deployment <deployment_id] [--job <job_id>]|download <name> [-o <output_path>]) [--project <token>] [--tag <tag>] [-v version]
     skafos -h | --help
-    skafos -v | --version
+    skafos --version
 ## Commands:
     setup         Setup development environment.
     init          Create a new project.
@@ -63,6 +64,7 @@ You can install [https://brew.sh/](Homebrew), or use the same process as Linux.
     remote info   Print command to add a new remote. 
     orgs          List or set your default organization.
     whoami        List your current user info and settings.
+    models        List or download models for a project.
 ## Options:
     -V --version             Shows version.
 
@@ -72,10 +74,5 @@ If you need help, feel free to reach out:
 - https://metismachine.com
 - https://twitter.com/metismachine
 - https://github.com/metismachine
-
-Skafos is currently under a private beta but don't despair 
-because we are offering an opportunity for you to get early access. 
-
-Please go to https://metismachine.typeform.com/to/JzdHLh to make it so. 
 
 Fire it up!
