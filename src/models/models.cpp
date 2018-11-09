@@ -89,10 +89,23 @@ void Models::download(std::string project_token, std::map<std::string, std::stri
     if (output_path.compare(".") == 0){
       download_path = FileManager::cwd() + "/" + output_file;
     } else {
-      download_path = output_path + "/" + output_file;
+      if (FileManager::is_dir(output_path)){
+        download_path = output_path;
+      } else {
+        console::warn("Invalid output path, downloading to current directory.");
+        download_path = FileManager::cwd() + "/" + output_file;
+      }
     }
 
     Request::download(model_url, download_path);
+    
+    try {
+      YAML::Node model_error = YAML::LoadFile(download_path);
+      console::error("There was an error downloading your model.");
+      FileManager::delete_file(download_path);
+    } catch (...){
+      console::info("Model successfully downloaded to " + download_path);
+    }
 
   } else {
     console::error("There was an error downloading your model \n");

@@ -7,6 +7,7 @@
 #include "env/env.h"
 #include "file/file.h"
 #include <curl/curl.h>
+#include "yaml-cpp/yaml.h"
 
 using namespace std;
 using namespace json11;
