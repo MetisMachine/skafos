@@ -15,8 +15,9 @@ Usage:
     skafos remote info [<project_token>]
     skafos orgs [<name>] [--set-default]
     skafos whoami
+    skafos models (list [<name>] [--deployment <deployment_id] [--job <job_id>]|download <name> [-o <output_path>]) [--project <token>] [--tag <tag>] [-v version]
     skafos -h | --help
-    skafos -v | --version
+    skafos --version
 Commands:
     setup         Setup development environment.
     init          Create a new project.
@@ -30,8 +31,9 @@ Commands:
     remote info   Print command to add a new remote. 
     orgs          List or set your default organization.
     whoami        List your current user info and settings.
+    models        List or download models for a project.
 Options:
-    -v --version    Shows version.
+    --version    Shows version.
 
 
 If you need help, feel free to reach out:

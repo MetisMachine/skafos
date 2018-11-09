@@ -23,6 +23,7 @@ const string OLD_ORGANIZATIONS_URL = "/old/organizations";
 const string ORGANIZATIONS_URL     = "/organizations";
 const string ME_URL                = "/users/me";
 const string DEFAULT_ORG_URL       = "/organizations/default";
+const string MODELS_URL            = "/models";
 
 #define DEFAULT_HEADERS() \
 RestClient::HeaderFields headers = this->_default_headers(); \
@@ -365,6 +366,28 @@ RestClient::Response Request::_whoami() {
   return this->connection->get(ME_URL);
 }
 
+RestClient::Response Request::_list_models(std::string project_token, std::map<std::string, std::string> params){
+  API_HEADERS();
+
+  std::string request_params;
+  map<string, string>::iterator it;
+  for (it = params.begin(); it != params.end(); it++) {
+      std::string key = it->first;
+      std::string value = it->second;
+      if (std::next(it) != params.end()){
+        request_params = request_params + key + "=" + value + "&";
+      } else{
+        request_params = request_params + key + "=" + value;
+      }
+    }
+
+  cout << request_params << endl;
+
+  std::string uri = PROJECT_URL + "/" + project_token + MODELS_URL + "?" + request_params;
+
+  return this->connection->get(uri);
+}
+
 // DOWNLOAD
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -506,6 +529,10 @@ RestClient::Response Request::my_default_org() {
 
 RestClient::Response Request::whoami() {
   return instance()->_whoami();
+}
+
+RestClient::Response Request::list_models(std::string project_token, std::map<std::string, std::string> params){
+  return instance()->_list_models(project_token, params);
 }
 
 // DOWNLOAD
