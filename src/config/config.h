@@ -7,6 +7,13 @@
 using namespace json11;
 using namespace std;
 
+namespace config_helpers {
+  bool is_all_scalar(YAML::Node value);
+  bool is_number(std::string s);
+  bool is_bool(std::string s);
+  bool convert_to_bool(std::string s);
+}
+
 class Config {
   public: 
     static YAML::Node to_yaml_block(YAML::Node node);

@@ -2,51 +2,53 @@
 
 // Helpers
 
-bool is_all_scalar(YAML::Node value) {
-  bool all_scalar;
-  all_scalar = true;
-  for(unsigned i=0; i<value.size(); i++) {
-    YAML::Node sequence_item= value[i];
-    if (sequence_item.IsScalar()){
-      all_scalar = all_scalar && true;
-    } else{
-      all_scalar = all_scalar && false;
+namespace config_helpers {
+  bool is_all_scalar(YAML::Node value) {
+    bool all_scalar;
+    all_scalar = true;
+    for(unsigned i=0; i<value.size(); i++) {
+      YAML::Node sequence_item= value[i];
+      if (sequence_item.IsScalar()){
+        all_scalar = all_scalar && true;
+      } else{
+        all_scalar = all_scalar && false;
+      }
+    }
+    return all_scalar;
+  }
+
+  bool is_number(std::string s){
+    bool is_num;
+    is_num = true;
+    for (int i = 0; i < s.size(); i++){
+      if (std::isdigit(s[i])){
+        is_num = is_num && true;
+      } else{
+        is_num = is_num && false;
+      }
+    }
+    return is_num;
+  }
+
+  bool is_bool(std::string s){
+
+    for (int i = 0; i < s.size(); i++)
+      s[i] = tolower(s[i]);
+    if (s.compare("true") == 0 || s.compare("false") == 0) {
+      return true;
+    } else {
+      return false;
     }
   }
-  return all_scalar;
-}
 
-bool is_number(std::string s){
-  bool is_num;
-  is_num = true;
-  for (int i = 0; i < s.size(); i++){
-    if (std::isdigit(s[i])){
-      is_num = is_num && true;
-    } else{
-      is_num = is_num && false;
+  bool convert_to_bool(std::string s){
+    for (int i = 0; i < s.size(); i++)
+      s[i] = tolower(s[i]);
+    if (s.compare("true") == 0) {
+      return true;
+    } else {
+      return false;
     }
-  }
-  return is_num;
-}
-
-bool is_bool(std::string s){
-
-  for (int i = 0; i < s.size(); i++)
-    s[i] = tolower(s[i]);
-  if (s.compare("true") == 0 || s.compare("false") == 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-bool convert_to_bool(std::string s){
-  for (int i = 0; i < s.size(); i++)
-    s[i] = tolower(s[i]);
-  if (s.compare("true") == 0) {
-    return true;
-  } else {
-    return false;
   }
 }
 
@@ -154,7 +156,7 @@ YAML::Node Config::nested_yaml(YAML::Node value) {
 YAML::Node Config::sequence_to_yaml_block(YAML::Node builder, YAML::Node value, std::string key){
   YAML::Node nested;
   bool all_scalar;
-  all_scalar = is_all_scalar(value);
+  all_scalar = config_helpers::is_all_scalar(value);
   if (not(all_scalar)) {
     for(unsigned int j=0; j<value.size(); j++){
       nested = Config::nested_yaml(value[j]);
@@ -171,7 +173,7 @@ YAML::Node Config::sequence_to_yaml_block(YAML::Node builder, YAML::Node value, 
 YAML::Node Config::sequence_to_yaml_block(YAML::Node builder, YAML::Node value){
   YAML::Node nested;
   bool all_scalar;
-  all_scalar = is_all_scalar(value);
+  all_scalar = config_helpers::is_all_scalar(value);
   if (not(all_scalar)) {
     for(unsigned int j=0; j<value.size(); j++){
       nested = nested_yaml(value[j]);
@@ -228,10 +230,10 @@ Json::object Config::yaml_to_json(YAML::Node node) {
 }
 
 Json::object Config::handle_scalar_types(Json::object builder, YAML::Node value, std::string key){
-  if (is_number(value.as<std::string>())) {
+  if (config_helpers::is_number(value.as<std::string>())) {
     builder[key] = value.as<int>();
-  } else if (is_bool(value.as<std::string>())){
-    bool value_bool = convert_to_bool(value.as<std::string>());
+  } else if (config_helpers::is_bool(value.as<std::string>())){
+    bool value_bool = config_helpers::convert_to_bool(value.as<std::string>());
     builder[key] = value_bool;
   } else {
     builder[key] = value.as<std::string>();
@@ -276,7 +278,7 @@ Json::object Config::nested_json(YAML::Node value) {
 Json::array Config::nested_sequence(YAML::Node value) {
   Json::array to_list;
   bool all_scalar;
-  all_scalar = is_all_scalar(value);
+  all_scalar = config_helpers::is_all_scalar(value);
 
   if (not(all_scalar)) {
     for(unsigned int j=0; j<value.size(); j++){
@@ -286,10 +288,10 @@ Json::array Config::nested_sequence(YAML::Node value) {
         nested_list = nested_sequence(value[j]);
         to_list.push_back(nested_list);
       } else if(value[j].IsScalar()) {
-        if (is_number(value[j].as<std::string>())) {
+        if (config_helpers::is_number(value[j].as<std::string>())) {
           to_list.push_back(value[j].as<int>());
-        } else if (is_bool(value[j].as<std::string>())){
-          bool nested_bool = convert_to_bool(value[j].as<std::string>());
+        } else if (config_helpers::is_bool(value[j].as<std::string>())){
+          bool nested_bool = config_helpers::convert_to_bool(value[j].as<std::string>());
           to_list.push_back(nested_bool);
         } else {
           to_list.push_back(value[j].as<std::string>());
@@ -302,10 +304,10 @@ Json::array Config::nested_sequence(YAML::Node value) {
   } else {
     for(unsigned int j=0; j<value.size(); j++){
       YAML::Node one_item = value[j];
-      if (is_number(one_item.as<std::string>())) {
+      if (config_helpers::is_number(one_item.as<std::string>())) {
         to_list.push_back(one_item.as<int>());
-      } else if (is_bool(one_item.as<std::string>())){
-        bool value_bool = convert_to_bool(one_item.as<std::string>());
+      } else if (config_helpers::is_bool(one_item.as<std::string>())){
+        bool value_bool = config_helpers::convert_to_bool(one_item.as<std::string>());
         to_list.push_back(value_bool);
       } else {
         to_list.push_back(one_item.as<std::string>());
