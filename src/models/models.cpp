@@ -103,14 +103,32 @@ std::string Models::tags_to_string(Json tags){
   return model_tags;
 }
 
+void Models::download_to_file(std::string project_token, std::string display_name, std::string version, std::string output_path){
+
+    std::string model_url = DOWNLOAD_URL + "/projects/" + project_token + "/models?name=" + display_name + "&version=" + version;
+
+    std::string output_file = version + "_" + display_name + ".txt";
+    std::string download_path;
+
+    download_path = resolve_download_path(output_path, output_file);
+
+    console::debug("Download path: " + download_path);
+
     Request::download(model_url, download_path);
     
     try {
       YAML::Node model_error = YAML::LoadFile(download_path);
-      console::error("There was an error downloading your model.");
+      if (model_error["Error"]){
+        console::error("There was an error downloading your model to " + download_path + ": " + model_error["Error"].as<std::string>());
+      } else{
+        console::error("There was an error downloading your model to " + download_path);
+      }
       FileManager::delete_file(download_path);
-    } catch (...){
+    } catch (YAML::ParserException& e){
       console::info("Model successfully downloaded to " + download_path);
+    } catch (...){
+      console::error("There was an error downloading your model to " + download_path);
+    }
     }
 
   } else {
