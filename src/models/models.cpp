@@ -141,28 +141,42 @@ std::string Models::resolve_download_path(std::string output_path, std::string o
     } else {
       if (FileManager::is_dir(output_path)){
         string dir = output_path.substr(output_path.find_last_of("/"));
-        if (dir.compare("/") == 0){
-          download_path = output_path + output_file;
-        } else{
-          std::size_t found = output_path.find(".");
-          if (found!=std::string::npos){
-            string file_ext  = output_path.substr(output_path.find_last_of("."));
-            if (file_ext.compare(".") == 0){
-              download_path = output_path + "/" + output_file;
-            } else {
-              if (FileManager::file_exists(output_path) || file_ext.size() <= 4){
-                download_path = output_path;
-              } else {
-                download_path = output_path + "/" + output_file;
-              }
-            }
-          } else{
-            download_path = output_path + "/" + output_file;
-          }
-        }
+        download_path = check_dir_format(output_path, output_file, dir);
       } else {
         download_path = output_path;
       }
     }
     return download_path;
+}
+
+std::string Models::check_dir_format(std::string output_path, std::string output_file, std::string dir){
+  std::string download_path;
+  if (dir.compare("/") == 0){
+    download_path = output_path + output_file;
+  } else{
+    // check if output_path is a file or a dir w/out ending /
+    download_path = check_for_file_ext(output_path, output_file);
+    }
+    return download_path;
+}
+
+std::string Models::check_for_file_ext(std::string output_path, std::string output_file){
+  // check if . is in output_path, then see if it is the length of a file extention, otherwise treat as dir
+  std::string download_path;
+  std::size_t found = output_path.find(".");
+  if (found!=std::string::npos){
+    string file_ext  = output_path.substr(output_path.find_last_of("."));
+    if (file_ext.compare(".") == 0){
+      download_path = output_path + "/" + output_file;
+    } else {
+      if (FileManager::file_exists(output_path) || file_ext.size() <= 4){
+        download_path = output_path;
+      } else {
+        download_path = output_path + "/" + output_file;
+      }
+    }
+  } else{
+    download_path = output_path + "/" + output_file;
+  }
+  return download_path;
 }
