@@ -86,16 +86,22 @@ void Models::download(std::string project_token, std::map<std::string, std::stri
     std::string output_file = version + "_" + display_name + ".txt";
     std::string download_path;
     
-    if (output_path.compare(".") == 0){
-      download_path = FileManager::cwd() + "/" + output_file;
+std::string Models::tags_to_string(Json tags){
+  auto tags_list = tags.array_items();
+  std::string model_tags;
+  if (tags_list.size() == 0){
+    model_tags = "nil";
     } else {
-      if (FileManager::is_dir(output_path)){
-        download_path = output_path;
+    for (int j = 0; j < tags_list.size(); j++) {
+      if(j == tags_list.size() - 1){
+        model_tags = model_tags + " " + tags_list[j].string_value();
       } else {
-        console::warn("Invalid output path, downloading to current directory.");
-        download_path = FileManager::cwd() + "/" + output_file;
+        model_tags = model_tags + " " + tags_list[j].string_value() + ",";
       }
     }
+  }
+  return model_tags;
+}
 
     Request::download(model_url, download_path);
     
