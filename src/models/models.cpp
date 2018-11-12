@@ -81,17 +81,19 @@ void Models::download(std::string project_token, std::map<std::string, std::stri
     std::string display_name = selected_model["display_name"].string_value();
     std::string version = selected_model["version"].string_value();
 
-    std::string model_url = DOWNLOAD_URL + "/projects/" + project_token + "/models?name=" + display_name + "&version=" + version;
+    Models::download_to_file(project_token, display_name, version, output_path);
 
-    std::string output_file = version + "_" + display_name + ".txt";
-    std::string download_path;
-    
+  } else {
+    console::error("There was an error downloading your model \n");
+  }
+}
+
 std::string Models::tags_to_string(Json tags){
   auto tags_list = tags.array_items();
   std::string model_tags;
   if (tags_list.size() == 0){
     model_tags = "nil";
-    } else {
+  } else {
     for (int j = 0; j < tags_list.size(); j++) {
       if(j == tags_list.size() - 1){
         model_tags = model_tags + " " + tags_list[j].string_value();
@@ -129,26 +131,38 @@ void Models::download_to_file(std::string project_token, std::string display_nam
     } catch (...){
       console::error("There was an error downloading your model to " + download_path);
     }
-    }
-
-  } else {
-    console::error("There was an error downloading your model \n");
-  }
 }
 
-std::string Models::tags_to_string(Json tags){
-  auto tags_list = tags.array_items();
-  std::string model_tags;
-  if (tags_list.size() == 0){
-    model_tags = "nil";
-  } else {
-    for (int j = 0; j < tags_list.size(); j++) {
-      if(j == tags_list.size() - 1){
-        model_tags = model_tags + " " + tags_list[j].string_value();
+std::string Models::resolve_download_path(std::string output_path, std::string output_file) {
+  std::string download_path;
+
+  if (output_path.compare(".") == 0){
+      download_path = FileManager::cwd() + "/" + output_file;
+    } else {
+      if (FileManager::is_dir(output_path)){
+        string dir = output_path.substr(output_path.find_last_of("/"));
+        if (dir.compare("/") == 0){
+          download_path = output_path + output_file;
+        } else{
+          std::size_t found = output_path.find(".");
+          if (found!=std::string::npos){
+            string file_ext  = output_path.substr(output_path.find_last_of("."));
+            if (file_ext.compare(".") == 0){
+              download_path = output_path + "/" + output_file;
+            } else {
+              if (FileManager::file_exists(output_path) || file_ext.size() <= 4){
+                download_path = output_path;
+              } else {
+                download_path = output_path + "/" + output_file;
+              }
+            }
+          } else{
+            download_path = output_path + "/" + output_file;
+          }
+        }
       } else {
-        model_tags = model_tags + " " + tags_list[j].string_value() + ",";
+        download_path = output_path;
       }
     }
-  }
-  return model_tags;
+    return download_path;
 }
