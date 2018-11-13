@@ -394,7 +394,7 @@ void download_models(int argc, char **argv, int cmd_index, map<string, int> flag
   string project_token       = ".";
 
   std::string model_name = string(argv[3]);
-  params.insert(std::pair<string,string> ("display_name", model_name));
+  params.insert(std::pair<string,string> ("name", model_name));
 
   int project_index = flags.find("--project")->second;
   if (project_index != -1){
@@ -421,7 +421,7 @@ void list_models (int argc, char **argv, int cmd_index, map<string, int> flags, 
 
   if (flags.find(string(argv[3])) == flags.end()){ 
     std::string model_name = string(argv[3]);
-    params.insert(std::pair<string,string> ("display_name", model_name));
+    params.insert(std::pair<string,string> ("name", model_name));
   }
 
   int deployment_index = flags.find("--deployment")->second;
@@ -448,7 +448,7 @@ void list_models (int argc, char **argv, int cmd_index, map<string, int> flags, 
   }
   
   if (params.find("tag") != params.end() | params.find("version") != params.end()){
-    if (params.find("display_name") != params.end()){
+    if (params.find("name") != params.end()){
       Models::list(project_token, params);
     } else {
       console::error("A model name is required in order to list models by tag or version.");

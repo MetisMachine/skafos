@@ -381,8 +381,6 @@ RestClient::Response Request::_list_models(std::string project_token, std::map<s
       }
     }
 
-  cout << request_params << endl;
-
   std::string uri = PROJECT_URL + "/" + project_token + MODELS_URL + "?" + request_params;
 
   return this->connection->get(uri);
