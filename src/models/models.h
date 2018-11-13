@@ -18,8 +18,6 @@ class Models {
     static void download(std::string project_token, std::map<string,string> params, std::string output_path);
 
   private:
-    static string check_dir_format(std::string output_path, std::string output_file, std::string dir);
-    static string check_for_file_ext(std::string output_path, std::string output_file);
     static void download_to_file(std::string project_token, std::string display_name, std::string version, std::string output_path);
     static string resolve_download_path(std::string output_path, std::string output_file);
     static string tags_to_string(Json model_tags);

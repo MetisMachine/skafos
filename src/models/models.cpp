@@ -109,16 +109,14 @@ void Models::download_to_file(std::string project_token, std::string display_nam
 
     std::string model_url = DOWNLOAD_URL + "/projects/" + project_token + "/models?name=" + display_name + "&version=" + version;
 
-    std::string output_file = version + "_" + display_name + ".txt";
+    std::string output_file = display_name;
     std::string download_path;
-
-    download_path = resolve_download_path(output_path, output_file);
-
-    console::debug("Download path: " + download_path);
-
-    Request::download(model_url, download_path);
     
     try {
+      download_path = resolve_download_path(output_path, output_file);
+      console::debug("Download path: " + download_path);
+      Request::download(model_url, download_path);
+
       YAML::Node model_error = YAML::LoadFile(download_path);
       if (model_error["Error"]){
         console::error("There was an error downloading your model to " + download_path + ": " + model_error["Error"].as<std::string>());
@@ -128,7 +126,9 @@ void Models::download_to_file(std::string project_token, std::string display_nam
       FileManager::delete_file(download_path);
     } catch (YAML::ParserException& e){
       console::info("Model successfully downloaded to " + download_path);
-    } catch (...){
+    } catch(std::string &error) {
+      console::error("Error: " + error);
+    } catch (...) {
       console::error("There was an error downloading your model to " + download_path);
     }
 }
@@ -136,47 +136,25 @@ void Models::download_to_file(std::string project_token, std::string display_nam
 std::string Models::resolve_download_path(std::string output_path, std::string output_file) {
   std::string download_path;
 
-  if (output_path.compare(".") == 0){
-      download_path = FileManager::cwd() + "/" + output_file;
+  if (FileManager::is_dir(output_path)){
+    char ch = output_path.back();
+    if (ch == '/') {
+      download_path = output_path + output_file;
     } else {
-      if (FileManager::is_dir(output_path)){
-        string dir = output_path.substr(output_path.find_last_of("/"));
-        download_path = check_dir_format(output_path, output_file, dir);
-      } else {
-        download_path = output_path;
-      }
-    }
-    return download_path;
-}
-
-std::string Models::check_dir_format(std::string output_path, std::string output_file, std::string dir){
-  std::string download_path;
-  if (dir.compare("/") == 0){
-    download_path = output_path + output_file;
-  } else{
-    // check if output_path is a file or a dir w/out ending /
-    download_path = check_for_file_ext(output_path, output_file);
-    }
-    return download_path;
-}
-
-std::string Models::check_for_file_ext(std::string output_path, std::string output_file){
-  // check if . is in output_path, then see if it is the length of a file extention, otherwise treat as dir
-  std::string download_path;
-  std::size_t found = output_path.find(".");
-  if (found!=std::string::npos){
-    string file_ext  = output_path.substr(output_path.find_last_of("."));
-    if (file_ext.compare(".") == 0){
       download_path = output_path + "/" + output_file;
+    }
+  } else {
+    std::size_t found = output_path.rfind("/");
+    if (found == std::string::npos) {
+      download_path = FileManager::resolve_path(output_path);
     } else {
-      if (FileManager::file_exists(output_path) || file_ext.size() <= 4){
+      string dir = output_path.substr(0, found);
+      if (FileManager::is_dir(dir)){
         download_path = output_path;
       } else {
-        download_path = output_path + "/" + output_file;
+        throw "Directory does not exist: " + dir;
       }
     }
-  } else{
-    download_path = output_path + "/" + output_file;
   }
   return download_path;
 }
