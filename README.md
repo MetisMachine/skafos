@@ -48,7 +48,7 @@ You can install [https://brew.sh/](Homebrew), or use the same process as Linux.
     skafos remote info [<project_token>]
     skafos orgs [<name>] [--set-default]
     skafos whoami
-    skafos models (list [<name>] [--deployment <deployment_id] [--job <job_id>]|download <name> [-o <output_path>]) [--project <token>] [--tag <tag>] [-v version]
+    skafos models (list [<name>] [--deployment <deployment_id>] [--job <job_id>]|download <name> [-o <output_path>]) [--project <token>] [--tag <tag>] [-v version]
     skafos -h | --help
     skafos --version
 ## Commands:

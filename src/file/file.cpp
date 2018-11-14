@@ -126,11 +126,11 @@ bool FileManager::dir_exists(string path) {
 
 bool FileManager::is_dir(string path) {
   struct stat buffer;
-  if(stat(path.c_str(), &buffer) != 0) {
-    return true;
-  }
-
-  return S_ISDIR(buffer.st_mode);
+  if(stat(path.c_str(), &buffer) == 0) {
+    return S_ISDIR(buffer.st_mode);
+  } 
+  
+  return false;
 }
 
 bool FileManager::is_dot_dir(string path) {
