@@ -217,7 +217,7 @@ void Project::remote_add(string project_token){
   if(stoi(list_size) == 1){
     selected_org = list[0]["id"].string_value();
   } else{
-    cout << "Please select the organization for the project." << endl;
+    cout << "Please select organization for the project by its number." << endl;
     int opt_iter = 1;
     for(auto i : list) {
       auto j = Json(i);
