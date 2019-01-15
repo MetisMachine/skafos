@@ -30,10 +30,14 @@ else()
   message(STATUS "Checking compiler flags for C++11 support.")
   include(CheckCXXCompilerFlag)
 
-  check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
-  check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+  if(NOT MSVC)
+    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+    CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+  endif(NOT MSVC)
   
-  if(COMPILER_SUPPORTS_CXX11)
+  if(MSVC)
+    message(STATUS "Building with Visual Studio")
+  elseif(COMPILER_SUPPORTS_CXX11)
       message(STATUS "C++11 is supported.")
   
       if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -101,6 +105,7 @@ else()
 set(EXE_NAME skafos)
 endif()
 
+target_include_directories(${EXEC_NAME} PRIVATE ${CURL_INCLUDE_DIRS})
 add_executable(${EXE_NAME} ${SOURCES})
 target_link_libraries(${EXE_NAME} sse yaml-cpp ${CMAKE_THREAD_LIBS_INIT} ${CURL_LIBRARIES} ${LibArchive_LIBRARIES} ${YAMLCPP_LIBRARY})
 
